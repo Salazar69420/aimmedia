@@ -1280,7 +1280,7 @@ footer {
 }
 #mode-overlay.m-open { opacity: 1; pointer-events: all; }
 
-#mode-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+#mode-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; z-index: 0; }
 
 /* Top bar — logo + badge + exit */
 .mode-topbar {
@@ -1308,7 +1308,7 @@ footer {
 
 /* HUD — floating headline bottom-left */
 .mode-hud-hl {
-  position: absolute; bottom: 0; left: 0;
+  position: absolute; bottom: 0; left: 0; z-index: 15;
   padding: 0 0 2.8rem 4vw;
   pointer-events: none;
   opacity: 0; transform: translateY(22px);
@@ -1338,7 +1338,7 @@ footer {
 
 /* HUD — case card bottom-right */
 .mode-hud-case {
-  position: absolute; bottom: 2.4rem; right: 3vw;
+  position: absolute; bottom: 2.4rem; right: 3vw; z-index: 15;
   pointer-events: none;
   opacity: 0; transform: translateY(22px);
   transition: opacity 0.6s 0.15s var(--ease), transform 0.6s 0.15s var(--ease);
@@ -1359,7 +1359,7 @@ footer {
 
 /* Vignette around the 3D scene */
 .mode-vignette {
-  position: absolute; inset: 0; pointer-events: none;
+  position: absolute; inset: 0; z-index: 5; pointer-events: none;
   background: radial-gradient(ellipse 90% 80% at 50% 50%, transparent 55%, rgba(0,0,0,0.65) 100%);
 }
 
@@ -3024,7 +3024,7 @@ Object.entries(imageMap).forEach(([id, src]) => {
     renderer.setSize(W, H); renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = T3.PCFSoftShadowMap;
     renderer.outputEncoding = T3.sRGBEncoding;
-    renderer.toneMapping = T3.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
+    renderer.toneMapping = T3.ACESFilmicToneMapping; renderer.toneMappingExposure = 2.2;
     scene = new T3.Scene(); scene.background = new T3.Color(cfg.bg);
     camera = new T3.PerspectiveCamera(50, W / H, 0.1, 800);
     sceneObjs.baseCamera = { x: 0, y: 0, z: 0 }; // filled by each scene
@@ -3067,7 +3067,7 @@ Object.entries(imageMap).forEach(([id, src]) => {
   // ── PROCEDURAL MODEL HELPERS ───────────────────────────────────
   function makeCar(T, bodyColor) {
     const g = new T.Group();
-    const bm = new T.MeshStandardMaterial({color:bodyColor,metalness:0.82,roughness:0.2});
+    const bm = new T.MeshStandardMaterial({color:bodyColor,metalness:0.35,roughness:0.35});
     const gm = new T.MeshStandardMaterial({color:0x0D0D0D,roughness:0.5});
     const wm = new T.MeshStandardMaterial({color:0x111111,roughness:0.85});
     const rm = new T.MeshStandardMaterial({color:0xD4D4D4,metalness:0.95,roughness:0.05});
@@ -3272,8 +3272,8 @@ Object.entries(imageMap).forEach(([id, src]) => {
   function buildCafe() {
     const T = T3();
     camera.position.set(0, 2.2, 6); camera.lookAt(0, 1.4, 0);
-    scene.fog = new T.FogExp2(0x0E0704, 0.06);
-    scene.add(new T.AmbientLight(0x180804, 0.7));
+    scene.fog = new T.FogExp2(0x0E0704, 0.045);
+    scene.add(new T.AmbientLight(0xAA6633, 1.4));
 
     // Floor
     scene.add(Object.assign(new T.Mesh(new T.PlaneGeometry(30,30), new T.MeshStandardMaterial({ color:0x120806, roughness:0.9, metalness:0.08 })), { rotation:{ x:-Math.PI/2 }, receiveShadow:true }).rotateX(-Math.PI/2));
@@ -3351,14 +3351,14 @@ Object.entries(imageMap).forEach(([id, src]) => {
   function buildCorporate() {
     const T = T3();
     camera.position.set(0, 8, 24); camera.lookAt(0, 6, 0);
-    scene.fog = new T.FogExp2(0x030710, 0.013);
+    scene.fog = new T.FogExp2(0x030710, 0.011);
 
     // Floor
-    scene.add(Object.assign(new T.Mesh(new T.PlaneGeometry(80,80), new T.MeshStandardMaterial({color:0x030710,roughness:0.9,metalness:0.35})), {receiveShadow:true}).rotateX(-Math.PI/2));
-    const grid = new T.GridHelper(70,70,0x071535,0x050E22); grid.material.opacity=0.45; grid.material.transparent=true; scene.add(grid);
+    scene.add(Object.assign(new T.Mesh(new T.PlaneGeometry(80,80), new T.MeshStandardMaterial({color:0x060D18,roughness:0.85,metalness:0.3})), {receiveShadow:true}).rotateX(-Math.PI/2));
+    const grid = new T.GridHelper(70,70,0x0A2050,0x071535); grid.material.opacity=0.65; grid.material.transparent=true; scene.add(grid);
 
     // Lighting
-    scene.add(new T.AmbientLight(0x040814,0.9));
+    scene.add(new T.AmbientLight(0x2244AA, 2.0));
     const bl = new T.PointLight(0x1A70DD,5.0,36); bl.position.set(-10,18,4); bl.castShadow=true; scene.add(bl);
     const tl = new T.PointLight(0x00CFC0,3.0,28); tl.position.set(10,14,-5); scene.add(tl);
     scene.add(Object.assign(new T.PointLight(0x4A9EDB,1.8,22), {}).translateX(0).translateY(6).translateZ(12));
@@ -3433,17 +3433,17 @@ Object.entries(imageMap).forEach(([id, src]) => {
     scene.fog = new T.FogExp2(0x050505,0.025);
 
     // Showroom floor — polished dark
-    scene.add(Object.assign(new T.Mesh(new T.PlaneGeometry(50,50), new T.MeshStandardMaterial({color:0x080808,roughness:0.1,metalness:0.7})),{receiveShadow:true}).rotateX(-Math.PI/2));
-    const gd = new T.GridHelper(50,50,0x1A1A1A,0x111111); gd.material.opacity=0.6; gd.material.transparent=true; scene.add(gd);
+    scene.add(Object.assign(new T.Mesh(new T.PlaneGeometry(50,50), new T.MeshStandardMaterial({color:0x151515,roughness:0.15,metalness:0.5})),{receiveShadow:true}).rotateX(-Math.PI/2));
+    const gd = new T.GridHelper(50,50,0x2A2A2A,0x1A1A1A); gd.material.opacity=0.8; gd.material.transparent=true; scene.add(gd);
 
     // Walls
-    const wm = new T.MeshStandardMaterial({color:0x0A0A0A,roughness:1});
+    const wm = new T.MeshStandardMaterial({color:0x181818,roughness:0.8});
     [new T.Mesh(new T.BoxGeometry(50,12,0.1),wm), new T.Mesh(new T.BoxGeometry(0.1,12,50),wm), new T.Mesh(new T.BoxGeometry(0.1,12,50),wm)].forEach((m,i) => {
       m.position.set(i===1?-20:i===2?20:0, 6, i===0?-18:0); scene.add(m);
     });
 
     // Overhead strip lights (linear)
-    scene.add(new T.AmbientLight(0x060606,0.4));
+    scene.add(new T.AmbientLight(0x888888, 1.2));
     [[-8,0],[0,0],[8,0]].forEach(([lx]) => {
       const strip = new T.RectAreaLight ? null : null; // fallback to spotlights
       const sp = new T.SpotLight(0xFFFFFF,3.5,22,Math.PI/7,0.2,1.5);
