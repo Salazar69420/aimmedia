@@ -142,6 +142,18 @@ const IMAGE_JOBS = [
     aspect: '2:3',
   },
   {
+    id: 'atiyas',
+    file: 'atiyas.jpg',
+    prompt: 'Cinematic editorial photograph of a fresh farm market. Wooden crates overflowing with colorful fresh produce — tomatoes, herbs, peppers — under moody warm tungsten lighting. Deep dark shadows. Rich earthy tones. No people. No text. Luxury food brand photography.',
+    aspect: '2:3',
+  },
+  {
+    id: 'tdottruck',
+    file: 'tdottruck.jpg',
+    prompt: 'Cinematic dramatic photograph of a large commercial semi-truck driving on a dark highway at night. Motion blur on road markings. Dramatic headlight beams cutting through absolute darkness. Low angle epic perspective. Wet asphalt reflections. No people visible. No text. Cinematic automotive photography.',
+    aspect: '2:3',
+  },
+  {
     id: 'hero-right',
     file: 'hero-right.jpg',
     prompt: 'Ultra-cinematic macro photograph of glowing fiber optic light strands weaving through absolute darkness. Warm amber and deep coral light refractions. Ink-black background. Razor-sharp selective focus with extreme bokeh. 8K resolution. Subtle film grain. Abstract light installation art photography. Luminous threads of light against pitch black. No people, no text, no watermarks.',

@@ -747,6 +747,8 @@ canvas#particles {
 .cc3 .ccase-bg { background: radial-gradient(ellipse 80% 50% at 50% 60%, rgba(20,110,50,0.25) 0%, transparent 65%), linear-gradient(200deg, #0f1a14, #0a1210); }
 .cc4 .ccase-bg { background: radial-gradient(ellipse 70% 60% at 80% 20%, rgba(160,55,25,0.30) 0%, transparent 65%), linear-gradient(130deg, #1e1210, #130d09); }
 .cc5 .ccase-bg { background: radial-gradient(ellipse 60% 80% at 40% 60%, rgba(190,130,25,0.28) 0%, transparent 65%), linear-gradient(150deg, #1a1508, #12100a); }
+.cc6 .ccase-bg { background: radial-gradient(ellipse 70% 60% at 55% 40%, rgba(80,140,50,0.30) 0%, transparent 65%), linear-gradient(140deg, #101a0c, #0c1208); }
+.cc7 .ccase-bg { background: radial-gradient(ellipse 80% 50% at 60% 55%, rgba(60,80,140,0.28) 0%, transparent 65%), linear-gradient(160deg, #0c0e1a, #080a14); }
 
 /* ── 10M MOMENT ──────────────────────────────────────── */
 #moment {
@@ -1418,6 +1420,26 @@ footer {
         <div class="ccase-result">Premium AI video ads capturing the luxury café aesthetic of Windsor's most photogenic coffee shop.</div>
       </div>
     </div>
+    <div class="ccase cc6" role="button" tabindex="0" data-key="cc6" aria-label="Open Atiyas Fresh Farm case study">
+      <div class="ccase-bg" id="img-atiyas"></div>
+      <div class="ccase-ov"></div>
+      <div class="ccase-expand" aria-hidden="true">⤢</div>
+      <div class="ccase-body">
+        <div class="ccase-tag">Agriculture × Social &amp; Paid Media</div>
+        <div class="ccase-name">Atiyas Fresh Farm</div>
+        <div class="ccase-result">100K+ Meta ad impressions at minimum cost — plus 60% cost reduction vs. their previous campaign by rebuilding the entire paid strategy from scratch.</div>
+      </div>
+    </div>
+    <div class="ccase cc7" role="button" tabindex="0" data-key="cc7" aria-label="Open TdotTruck case study">
+      <div class="ccase-bg" id="img-tdottruck"></div>
+      <div class="ccase-ov"></div>
+      <div class="ccase-expand" aria-hidden="true">⤢</div>
+      <div class="ccase-body">
+        <div class="ccase-tag">Transport × AI Video &amp; YouTube</div>
+        <div class="ccase-name">TdotTruck</div>
+        <div class="ccase-result">Full-production cinematic AI video ad — zero production budget. Ran as a YouTube brand awareness campaign with significantly optimized CPM and reduced ad spend.</div>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1941,6 +1963,8 @@ const imageMap = {
   'img-coffee-exchange': 'assets/coffee-exchange.jpg',
   'img-krish':        'assets/krish.jpg',
   'img-kartik':       'assets/kartik.jpg',
+  'img-atiyas':       'assets/atiyas.jpg',
+  'img-tdottruck':    'assets/tdottruck.jpg',
 };
 Object.entries(imageMap).forEach(([id, src]) => {
   const el = document.getElementById(id);
@@ -2289,7 +2313,9 @@ Object.entries(imageMap).forEach(([id, src]) => {
     cc2: { tag: 'Real Estate × AI Automation', name: 'Kris Ramotar',   result: 'AI voice call agent deployed and live on the same day as the first meeting. Fully automated client intake.',         stat: 'Same Day', statL: 'AI Agent Deployment' },
     cc3: { tag: 'SaaS × CRM Automation',       name: 'WEtech Alliance', result: 'Full HubSpot CRM automation system for Windsor\'s leading tech accelerator — partner and member pipeline, streamlined.', stat: '100%',    statL: 'Pipeline Automated' },
     cc4: { tag: 'Automotive × AI Video',       name: 'VIP Motors',     result: 'High-end AI video ads for exotic and luxury inventory at a Brampton dealership — production value at zero production budget.', stat: '10×',     statL: 'Production Value · Zero Budget' },
-    cc5: { tag: 'F&B × Brand Content',         name: 'Coffee Exchange', result: 'Premium AI video ads capturing the luxury café aesthetic of Windsor\'s most photogenic coffee shop.',                  stat: 'Day 1',   statL: 'Full Campaign Launch' },
+    cc5: { tag: 'F&B × Brand Content',         name: 'Coffee Exchange',    result: 'Premium AI video ads capturing the luxury café aesthetic of Windsor\'s most photogenic coffee shop.',                                                                             stat: 'Day 1',   statL: 'Full Campaign Launch' },
+    cc6: { tag: 'Agriculture × Social & Paid Media', name: 'Atiyas Fresh Farm', result: 'Managed Instagram with AI-generated reels + offline content. Rebuilt Meta ads from scratch — 100K+ impressions at minimum cost and 60%+ lower CPM than their previous campaign.', stat: '60%+',    statL: 'Meta Ad Cost Reduction' },
+    cc7: { tag: 'Transport × AI Video & YouTube',    name: 'TdotTruck',         result: 'Produced a full-production cinematic AI video ad at near-zero budget and ran it as a YouTube brand awareness campaign — significantly optimized CPM, sustained cost reduction.',  stat: '0 Budget', statL: 'Production Cost · Full Campaign' },
   };
 
   const modal    = document.getElementById('cs-modal');
@@ -2376,17 +2402,14 @@ Object.entries(imageMap).forEach(([id, src]) => {
   img.addEventListener('error', () => { img.style.display = 'none'; });
 })();
 
-// ── FOUNDER INTERACTIVE CANVAS ────────────────────────────────
+// ── FOUNDER INTERACTIVE CANVAS (subtle data-field) ────────────
 (function() {
-  const AC = 'rgba(217,119,87,';
-
   function initFounderCanvas(canvasId, panelSel) {
     const canvas = document.getElementById(canvasId);
     const panel  = document.querySelector(panelSel);
     if (!canvas || !panel) return;
     const ctx = canvas.getContext('2d');
-    let W, H, pts = [], mx = 0, my = 0;
-    let raf = null, scanY = -80, scanOn = false, blink = 0;
+    let W, H, pts = [], mx = -9999, my = -9999, raf = null;
 
     function resize() {
       W = canvas.width  = canvas.offsetWidth;
@@ -2395,129 +2418,77 @@ Object.entries(imageMap).forEach(([id, src]) => {
     resize();
     new ResizeObserver(resize).observe(canvas);
 
-    function spawnPts() {
-      pts = [];
-      for (let i = 0; i < 90; i++) {
-        const a = Math.random() * Math.PI * 2;
-        pts.push({
-          x: Math.random() * W, y: Math.random() * H,
-          vx: Math.cos(a) * (Math.random() * 0.4 + 0.1),
-          vy: Math.sin(a) * (Math.random() * 0.4 + 0.1),
-          r: Math.random() * 1.6 + 0.5,
-          base: Math.random() * 0.25 + 0.1,
-        });
-      }
+    function spawn() {
+      pts = Array.from({ length: 32 }, () => {
+        const a = Math.random() * Math.PI * 2, spd = Math.random() * 0.18 + 0.04;
+        return { x: Math.random() * W, y: Math.random() * H,
+                 vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
+                 r: Math.random() * 1.1 + 0.4,
+                 alpha: Math.random() * 0.22 + 0.08 };
+      });
     }
 
     function draw() {
       ctx.clearRect(0, 0, W, H);
-      blink++;
 
-      /* ── scan line ── */
-      if (scanOn) {
-        scanY += 2.2;
-        if (scanY > H + 60) scanY = -60;
-        const sg = ctx.createLinearGradient(0, scanY - 28, 0, scanY + 28);
-        sg.addColorStop(0,   AC + '0)');
-        sg.addColorStop(0.45, AC + '0.14)');
-        sg.addColorStop(0.5,  AC + '0.22)');
-        sg.addColorStop(0.55, AC + '0.14)');
-        sg.addColorStop(1,   AC + '0)');
-        ctx.fillStyle = sg;
-        ctx.fillRect(0, scanY - 28, W, 56);
+      // Soft cursor presence glow
+      const cg = ctx.createRadialGradient(mx, my, 0, mx, my, 140);
+      cg.addColorStop(0, 'rgba(217,119,87,0.06)');
+      cg.addColorStop(1, 'rgba(217,119,87,0)');
+      ctx.fillStyle = cg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Connection lines (very faint)
+      const LINK = 75;
+      for (let i = 0; i < pts.length; i++) {
+        for (let j = i + 1; j < pts.length; j++) {
+          const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < LINK) {
+            ctx.beginPath();
+            ctx.moveTo(pts[i].x, pts[i].y);
+            ctx.lineTo(pts[j].x, pts[j].y);
+            ctx.strokeStyle = `rgba(217,119,87,${(1 - d / LINK) * 0.07})`;
+            ctx.lineWidth = 0.6;
+            ctx.stroke();
+          }
+        }
       }
 
-      /* ── magnetic particles ── */
+      // Particles — gently repelled by cursor
       pts.forEach(p => {
-        const dx = mx - p.x, dy = my - p.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        const pull = 200; // pull radius in px
-
-        if (mx > 0 && dist < pull) {
-          const f = (1 - dist / pull) * 0.038;
-          p.vx += dx * f;
-          p.vy += dy * f;
+        const dx = p.x - mx, dy = p.y - my;
+        const d = Math.sqrt(dx * dx + dy * dy);
+        const REP = 140;
+        if (d < REP && d > 1) {
+          const f = (1 - d / REP) * 0.016;
+          p.vx += (dx / d) * f;
+          p.vy += (dy / d) * f;
         }
-        // subtle drift back toward random
-        p.vx += (Math.random() - 0.5) * 0.012;
-        p.vy += (Math.random() - 0.5) * 0.012;
-        // drag
-        p.vx *= 0.91; p.vy *= 0.91;
-        p.x += p.vx;  p.y += p.vy;
-        // wrap
+        // Gentle random drift
+        p.vx += (Math.random() - 0.5) * 0.006;
+        p.vy += (Math.random() - 0.5) * 0.006;
+        p.vx *= 0.975; p.vy *= 0.975;
+        p.x += p.vx;   p.y += p.vy;
         if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
         if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
 
-        const prox = mx > 0 ? Math.max(0, 1 - dist / pull) : 0;
-        const alpha = p.base + prox * 0.65;
-        const r     = p.r + prox * 2.5;
-
-        // glow halo for close particles
-        if (prox > 0.25) {
-          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 5);
-          g.addColorStop(0, AC + (alpha * 0.6) + ')');
-          g.addColorStop(1, AC + '0)');
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, r * 5, 0, Math.PI * 2);
-          ctx.fillStyle = g; ctx.fill();
-        }
         ctx.beginPath();
-        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = AC + alpha + ')';
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(217,119,87,${p.alpha})`;
         ctx.fill();
       });
-
-      /* ── cursor aura ── */
-      if (mx > 0) {
-        const cg = ctx.createRadialGradient(mx, my, 0, mx, my, 100);
-        cg.addColorStop(0, AC + '0.10)');
-        cg.addColorStop(1, AC + '0)');
-        ctx.beginPath();
-        ctx.arc(mx, my, 100, 0, Math.PI * 2);
-        ctx.fillStyle = cg; ctx.fill();
-      }
-
-      /* ── corner viewfinder brackets (video-cam feel) ── */
-      const bx = W * 0.07, by = H * 0.07, bw = W * 0.86, bh = H * 0.86;
-      const arm = Math.min(W, H) * 0.07;
-      ctx.strokeStyle = AC + '0.35)'; ctx.lineWidth = 1.2;
-      [
-        [[bx, by + arm], [bx, by], [bx + arm, by]],
-        [[bx + bw - arm, by], [bx + bw, by], [bx + bw, by + arm]],
-        [[bx, by + bh - arm], [bx, by + bh], [bx + arm, by + bh]],
-        [[bx + bw - arm, by + bh], [bx + bw, by + bh], [bx + bw, by + bh - arm]],
-      ].forEach(pts3 => {
-        ctx.beginPath();
-        pts3.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
-        ctx.stroke();
-      });
-
-      /* ── blinking REC indicator ── */
-      const recOn = Math.floor(blink / 40) % 2 === 0;
-      if (recOn) {
-        ctx.beginPath();
-        ctx.arc(bx + arm * 0.45, by + arm * 0.5, 3, 0, Math.PI * 2);
-        ctx.fillStyle = AC + '0.85)'; ctx.fill();
-      }
-      ctx.font = '500 8px var(--sans)';
-      ctx.fillStyle = AC + (recOn ? '0.65)' : '0.25)');
-      ctx.fillText('REC', bx + arm * 0.45 + 7, by + arm * 0.5 + 3);
 
       raf = requestAnimationFrame(draw);
     }
 
-    panel.addEventListener('mouseenter', () => {
-      scanOn = true; scanY = -60;
-      spawnPts();
-      if (!raf) draw();
-    });
+    panel.addEventListener('mouseenter', () => { spawn(); if (!raf) draw(); });
     panel.addEventListener('mousemove', e => {
       const r = canvas.getBoundingClientRect();
-      mx = e.clientX - r.left;
-      my = e.clientY - r.top;
+      mx = e.clientX - r.left; my = e.clientY - r.top;
     });
     panel.addEventListener('mouseleave', () => {
-      scanOn = false; mx = 0; my = 0;
+      mx = -9999; my = -9999;
       cancelAnimationFrame(raf); raf = null;
       ctx.clearRect(0, 0, W, H);
     });
