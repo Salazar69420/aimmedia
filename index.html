@@ -672,10 +672,27 @@ canvas#particles {
   inset: 0;
   background-size: cover;
   background-position: center;
-  transition: transform 0.7s var(--ease), filter 0.5s;
-  transform: scale(1.06);
+  transition: filter 0.5s;
+  animation: kenBurns 14s ease-in-out infinite;
 }
-.ccase:hover .ccase-bg { transform: scale(1.0); filter: brightness(1.2); }
+.ccase:hover .ccase-bg { animation-play-state: paused; filter: brightness(1.18); }
+.ccase-expand {
+  position: absolute;
+  top: 1.4rem; right: 1.4rem;
+  z-index: 5;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(245,240,235,0.2);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.8rem;
+  color: rgba(245,240,235,0.5);
+  opacity: 0;
+  transition: opacity 0.35s, border-color 0.35s, color 0.35s, transform 0.35s var(--ease);
+  backdrop-filter: blur(8px);
+  background: rgba(28,25,23,0.35);
+}
+.ccase:hover .ccase-expand { opacity: 1; border-color: var(--accent); color: var(--accent); transform: scale(1.1); }
+@media (hover: none) { .ccase-expand { opacity: 0.55; } }
 .ccase-ov {
   position: absolute;
   inset: 0;
@@ -1049,6 +1066,149 @@ footer {
   #moment { padding: 7rem 1.5rem; min-height: 60vh; }
   .stat-n { font-size: 2rem; }
 }
+
+/* ── KEN BURNS ────────────────────────────────────────── */
+@keyframes kenBurns {
+  0%   { transform: scale(1.06) translate(0,    0); }
+  25%  { transform: scale(1.10) translate(-1.2%,  0.6%); }
+  50%  { transform: scale(1.08) translate( 0.8%, -0.8%); }
+  75%  { transform: scale(1.11) translate(-0.5%,  0.4%); }
+  100% { transform: scale(1.06) translate(0,    0); }
+}
+
+/* ── CASE STUDY MODAL ─────────────────────────────────── */
+#cs-modal {
+  position: fixed; inset: 0;
+  z-index: 7000;
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: #0e0c0a;
+  cursor: none;
+}
+#cs-modal.open { opacity: 1; pointer-events: all; }
+#cs-m-bg {
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.08);
+  transition: transform 1.6s cubic-bezier(0.16,1,0.3,1);
+  filter: grayscale(10%) contrast(1.05) brightness(0.8);
+}
+#cs-modal.open #cs-m-bg { transform: scale(1); }
+.cs-m-ov {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to top,  rgba(14,12,10,0.97) 0%, rgba(14,12,10,0.6) 48%, rgba(14,12,10,0.08) 100%),
+    linear-gradient(to right, rgba(14,12,10,0.2) 0%, transparent 55%);
+}
+#cs-close {
+  position: absolute; top: 1.8rem; right: 2rem;
+  z-index: 10;
+  width: 48px; height: 48px; border-radius: 50%;
+  background: rgba(28,25,23,0.55);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1.25rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: none;
+  transition: border-color 0.3s, color 0.3s, transform 0.45s var(--ease), background 0.3s;
+}
+#cs-close:hover { border-color: var(--accent); color: var(--accent); transform: rotate(90deg) scale(1.12); }
+@media (hover: none) { #cs-close { cursor: pointer; } }
+.cs-m-body {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: clamp(1.8rem, 4vw, 4rem) clamp(1.8rem, 5vw, 4.5rem);
+  z-index: 5;
+  transform: translateY(40px);
+  opacity: 0;
+  transition: transform 0.8s var(--ease) 0.3s, opacity 0.6s ease 0.3s;
+}
+#cs-modal.open .cs-m-body { transform: translateY(0); opacity: 1; }
+.cs-m-tag-el {
+  display: inline-flex;
+  font-size: 0.58rem; font-weight: 700;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--accent); border: 1px solid var(--a40);
+  padding: 0.3rem 0.9rem; border-radius: 100px;
+  margin-bottom: 1.2rem;
+}
+.cs-m-name-el {
+  font-family: var(--serif);
+  font-size: clamp(2.8rem, 8.5vw, 9rem);
+  font-weight: 900; line-height: 0.88;
+  letter-spacing: -0.025em; margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+.cs-m-name-el span {
+  display: block;
+  transform: translateY(110%);
+  transition: transform 0.9s var(--ease) 0.45s;
+}
+#cs-modal.open .cs-m-name-el span { transform: translateY(0); }
+.cs-m-result-el {
+  font-size: clamp(0.88rem, 1.4vw, 1.05rem);
+  color: rgba(245,240,235,0.62);
+  max-width: 600px; line-height: 1.78; font-weight: 300;
+  margin-bottom: 2rem;
+}
+.cs-m-meta { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+.cs-m-stat-el {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 4.5vw, 5rem);
+  font-weight: 900; color: var(--accent); line-height: 1;
+}
+.cs-m-statl-el {
+  font-size: 0.62rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted);
+}
+/* swipe hint on mobile */
+.cs-m-swipe {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase;
+  color: var(--muted); padding: 1.2rem 0;
+  display: none;
+}
+@media (hover: none) { .cs-m-swipe { display: block; } }
+
+/* ── CURSOR TRAIL ─────────────────────────────────────── */
+.c-trail {
+  position: fixed; border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none; z-index: 9797;
+  transform: translate(-50%,-50%);
+  mix-blend-mode: screen;
+  opacity: 0; will-change: left, top;
+}
+
+/* ── TOUCH RIPPLE ─────────────────────────────────────── */
+.t-ripple {
+  position: fixed; border-radius: 50%;
+  border: 1.5px solid var(--accent);
+  pointer-events: none; z-index: 9700;
+  transform: translate(-50%,-50%) scale(0);
+  opacity: 0.75;
+  animation: rippleOut 0.7s var(--ease) forwards;
+}
+@keyframes rippleOut {
+  to { transform: translate(-50%,-50%) scale(5); opacity: 0; }
+}
+
+/* ── MOBILE CASE STUDY ────────────────────────────────── */
+@media (max-width: 600px) {
+  .ccase { flex: 0 0 84vw; height: 510px; cursor: pointer; }
+  #cs-close { cursor: pointer; }
+  .ccase-expand { opacity: 0.5; }
+  .cases-track { padding-left: 1.2rem; padding-right: 1.2rem; gap: 0.85rem; }
+}
+
+/* ── MOBILE NAV ───────────────────────────────────────── */
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+  nav { padding: 1.1rem 1.5rem; }
+}
   </style>
 </head>
 <body>
@@ -1208,45 +1368,50 @@ footer {
     <div class="work-hint rev">Drag to explore</div>
   </div>
   <div class="cases-track" id="casesTrack">
-    <div class="ccase cc1">
+    <div class="ccase cc1" role="button" tabindex="0" data-key="cc1" aria-label="Open Ram Bharose case study">
       <div class="ccase-bg" id="img-ram-bharose"></div>
       <div class="ccase-ov"></div>
+      <div class="ccase-expand" aria-hidden="true">⤢</div>
       <div class="ccase-body">
         <div class="ccase-tag">Hospitality × Content</div>
         <div class="ccase-name">Ram Bharose</div>
         <div class="ccase-result">200K+ organic views in 6 days — cinematic short-form content for Windsor's best-kept restaurant secret.</div>
       </div>
     </div>
-    <div class="ccase cc2">
+    <div class="ccase cc2" role="button" tabindex="0" data-key="cc2" aria-label="Open Kris Ramotar case study">
       <div class="ccase-bg" id="img-kris-ramotar"></div>
       <div class="ccase-ov"></div>
+      <div class="ccase-expand" aria-hidden="true">⤢</div>
       <div class="ccase-body">
         <div class="ccase-tag">Real Estate × AI Automation</div>
         <div class="ccase-name">Kris Ramotar</div>
         <div class="ccase-result">AI voice call agent deployed and live on the same day as first meeting. Fully automated client intake.</div>
       </div>
     </div>
-    <div class="ccase cc3">
+    <div class="ccase cc3" role="button" tabindex="0" data-key="cc3" aria-label="Open WEtech Alliance case study">
       <div class="ccase-bg" id="img-wetech"></div>
       <div class="ccase-ov"></div>
+      <div class="ccase-expand" aria-hidden="true">⤢</div>
       <div class="ccase-body">
         <div class="ccase-tag">SaaS × CRM Automation</div>
         <div class="ccase-name">WEtech Alliance</div>
         <div class="ccase-result">Full HubSpot CRM automation system for Windsor's leading tech accelerator — partner and member pipeline, streamlined.</div>
       </div>
     </div>
-    <div class="ccase cc4">
+    <div class="ccase cc4" role="button" tabindex="0" data-key="cc4" aria-label="Open VIP Motors case study">
       <div class="ccase-bg" id="img-vip-motors"></div>
       <div class="ccase-ov"></div>
+      <div class="ccase-expand" aria-hidden="true">⤢</div>
       <div class="ccase-body">
         <div class="ccase-tag">Automotive × AI Video</div>
         <div class="ccase-name">VIP Motors</div>
         <div class="ccase-result">High-end AI video ads for exotic and luxury inventory at a Brampton dealership — production value at zero production budget.</div>
       </div>
     </div>
-    <div class="ccase cc5">
+    <div class="ccase cc5" role="button" tabindex="0" data-key="cc5" aria-label="Open Coffee Exchange case study">
       <div class="ccase-bg" id="img-coffee-exchange"></div>
       <div class="ccase-ov"></div>
+      <div class="ccase-expand" aria-hidden="true">⤢</div>
       <div class="ccase-body">
         <div class="ccase-tag">F&amp;B × Brand Content</div>
         <div class="ccase-name">Coffee Exchange</div>
@@ -1312,6 +1477,23 @@ footer {
 </footer>
 
 <div id="spotlight" aria-hidden="true"></div>
+
+<!-- ── CASE STUDY MODAL ───────────────────────────────────── -->
+<div id="cs-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <button id="cs-close" aria-label="Close case study">✕</button>
+  <div id="cs-m-bg"></div>
+  <div class="cs-m-ov"></div>
+  <div class="cs-m-body">
+    <div class="cs-m-tag-el" id="cs-m-tag"></div>
+    <div class="cs-m-name-el" id="cs-m-name"><span></span></div>
+    <div class="cs-m-result-el" id="cs-m-result"></div>
+    <div class="cs-m-meta">
+      <div class="cs-m-stat-el" id="cs-m-stat"></div>
+      <div class="cs-m-statl-el" id="cs-m-statl"></div>
+    </div>
+  </div>
+  <div class="cs-m-swipe">↓ swipe down to close</div>
+</div>
 
 <!-- ─────────────────────────────────────────────────────── -->
 <script>
@@ -1776,17 +1958,28 @@ Object.entries(imageMap).forEach(([id, src]) => {
 (function initBcardAnims() {
   const AC = 'rgba(217,119,87,';
 
-  // Wire a canvas to its parent bcard: start on hover, stop + clear on leave
+  const isTouch = window.matchMedia('(hover: none)').matches;
+
+  // Wire a canvas: hover-gated on desktop, IntersectionObserver on mobile
   function hoverGate(canvas, startFn) {
     const card = canvas.closest('.bcard');
     if (!card) return;
     let raf = null;
-    card.addEventListener('mouseenter', () => { if (!raf) raf = startFn(() => { raf = null; }); });
-    card.addEventListener('mouseleave', () => {
+    const stop = () => {
       if (raf) { cancelAnimationFrame(raf); raf = null; }
-      const ctx = canvas.getContext('2d');
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    });
+      canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
+    };
+    const start = () => { if (!raf) raf = startFn(() => { raf = null; }); };
+
+    if (isTouch) {
+      const io = new IntersectionObserver(entries => {
+        entries[0].isIntersecting ? start() : stop();
+      }, { threshold: 0.35 });
+      io.observe(card);
+    } else {
+      card.addEventListener('mouseenter', start);
+      card.addEventListener('mouseleave', stop);
+    }
   }
 
   /* ── 1. NEURAL NETWORK (AI Automation) ── */
@@ -2009,6 +2202,168 @@ Object.entries(imageMap).forEach(([id, src]) => {
       raf=draw(); return raf;
     });
   })();
+})();
+
+// ── CURSOR TRAIL ─────────────────────────────────────────────
+(function() {
+  if (window.matchMedia('(hover: none)').matches) return;
+  const TRAIL_COUNT = 5;
+  const trails = Array.from({ length: TRAIL_COUNT }, (_, i) => {
+    const el = document.createElement('div');
+    el.className = 'c-trail';
+    const size = 5 - i * 0.6;
+    el.style.cssText = `width:${size}px;height:${size}px;`;
+    document.body.appendChild(el);
+    return { el, x: 0, y: 0, lag: 0.08 + i * 0.04 };
+  });
+  let mx = 0, my = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  (function tick() {
+    trails.forEach((t, i) => {
+      const prev = i === 0 ? { x: mx, y: my } : trails[i - 1];
+      t.x += (prev.x - t.x) * t.lag;
+      t.y += (prev.y - t.y) * t.lag;
+      t.el.style.left  = t.x + 'px';
+      t.el.style.top   = t.y + 'px';
+      t.el.style.opacity = Math.max(0, 0.35 - i * 0.07);
+    });
+    requestAnimationFrame(tick);
+  })();
+})();
+
+// ── TOUCH RIPPLE ─────────────────────────────────────────────
+(function() {
+  if (!window.matchMedia('(hover: none)').matches) return;
+  document.addEventListener('touchstart', e => {
+    const t = e.touches[0];
+    const el = document.createElement('div');
+    el.className = 't-ripple';
+    el.style.left = t.clientX + 'px';
+    el.style.top  = t.clientY + 'px';
+    el.style.width = el.style.height = '28px';
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 750);
+  }, { passive: true });
+})();
+
+// ── STATS COUNTER ─────────────────────────────────────────────
+(function() {
+  const statEls = document.querySelectorAll('.stat-n');
+  function animCounter(el) {
+    const raw = el.innerHTML.replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, '').trim();
+    const m = raw.match(/^([\d,.]+)([^\d]*)$/);
+    if (!m) return;
+    const num = parseFloat(m[1].replace(/,/g, ''));
+    const suffix = m[2] || '';
+    if (!num) return;
+    const isMillions = num >= 1000000;
+    const isThousands = !isMillions && num >= 1000;
+    const format = v => {
+      if (isMillions)   return Math.round(v / 1000000) + 'M';
+      if (isThousands)  return Math.round(v / 1000) + 'K';
+      return Math.round(v).toString();
+    };
+    const dur = 1600, start = performance.now();
+    (function step(now) {
+      const p = Math.min((now - start) / dur, 1);
+      const ease = 1 - Math.pow(1 - p, 3);
+      el.textContent = format(num * ease) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = format(num) + suffix;
+    })(start);
+  }
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      animCounter(e.target);
+      io.unobserve(e.target);
+    });
+  }, { threshold: 0.7 });
+  statEls.forEach(el => io.observe(el));
+})();
+
+// ── CASE STUDY MODAL ──────────────────────────────────────────
+(function() {
+  const CASES = {
+    cc1: { tag: 'Hospitality × Content',      name: 'Ram Bharose',    result: '200K+ organic views in 6 days — cinematic short-form content for Windsor\'s best-kept restaurant secret.', stat: '200K+',    statL: 'Organic Views · 6 Days' },
+    cc2: { tag: 'Real Estate × AI Automation', name: 'Kris Ramotar',   result: 'AI voice call agent deployed and live on the same day as the first meeting. Fully automated client intake.',         stat: 'Same Day', statL: 'AI Agent Deployment' },
+    cc3: { tag: 'SaaS × CRM Automation',       name: 'WEtech Alliance', result: 'Full HubSpot CRM automation system for Windsor\'s leading tech accelerator — partner and member pipeline, streamlined.', stat: '100%',    statL: 'Pipeline Automated' },
+    cc4: { tag: 'Automotive × AI Video',       name: 'VIP Motors',     result: 'High-end AI video ads for exotic and luxury inventory at a Brampton dealership — production value at zero production budget.', stat: '10×',     statL: 'Production Value · Zero Budget' },
+    cc5: { tag: 'F&B × Brand Content',         name: 'Coffee Exchange', result: 'Premium AI video ads capturing the luxury café aesthetic of Windsor\'s most photogenic coffee shop.',                  stat: 'Day 1',   statL: 'Full Campaign Launch' },
+  };
+
+  const modal    = document.getElementById('cs-modal');
+  const mBg      = document.getElementById('cs-m-bg');
+  const mTag     = document.getElementById('cs-m-tag');
+  const mName    = document.getElementById('cs-m-name');
+  const mResult  = document.getElementById('cs-m-result');
+  const mStat    = document.getElementById('cs-m-stat');
+  const mStatL   = document.getElementById('cs-m-statl');
+  const closeBtn = document.getElementById('cs-close');
+  if (!modal) return;
+
+  let isOpen = false;
+
+  function openModal(card) {
+    const key = card.dataset.key;
+    const data = CASES[key];
+    if (!data || isOpen) return;
+    isOpen = true;
+
+    // Populate content
+    mTag.textContent = data.tag;
+    mName.querySelector('span').textContent = data.name;
+    mResult.textContent = data.result;
+    mStat.textContent = data.stat;
+    mStatL.textContent = data.statL;
+
+    // Copy background image from card
+    const bgEl = card.querySelector('.ccase-bg');
+    mBg.style.backgroundImage = bgEl?.style.backgroundImage || '';
+
+    // Clip-path expand from card's position
+    const rect = card.getBoundingClientRect();
+    const vw = window.innerWidth, vh = window.innerHeight;
+    modal.style.clipPath = `inset(${rect.top}px ${vw - rect.right}px ${vh - rect.bottom}px ${rect.left}px round 1.1rem)`;
+    modal.style.transition = 'none';
+    modal.style.opacity = '1';
+    modal.style.pointerEvents = 'all';
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      modal.style.transition = 'clip-path 0.8s cubic-bezier(0.16,1,0.3,1)';
+      modal.style.clipPath = 'inset(0px 0px 0px 0px round 0px)';
+      modal.classList.add('open');
+    }));
+  }
+
+  function closeModal() {
+    if (!isOpen) return;
+    modal.classList.remove('open');
+    setTimeout(() => {
+      isOpen = false;
+      modal.style.opacity = '0';
+      modal.style.pointerEvents = 'none';
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }, 650);
+  }
+
+  document.querySelectorAll('.ccase').forEach(card => {
+    card.addEventListener('click', () => openModal(card));
+    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openModal(card); });
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // Swipe-down to close on mobile
+  let ty0 = 0;
+  modal.addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, { passive: true });
+  modal.addEventListener('touchend', e => {
+    if (e.changedTouches[0].clientY - ty0 > 90) closeModal();
+  }, { passive: true });
 })();
 
 // ── HERO VISUAL LOAD ─────────────────────────────────────────
