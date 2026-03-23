@@ -141,6 +141,12 @@ const IMAGE_JOBS = [
     prompt: 'Black and white studio portrait of a young South Asian male professional in his early 20s. Dramatic side lighting from right. Dark background. Film grain. Thoughtful composed expression. No text.',
     aspect: '2:3',
   },
+  {
+    id: 'hero-right',
+    file: 'hero-right.jpg',
+    prompt: 'Ultra-cinematic macro photograph of glowing fiber optic light strands weaving through absolute darkness. Warm amber and deep coral light refractions. Ink-black background. Razor-sharp selective focus with extreme bokeh. 8K resolution. Subtle film grain. Abstract light installation art photography. Luminous threads of light against pitch black. No people, no text, no watermarks.',
+    aspect: '9:16',
+  },
 ];
 
 // ── VIDEO JOB (LTX 2.3) ──────────────────────────────────────────

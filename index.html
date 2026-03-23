@@ -993,6 +993,39 @@ footer {
 .bcard-title,
 .bcard-desc { position: relative; z-index: 1; }
 
+/* ── HERO VISUAL (right side floating image) ─────────────── */
+.hero-visual-wrap {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  width: 48%;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.hero-visual-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 115%;
+  top: -8%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity 2.2s ease;
+  will-change: transform;
+  -webkit-mask-image: radial-gradient(ellipse 88% 80% at 80% 50%, black 15%, rgba(0,0,0,0.55) 48%, transparent 75%);
+  mask-image: radial-gradient(ellipse 88% 80% at 80% 50%, black 15%, rgba(0,0,0,0.55) 48%, transparent 75%);
+}
+.hero-visual-img.vis { opacity: 0.52; }
+
+/* ── FOUNDER CANVAS ──────────────────────────────────────── */
+.founder-hover-canvas {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 4;
+}
+
 /* ── RESPONSIVE ──────────────────────────────────────── */
 @media (max-width: 960px) {
   nav { padding: 1.25rem 1.5rem; }
@@ -1007,6 +1040,14 @@ footer {
   footer { flex-direction: column; gap: 1.5rem; text-align: center; }
   .work-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
   .hero-headline { font-size: clamp(3.5rem, 13vw, 6rem); }
+  .hero-visual-wrap { width: 55%; opacity: 0.7; }
+}
+@media (max-width: 600px) {
+  .hero-visual-wrap { display: none; }
+  .m-num { font-size: clamp(1.8rem, 10vw, 5rem) !important; letter-spacing: -0.03em; }
+  .moment-ghost { font-size: 80vw; }
+  #moment { padding: 7rem 1.5rem; min-height: 60vh; }
+  .stat-n { font-size: 2rem; }
 }
   </style>
 </head>
@@ -1061,6 +1102,10 @@ footer {
   </video>
   <canvas id="particles" aria-hidden="true"></canvas>
   <div class="hero-bg" aria-hidden="true"></div>
+  <!-- Right-side visual with scroll parallax -->
+  <div class="hero-visual-wrap" aria-hidden="true">
+    <img class="hero-visual-img" id="hero-visual-img" src="assets/hero-right.jpg" alt="" />
+  </div>
   <div class="hero-vignette" aria-hidden="true"></div>
   <div class="hero-bg-num" aria-hidden="true">AI</div>
 
@@ -1225,6 +1270,7 @@ footer {
   <div class="founder-panel fp-left rev-l">
     <div class="fp-bg" id="img-krish"></div>
     <div class="fp-vignette"></div>
+    <canvas class="founder-hover-canvas" id="fc-krish"></canvas>
     <div class="fp-divider"></div>
     <div class="fp-content">
       <div class="fp-role">Architect</div>
@@ -1236,6 +1282,7 @@ footer {
   <div class="founder-panel fp-right rev-r">
     <div class="fp-bg" id="img-kartik"></div>
     <div class="fp-vignette"></div>
+    <canvas class="founder-hover-canvas" id="fc-kartik"></canvas>
     <div class="fp-content">
       <div class="fp-role">Strategist</div>
       <div class="fp-name">Kartik<br>Garg</div>
@@ -1572,6 +1619,12 @@ function initMotion() {
   });
   gsap.to('#hero-video', {
     yPercent: 12,
+    ease: 'none',
+    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
+  });
+  // Hero right visual — slower parallax for depth layering
+  gsap.to('#hero-visual-img', {
+    yPercent: 22,
     ease: 'none',
     scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true }
   });
@@ -1956,6 +2009,167 @@ Object.entries(imageMap).forEach(([id, src]) => {
       raf=draw(); return raf;
     });
   })();
+})();
+
+// ── HERO VISUAL LOAD ─────────────────────────────────────────
+(function() {
+  const img = document.getElementById('hero-visual-img');
+  if (!img) return;
+  const show = () => img.classList.add('vis');
+  if (img.complete && img.naturalWidth) show();
+  else img.addEventListener('load', show);
+  img.addEventListener('error', () => { img.style.display = 'none'; });
+})();
+
+// ── FOUNDER INTERACTIVE CANVAS ────────────────────────────────
+(function() {
+  const AC = 'rgba(217,119,87,';
+
+  function initFounderCanvas(canvasId, panelSel) {
+    const canvas = document.getElementById(canvasId);
+    const panel  = document.querySelector(panelSel);
+    if (!canvas || !panel) return;
+    const ctx = canvas.getContext('2d');
+    let W, H, pts = [], mx = 0, my = 0;
+    let raf = null, scanY = -80, scanOn = false, blink = 0;
+
+    function resize() {
+      W = canvas.width  = canvas.offsetWidth;
+      H = canvas.height = canvas.offsetHeight;
+    }
+    resize();
+    new ResizeObserver(resize).observe(canvas);
+
+    function spawnPts() {
+      pts = [];
+      for (let i = 0; i < 90; i++) {
+        const a = Math.random() * Math.PI * 2;
+        pts.push({
+          x: Math.random() * W, y: Math.random() * H,
+          vx: Math.cos(a) * (Math.random() * 0.4 + 0.1),
+          vy: Math.sin(a) * (Math.random() * 0.4 + 0.1),
+          r: Math.random() * 1.6 + 0.5,
+          base: Math.random() * 0.25 + 0.1,
+        });
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      blink++;
+
+      /* ── scan line ── */
+      if (scanOn) {
+        scanY += 2.2;
+        if (scanY > H + 60) scanY = -60;
+        const sg = ctx.createLinearGradient(0, scanY - 28, 0, scanY + 28);
+        sg.addColorStop(0,   AC + '0)');
+        sg.addColorStop(0.45, AC + '0.14)');
+        sg.addColorStop(0.5,  AC + '0.22)');
+        sg.addColorStop(0.55, AC + '0.14)');
+        sg.addColorStop(1,   AC + '0)');
+        ctx.fillStyle = sg;
+        ctx.fillRect(0, scanY - 28, W, 56);
+      }
+
+      /* ── magnetic particles ── */
+      pts.forEach(p => {
+        const dx = mx - p.x, dy = my - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const pull = 200; // pull radius in px
+
+        if (mx > 0 && dist < pull) {
+          const f = (1 - dist / pull) * 0.038;
+          p.vx += dx * f;
+          p.vy += dy * f;
+        }
+        // subtle drift back toward random
+        p.vx += (Math.random() - 0.5) * 0.012;
+        p.vy += (Math.random() - 0.5) * 0.012;
+        // drag
+        p.vx *= 0.91; p.vy *= 0.91;
+        p.x += p.vx;  p.y += p.vy;
+        // wrap
+        if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
+        if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
+
+        const prox = mx > 0 ? Math.max(0, 1 - dist / pull) : 0;
+        const alpha = p.base + prox * 0.65;
+        const r     = p.r + prox * 2.5;
+
+        // glow halo for close particles
+        if (prox > 0.25) {
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 5);
+          g.addColorStop(0, AC + (alpha * 0.6) + ')');
+          g.addColorStop(1, AC + '0)');
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, r * 5, 0, Math.PI * 2);
+          ctx.fillStyle = g; ctx.fill();
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = AC + alpha + ')';
+        ctx.fill();
+      });
+
+      /* ── cursor aura ── */
+      if (mx > 0) {
+        const cg = ctx.createRadialGradient(mx, my, 0, mx, my, 100);
+        cg.addColorStop(0, AC + '0.10)');
+        cg.addColorStop(1, AC + '0)');
+        ctx.beginPath();
+        ctx.arc(mx, my, 100, 0, Math.PI * 2);
+        ctx.fillStyle = cg; ctx.fill();
+      }
+
+      /* ── corner viewfinder brackets (video-cam feel) ── */
+      const bx = W * 0.07, by = H * 0.07, bw = W * 0.86, bh = H * 0.86;
+      const arm = Math.min(W, H) * 0.07;
+      ctx.strokeStyle = AC + '0.35)'; ctx.lineWidth = 1.2;
+      [
+        [[bx, by + arm], [bx, by], [bx + arm, by]],
+        [[bx + bw - arm, by], [bx + bw, by], [bx + bw, by + arm]],
+        [[bx, by + bh - arm], [bx, by + bh], [bx + arm, by + bh]],
+        [[bx + bw - arm, by + bh], [bx + bw, by + bh], [bx + bw, by + bh - arm]],
+      ].forEach(pts3 => {
+        ctx.beginPath();
+        pts3.forEach(([x, y], i) => i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y));
+        ctx.stroke();
+      });
+
+      /* ── blinking REC indicator ── */
+      const recOn = Math.floor(blink / 40) % 2 === 0;
+      if (recOn) {
+        ctx.beginPath();
+        ctx.arc(bx + arm * 0.45, by + arm * 0.5, 3, 0, Math.PI * 2);
+        ctx.fillStyle = AC + '0.85)'; ctx.fill();
+      }
+      ctx.font = '500 8px var(--sans)';
+      ctx.fillStyle = AC + (recOn ? '0.65)' : '0.25)');
+      ctx.fillText('REC', bx + arm * 0.45 + 7, by + arm * 0.5 + 3);
+
+      raf = requestAnimationFrame(draw);
+    }
+
+    panel.addEventListener('mouseenter', () => {
+      scanOn = true; scanY = -60;
+      spawnPts();
+      if (!raf) draw();
+    });
+    panel.addEventListener('mousemove', e => {
+      const r = canvas.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+    });
+    panel.addEventListener('mouseleave', () => {
+      scanOn = false; mx = 0; my = 0;
+      cancelAnimationFrame(raf); raf = null;
+      ctx.clearRect(0, 0, W, H);
+    });
+  }
+
+  initFounderCanvas('fc-krish',  '.fp-left');
+  initFounderCanvas('fc-kartik', '.fp-right');
 })();
 
 })(); // end IIFE
