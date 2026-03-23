@@ -1631,16 +1631,111 @@ heroVid.addEventListener('error', () => { heroVid.style.display = 'none'; });
 if (heroVid.readyState >= 2) activateVideo();
 else heroVid.load();
 
-// ── SOUND TOGGLE ─────────────────────────────────────────────
-const soundBtn = document.getElementById('sound-btn');
-let muted = true;
-soundBtn.addEventListener('click', () => {
-  muted = !muted;
-  heroVid.muted = muted;
-  soundBtn.textContent = muted ? '🔇' : '🔊';
-  soundBtn.classList.toggle('active', !muted);
-  if (!muted && heroVid.paused) heroVid.play();
-});
+// ── AMBIENT AUDIO ENGINE (procedural — never loops) ──────────
+(function() {
+  const soundBtn = document.getElementById('sound-btn');
+  heroVid.muted = true; // keep video audio silent; engine replaces it
+  let engine = null, on = false;
+
+  class Ambient {
+    constructor() {
+      this.ac  = new (window.AudioContext || window.webkitAudioContext)();
+      this.out = this.ac.createGain();
+      this.out.gain.value = 0;
+      this.out.connect(this.ac.destination);
+      this.nodes = [];
+      this._build();
+    }
+
+    _build() {
+      const ac = this.ac;
+
+      /* ── Brown noise (city rumble / room tone) ── */
+      const SECS = 8;
+      const buf  = ac.createBuffer(2, ac.sampleRate * SECS, ac.sampleRate);
+      for (let ch = 0; ch < 2; ch++) {
+        const d = buf.getChannelData(ch);
+        let last = 0;
+        for (let i = 0; i < d.length; i++) {
+          const w = Math.random() * 2 - 1;
+          d[i] = (last + 0.02 * w) / 1.02;
+          last = d[i];
+          d[i] *= 3.5;
+        }
+      }
+      const noise = ac.createBufferSource();
+      noise.buffer = buf; noise.loop = true;
+      // Crossfade loop point to hide seam
+      noise.loopStart = 0.05;
+      noise.loopEnd   = SECS - 0.05;
+
+      const lpf = ac.createBiquadFilter();
+      lpf.type = 'lowpass'; lpf.frequency.value = 160; lpf.Q.value = 0.5;
+      const ng  = ac.createGain(); ng.gain.value = 0.20;
+      noise.connect(lpf); lpf.connect(ng); ng.connect(this.out);
+      noise.start();
+
+      /* Slow LFO on lpf cutoff — 28-second period, never feels repetitive */
+      const lfo = ac.createOscillator(); lfo.frequency.value = 0.036;
+      const lg  = ac.createGain(); lg.gain.value = 65;
+      lfo.connect(lg); lg.connect(lpf.frequency); lfo.start();
+
+      /* ── 40 Hz sub-bass hum (infrastructure/depth) ── */
+      const sub = ac.createOscillator();
+      sub.type = 'sine'; sub.frequency.value = 40;
+      const sg = ac.createGain(); sg.gain.value = 0.032;
+      sub.connect(sg); sg.connect(this.out); sub.start();
+
+      /* ── Detuned tonal pair — 520 / 526 Hz, slow beating (6Hz beat) ── */
+      [[520, -0.3], [526, 0.3]].forEach(([freq, pan]) => {
+        const osc = ac.createOscillator();
+        osc.type = 'sine'; osc.frequency.value = freq;
+        const g  = ac.createGain(); g.gain.value = 0.007;
+        const sp = ac.createStereoPanner(); sp.pan.value = pan;
+        osc.connect(g); g.connect(sp); sp.connect(this.out);
+        osc.start();
+        this.nodes.push(osc);
+      });
+
+      /* ── Breath LFO on master (0.05 Hz — 20-second swell) ── */
+      const blfo = ac.createOscillator(); blfo.frequency.value = 0.05;
+      const bg   = ac.createGain(); bg.gain.value = 0.05;
+      blfo.connect(bg); bg.connect(this.out.gain); blfo.start();
+
+      this.nodes.push(noise, lfo, sub, blfo);
+    }
+
+    fadeIn(sec = 2.8) {
+      this.ac.resume();
+      const g = this.out.gain;
+      g.cancelScheduledValues(this.ac.currentTime);
+      g.setValueAtTime(g.value, this.ac.currentTime);
+      g.linearRampToValueAtTime(0.65, this.ac.currentTime + sec);
+    }
+    fadeOut(sec = 2.0) {
+      const g = this.out.gain;
+      g.cancelScheduledValues(this.ac.currentTime);
+      g.setValueAtTime(g.value, this.ac.currentTime);
+      g.linearRampToValueAtTime(0, this.ac.currentTime + sec);
+    }
+    destroy() {
+      this.nodes.forEach(n => { try { n.stop(); } catch(e) {} });
+      this.ac.close();
+    }
+  }
+
+  soundBtn.onclick = () => {
+    on = !on;
+    if (on) {
+      if (!engine) engine = new Ambient();
+      engine.fadeIn();
+    } else {
+      if (engine) engine.fadeOut();
+    }
+    soundBtn.textContent = on ? '🔊' : '🔇';
+    soundBtn.classList.toggle('active', on);
+  };
+})();
 
 // ── PARTICLES ────────────────────────────────────────────────
 const canvas = document.getElementById('particles');
@@ -2402,7 +2497,7 @@ Object.entries(imageMap).forEach(([id, src]) => {
   img.addEventListener('error', () => { img.style.display = 'none'; });
 })();
 
-// ── FOUNDER INTERACTIVE CANVAS (subtle data-field) ────────────
+// ── FOUNDER CANVAS — gravity orbit ────────────────────────────
 (function() {
   function initFounderCanvas(canvasId, panelSel) {
     const canvas = document.getElementById(canvasId);
@@ -2419,65 +2514,104 @@ Object.entries(imageMap).forEach(([id, src]) => {
     new ResizeObserver(resize).observe(canvas);
 
     function spawn() {
-      pts = Array.from({ length: 32 }, () => {
-        const a = Math.random() * Math.PI * 2, spd = Math.random() * 0.18 + 0.04;
+      pts = Array.from({ length: 48 }, () => {
+        const a = Math.random() * Math.PI * 2, spd = Math.random() * 0.22 + 0.05;
         return { x: Math.random() * W, y: Math.random() * H,
                  vx: Math.cos(a) * spd, vy: Math.sin(a) * spd,
-                 r: Math.random() * 1.1 + 0.4,
-                 alpha: Math.random() * 0.22 + 0.08 };
+                 r: Math.random() * 1.4 + 0.5,
+                 alpha: Math.random() * 0.18 + 0.07 };
       });
     }
 
     function draw() {
       ctx.clearRect(0, 0, W, H);
+      const live = mx > -999;
 
-      // Soft cursor presence glow
-      const cg = ctx.createRadialGradient(mx, my, 0, mx, my, 140);
-      cg.addColorStop(0, 'rgba(217,119,87,0.06)');
-      cg.addColorStop(1, 'rgba(217,119,87,0)');
-      ctx.fillStyle = cg;
-      ctx.fillRect(0, 0, W, H);
-
-      // Connection lines (very faint)
-      const LINK = 75;
-      for (let i = 0; i < pts.length; i++) {
-        for (let j = i + 1; j < pts.length; j++) {
-          const dx = pts[i].x - pts[j].x, dy = pts[i].y - pts[j].y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < LINK) {
-            ctx.beginPath();
-            ctx.moveTo(pts[i].x, pts[i].y);
-            ctx.lineTo(pts[j].x, pts[j].y);
-            ctx.strokeStyle = `rgba(217,119,87,${(1 - d / LINK) * 0.07})`;
-            ctx.lineWidth = 0.6;
-            ctx.stroke();
-          }
-        }
+      /* ── Cursor glow ── */
+      if (live) {
+        const cg = ctx.createRadialGradient(mx, my, 0, mx, my, 170);
+        cg.addColorStop(0, 'rgba(217,119,87,0.14)');
+        cg.addColorStop(1, 'rgba(217,119,87,0)');
+        ctx.fillStyle = cg; ctx.fillRect(0, 0, W, H);
       }
 
-      // Particles — gently repelled by cursor
-      pts.forEach(p => {
+      const GRAV = 210;
+      /* ── Orbiting particles near cursor ── */
+      const orbiters = live ? pts.filter(p => {
         const dx = p.x - mx, dy = p.y - my;
-        const d = Math.sqrt(dx * dx + dy * dy);
-        const REP = 140;
-        if (d < REP && d > 1) {
-          const f = (1 - d / REP) * 0.016;
-          p.vx += (dx / d) * f;
-          p.vy += (dy / d) * f;
+        return dx * dx + dy * dy < GRAV * GRAV;
+      }) : [];
+
+      /* ── Web: orbiter ↔ orbiter lines ── */
+      orbiters.forEach((a, i) => {
+        orbiters.slice(i + 1).forEach(b => {
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < 140) {
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y);
+            ctx.strokeStyle = `rgba(217,119,87,${(1 - d / 140) * 0.18})`;
+            ctx.lineWidth = 0.75; ctx.stroke();
+          }
+        });
+        /* Thread from cursor to each orbiter */
+        const dx = a.x - mx, dy = a.y - my;
+        const d  = Math.sqrt(dx * dx + dy * dy);
+        ctx.beginPath(); ctx.moveTo(mx, my); ctx.lineTo(a.x, a.y);
+        ctx.strokeStyle = `rgba(217,119,87,${(1 - d / GRAV) * 0.10})`;
+        ctx.lineWidth = 0.5; ctx.stroke();
+      });
+
+      /* ── Update + draw each particle ── */
+      pts.forEach(p => {
+        if (live) {
+          const dx = mx - p.x, dy = my - p.y;
+          const d2 = dx * dx + dy * dy;
+          const d  = Math.sqrt(d2);
+
+          if (d < GRAV && d > 1) {
+            /* Gravity toward cursor */
+            const gs = (1 - d / GRAV) * 0.030;
+            p.vx += (dx / d) * gs;
+            p.vy += (dy / d) * gs;
+            /* Tangential force → elliptical orbit */
+            const ts = (1 - d / GRAV) * 0.022;
+            p.vx += (-dy / d) * ts;
+            p.vy += ( dx / d) * ts;
+          }
         }
-        // Gentle random drift
-        p.vx += (Math.random() - 0.5) * 0.006;
-        p.vy += (Math.random() - 0.5) * 0.006;
-        p.vx *= 0.975; p.vy *= 0.975;
-        p.x += p.vx;   p.y += p.vy;
+
+        p.vx += (Math.random() - 0.5) * 0.005;
+        p.vy += (Math.random() - 0.5) * 0.005;
+        p.vx *= 0.952; p.vy *= 0.952;
+        p.x  += p.vx;  p.y  += p.vy;
         if (p.x < 0) p.x = W; if (p.x > W) p.x = 0;
         if (p.y < 0) p.y = H; if (p.y > H) p.y = 0;
 
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(217,119,87,${p.alpha})`;
-        ctx.fill();
+        const d    = live ? Math.sqrt((p.x - mx) ** 2 + (p.y - my) ** 2) : 999;
+        const prox = Math.max(0, 1 - d / GRAV);
+        const a    = p.alpha + prox * 0.55;
+        const r    = p.r    + prox * 2.2;
+
+        /* Glow halo for orbiting particles */
+        if (prox > 0.25) {
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, r * 4.5);
+          g.addColorStop(0, `rgba(217,119,87,${prox * 0.28})`);
+          g.addColorStop(1, 'rgba(217,119,87,0)');
+          ctx.beginPath(); ctx.arc(p.x, p.y, r * 4.5, 0, Math.PI * 2);
+          ctx.fillStyle = g; ctx.fill();
+        }
+
+        ctx.beginPath(); ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(217,119,87,${a})`; ctx.fill();
       });
+
+      /* ── Centre dot at cursor ── */
+      if (live) {
+        ctx.beginPath(); ctx.arc(mx, my, 3.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(217,119,87,0.65)'; ctx.fill();
+        ctx.beginPath(); ctx.arc(mx, my, 8, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(217,119,87,0.20)'; ctx.lineWidth = 1; ctx.stroke();
+      }
 
       raf = requestAnimationFrame(draw);
     }
