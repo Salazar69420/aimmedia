@@ -2823,7 +2823,7 @@ Object.entries(imageMap).forEach(([id, src]) => {
 </div>
 
 <script>
-// ── INDUSTRY MODES (lazy Three.js) ────────────────────────────
+// ── INDUSTRY MODES — GLB model edition ────────────────────────────
 (function() {
   const MODES = {
     realtor: {
@@ -2917,13 +2917,20 @@ Object.entries(imageMap).forEach(([id, src]) => {
     setTimeout(() => { overlay.classList.remove('m-closing'); destroyScene(); currentMode = null; }, 820);
   }
 
-  // ── LAZY LOAD THREE.JS ────────────────────────────────────────
+  // ── LAZY LOAD Three.js + GLTFLoader ──────────────────────────
   function lazyThree(cb) {
-    if (window.THREE) { THREE_lib = window.THREE; cb(); return; }
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js';
-    s.onload = () => { THREE_lib = window.THREE; cb(); };
-    document.head.appendChild(s);
+    if (window.THREE && window.THREE.GLTFLoader) { THREE_lib = window.THREE; cb(); return; }
+    function loadGLTFLoader() {
+      const s2 = document.createElement('script');
+      s2.src = 'https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/GLTFLoader.js';
+      s2.onload = () => { THREE_lib = window.THREE; cb(); };
+      document.head.appendChild(s2);
+    }
+    if (window.THREE) { loadGLTFLoader(); return; }
+    const s1 = document.createElement('script');
+    s1.src = 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js';
+    s1.onload = loadGLTFLoader;
+    document.head.appendChild(s1);
   }
 
   // ── SCENE LIFECYCLE ───────────────────────────────────────────
@@ -2931,11 +2938,16 @@ Object.entries(imageMap).forEach(([id, src]) => {
     destroyScene();
     sceneObjs = {}; sceneStartMs = Date.now();
     const W = window.innerWidth, H = window.innerHeight;
-    const T = THREE_lib;
-    renderer = new T.WebGLRenderer({ canvas: document.getElementById('mode-canvas'), antialias: true });
-    renderer.setSize(W, H); renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
-    scene = new T.Scene(); scene.background = new T.Color(cfg.bg);
-    camera = new T.PerspectiveCamera(55, W / H, 0.1, 500);
+    const T3 = THREE_lib;
+    renderer = new T3.WebGLRenderer({ canvas: document.getElementById('mode-canvas'), antialias: true, alpha: false });
+    renderer.setSize(W, H); renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = T3.PCFSoftShadowMap;
+    renderer.outputEncoding = T3.sRGBEncoding;
+    renderer.toneMapping = T3.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+    scene = new T3.Scene(); scene.background = new T3.Color(cfg.bg);
+    camera = new T3.PerspectiveCamera(50, W / H, 0.1, 500);
     ({ realtor: buildRealtor, cafe: buildCafe, corporate: buildCorporate, dealership: buildDealership }[cfg.scene])(cfg);
     (function loop() { animId = requestAnimationFrame(loop); ({ realtor: updateRealtor, cafe: updateCafe, corporate: updateCorporate, dealership: updateDealership }[cfg.scene])(); renderer.render(scene, camera); })();
   }
@@ -2950,85 +2962,141 @@ Object.entries(imageMap).forEach(([id, src]) => {
   function T() { return THREE_lib; }
   function sec() { return (Date.now() - sceneStartMs) / 1000; }
 
-  // ── REALTOR — Blueprint grid + rising buildings ───────────────
+  // ── GLB loader helper ─────────────────────────────────────────
+  function loadGLB(src, targetSize, onLoad) {
+    const T3 = T();
+    new T3.GLTFLoader().load(src, gltf => {
+      const model = gltf.scene;
+      const box = new T3.Box3().setFromObject(model);
+      const center = box.getCenter(new T3.Vector3());
+      const size = box.getSize(new T3.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z);
+      model.position.sub(center);
+      model.scale.setScalar(targetSize / maxDim);
+      // Shift so bottom sits on y=0
+      const box2 = new T3.Box3().setFromObject(model);
+      model.position.y -= box2.min.y;
+      model.traverse(child => {
+        if (child.isMesh) {
+          child.castShadow = true; child.receiveShadow = true;
+          if (child.material) {
+            child.material.envMapIntensity = 1.2;
+            child.material.needsUpdate = true;
+          }
+        }
+      });
+      onLoad(model);
+    }, undefined, err => console.warn('GLB load error:', err));
+  }
+
+  // Fade a model in over `dur` seconds
+  function fadeInModel(model, dur) {
+    model.traverse(c => { if (c.isMesh && c.material) { c.material = c.material.clone(); c.material.transparent = true; c.material.opacity = 0; } });
+    const start = Date.now();
+    const iv = setInterval(() => {
+      const p = Math.min(1, (Date.now() - start) / (dur * 1000));
+      model.traverse(c => { if (c.isMesh && c.material && c.material.transparent) c.material.opacity = p; });
+      if (p >= 1) { clearInterval(iv); model.traverse(c => { if (c.isMesh && c.material) c.material.transparent = false; }); }
+    }, 16);
+  }
+
+  // ── REALTOR — House model on blueprint grid ───────────────────
   function buildRealtor() {
     const T3 = T();
-    camera.position.set(0, 10, 22); camera.lookAt(0, 4, 0);
+    camera.position.set(6, 5, 12); camera.lookAt(0, 2, 0);
+
+    // Fog
+    scene.fog = new T3.FogExp2(0xF0ECE3, 0.022);
+
+    // Ground plane (light marble-ish)
+    const ground = new T3.Mesh(new T3.PlaneGeometry(60, 60), new T3.MeshStandardMaterial({ color: 0xE8E2D8, roughness: 0.85, metalness: 0.0 }));
+    ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+
+    // Blueprint grid overlay
     const grid = new T3.GridHelper(50, 50, 0x2A5298, 0x3D6CC0);
-    grid.material.opacity = 0.28; grid.material.transparent = true; scene.add(grid);
-    scene.add(new T3.AmbientLight(0xffffff, 0.88));
-    const sun = new T3.DirectionalLight(0xD6E8FF, 1.3); sun.position.set(10, 20, 15); scene.add(sun);
-    const fill = new T3.DirectionalLight(0xBDD4F0, 0.35); fill.position.set(-10, 5, -5); scene.add(fill);
-    const BLDGS = [
-      [-6, -2, 2.0, 8,  2.0, 0.0], [-3,  1, 2.8, 12, 2.2, 0.4],
-      [ 0, -3, 1.6, 6,  1.6, 0.2], [ 2.5, 0, 3.2, 15, 2.6, 0.6],
-      [ 5.5,-1, 2.2, 9,  2.2, 0.25],[-5,  4, 1.4,  5, 1.4, 0.5],
-      [ 1.5, 4.5,2.0,7,  1.8, 0.35],[ 7.5, 2, 1.2, 4, 1.2, 0.7],
-    ];
-    sceneObjs.buildings = BLDGS.map(([x, z, w, h, d, dl]) => {
-      const geo = new T3.BoxGeometry(w, h, d);
-      const mesh = new T3.Mesh(geo, new T3.MeshLambertMaterial({ color: 0xCDDDF0 }));
-      const wire = new T3.LineSegments(new T3.EdgesGeometry(geo), new T3.LineBasicMaterial({ color: 0x1B3A6B, transparent: true, opacity: 0.55 }));
-      const g = new T3.Group(); g.add(mesh); g.add(wire);
-      g.position.set(x, -(h / 2) - 0.2, z);
-      g.userData = { tY: h / 2, dl, h };
-      scene.add(g); return g;
+    grid.material.opacity = 0.2; grid.material.transparent = true; scene.add(grid);
+
+    // Lights — architectural 3-point
+    scene.add(new T3.AmbientLight(0xEEF2FF, 0.65));
+    const sun = new T3.DirectionalLight(0xFFF8EE, 2.0);
+    sun.position.set(12, 20, 14); sun.castShadow = true;
+    sun.shadow.mapSize.set(2048, 2048); sun.shadow.camera.near = 0.5; sun.shadow.camera.far = 80;
+    sun.shadow.camera.left = sun.shadow.camera.bottom = -20; sun.shadow.camera.right = sun.shadow.camera.top = 20;
+    scene.add(sun);
+    const sky = new T3.DirectionalLight(0xC8D8F8, 0.6); sky.position.set(-8, 15, -6); scene.add(sky);
+    const rim = new T3.DirectionalLight(0xFFFFFF, 0.35); rim.position.set(0, 8, -18); scene.add(rim);
+
+    // Background box buildings (silhouette)
+    [[-10,-10,2,8,2],[-6,-11,1.5,5,1.5],[8,-10,2.5,10,2],[12,-11,1.8,7,1.8]].forEach(([x, z, w, h, d]) => {
+      const m = new T3.Mesh(new T3.BoxGeometry(w, h, d), new T3.MeshStandardMaterial({ color: 0xD5CCC0, roughness: 1 }));
+      m.position.set(x, h / 2, z); m.receiveShadow = true; scene.add(m);
+    });
+
+    // House GLB
+    loadGLB('assets/model-house.glb', 8, model => {
+      model.position.set(0, 0, -1);
+      scene.add(model);
+      fadeInModel(model, 1.2);
+      sceneObjs.house = model;
     });
     sceneObjs.rAngle = 0;
   }
 
   function updateRealtor() {
-    const t = sec();
-    sceneObjs.buildings.forEach(g => {
-      const tl = Math.max(0, t - g.userData.dl);
-      if (tl > 0) {
-        const p = Math.min(1, tl / 1.8);
-        const e = 1 - Math.pow(1 - p, 3);
-        g.position.y = -(g.userData.h / 2) + e * (g.userData.h / 2 + 0.2);
-      }
-    });
-    sceneObjs.rAngle = (sceneObjs.rAngle || 0) + 0.0007;
+    sceneObjs.rAngle = (sceneObjs.rAngle || 0) + 0.0005;
     const a = sceneObjs.rAngle;
-    camera.position.x = Math.sin(a) * 18; camera.position.z = Math.cos(a) * 18;
-    camera.position.y = 10 + Math.sin(a * 0.5);
-    camera.lookAt(0, 5, 0);
+    const r = 14;
+    camera.position.x = Math.sin(a) * r * 0.55;
+    camera.position.z = Math.cos(a) * r;
+    camera.position.y = 5 + Math.sin(a * 0.4) * 0.8;
+    camera.lookAt(0, 2.5, 0);
   }
 
-  // ── CAFE — Warm low-poly interior + steam ─────────────────────
+  // ── CAFE — Espresso machine + warm studio ─────────────────────
   function buildCafe() {
     const T3 = T();
-    camera.position.set(0, 5, 12); camera.lookAt(0, 1.5, 0);
-    scene.add(new T3.AmbientLight(0x1A0808, 0.8));
-    const pendPos = [[-3, 3.2, -1], [0, 3.2, 0.2], [3, 3.2, -1]];
-    pendPos.forEach(([x, y, z]) => { const pt = new T3.PointLight(0xD4823A, 2.5, 9); pt.position.set(x, y, z); scene.add(pt); });
-    const bl = new T3.PointLight(0xF0A060, 0.7, 20); bl.position.set(0, 5, -4); scene.add(bl);
-    // Floor
-    const fl = new T3.Mesh(new T3.PlaneGeometry(24, 24), new T3.MeshLambertMaterial({ color: 0x140804 }));
-    fl.rotation.x = -Math.PI / 2; scene.add(fl);
-    // Counter
-    const cnt = new T3.Mesh(new T3.BoxGeometry(9, 1.0, 1.0), new T3.MeshLambertMaterial({ color: 0x2C1208 })); cnt.position.set(0, 0.5, -5); scene.add(cnt);
-    // Back wall
-    const bw = new T3.Mesh(new T3.PlaneGeometry(14, 6), new T3.MeshLambertMaterial({ color: 0x1A0C06 })); bw.position.set(0, 3, -5.6); scene.add(bw);
-    // Tables
-    const tMat = new T3.MeshLambertMaterial({ color: 0x3A1C0C });
-    const lMat = new T3.MeshLambertMaterial({ color: 0x2A1408 });
-    [[-3, 1.5], [0, 1.5], [3, 1.5]].forEach(([tx, tz]) => {
-      const top = new T3.Mesh(new T3.BoxGeometry(0.9, 0.06, 0.9), tMat); top.position.set(tx, 0.76, tz); scene.add(top);
-      const leg = new T3.Mesh(new T3.CylinderGeometry(0.04, 0.04, 0.76, 6), lMat); leg.position.set(tx, 0.38, tz); scene.add(leg);
-    });
-    // Pendant lamps
+    camera.position.set(0, 2.5, 7); camera.lookAt(0, 1.5, 0);
+    scene.fog = new T3.FogExp2(0x1A0F08, 0.05);
+
+    // Dark floor (rich espresso wood)
+    const fl = new T3.Mesh(new T3.PlaneGeometry(30, 30), new T3.MeshStandardMaterial({ color: 0x1C0C06, roughness: 0.9, metalness: 0.05 }));
+    fl.rotation.x = -Math.PI / 2; fl.receiveShadow = true; scene.add(fl);
+
+    // Marble counter
+    const counter = new T3.Mesh(new T3.BoxGeometry(5, 0.12, 1.4), new T3.MeshStandardMaterial({ color: 0x2E2220, roughness: 0.3, metalness: 0.2 }));
+    counter.position.set(0, 1.0, -1.2); counter.castShadow = true; counter.receiveShadow = true; scene.add(counter);
+
+    // Dark back wall
+    const bw = new T3.Mesh(new T3.PlaneGeometry(16, 8), new T3.MeshStandardMaterial({ color: 0x120806 }));
+    bw.position.set(0, 4, -4); scene.add(bw);
+
+    // Pendant lights
+    scene.add(new T3.AmbientLight(0x200A04, 0.6));
+    const pendPos = [[-1.2, 2.8, -0.8], [1.2, 2.8, -0.8]];
     pendPos.forEach(([x, y, z]) => {
-      const lamp = new T3.Mesh(new T3.CylinderGeometry(0.05, 0.22, 0.3, 8), new T3.MeshLambertMaterial({ color: 0x9B7040, emissive: 0xD4823A, emissiveIntensity: 0.4 })); lamp.position.set(x, y + 0.15, z); scene.add(lamp);
-      const cord = new T3.Mesh(new T3.CylinderGeometry(0.012, 0.012, 1.8, 4), lMat); cord.position.set(x, y + 1.05, z); scene.add(cord);
+      const pt = new T3.PointLight(0xE8802A, 3.5, 6); pt.position.set(x, y, z); pt.castShadow = true; scene.add(pt);
+      const lamp = new T3.Mesh(new T3.CylinderGeometry(0.04, 0.18, 0.25, 8), new T3.MeshStandardMaterial({ color: 0x8B6030, emissive: 0xE8802A, emissiveIntensity: 0.5, roughness: 0.5 }));
+      lamp.position.set(x, y + 0.12, z); scene.add(lamp);
+      const cord = new T3.Mesh(new T3.CylinderGeometry(0.008, 0.008, 1.6, 4), new T3.MeshStandardMaterial({ color: 0x2A1808 }));
+      cord.position.set(x, y + 0.92, z); scene.add(cord);
     });
-    // Steam particles
-    const sGeo = new T3.SphereGeometry(0.034, 5, 5);
-    const tableXs = [-3, 0, 3];
-    sceneObjs.steam = Array.from({ length: 45 }, (_, i) => {
-      const tx = tableXs[i % 3];
+    const rimL = new T3.PointLight(0xF0A060, 0.8, 14); rimL.position.set(0, 5, -3); scene.add(rimL);
+
+    // Coffee machine GLB
+    loadGLB('assets/model-coffee.glb', 1.4, model => {
+      model.position.set(0, 1.06, -1.4);
+      scene.add(model);
+      fadeInModel(model, 1.0);
+      sceneObjs.coffee = model;
+    });
+
+    // Steam particles above machine
+    const sGeo = new T3.SphereGeometry(0.028, 5, 5);
+    sceneObjs.steam = Array.from({ length: 35 }, (_, i) => {
       const s = new T3.Mesh(sGeo, new T3.MeshBasicMaterial({ color: 0xF5E6D3, transparent: true, opacity: 0 }));
-      s.position.set(tx + (Math.random() - 0.5) * 0.35, 0.82 + Math.random() * 1.9, 1.5 + (Math.random() - 0.5) * 0.3);
-      s.userData = { bx: tx, phase: Math.random() * Math.PI * 2, spd: 0.28 + Math.random() * 0.45 };
+      const ox = (Math.random() - 0.5) * 0.3;
+      s.position.set(ox, 1.25 + Math.random() * 1.4, -1.2 + (Math.random() - 0.5) * 0.2);
+      s.userData = { bx: ox, phase: Math.random() * Math.PI * 2, spd: 0.22 + Math.random() * 0.38 };
       scene.add(s); return s;
     });
     sceneObjs.cAngle = 0;
@@ -3036,61 +3104,73 @@ Object.entries(imageMap).forEach(([id, src]) => {
 
   function updateCafe() {
     const t = sec();
-    sceneObjs.cAngle = (sceneObjs.cAngle || 0) + 0.0005;
-    sceneObjs.steam.forEach(p => {
-      const h = p.position.y - 0.82;
-      p.position.y += p.userData.spd * 0.007;
-      p.position.x += Math.sin(t * 0.6 + p.userData.phase) * 0.0015;
-      p.material.opacity = 0.38 * Math.sin(Math.min(1, h / 2.3) * Math.PI);
-      if (p.position.y > 3.3) { p.position.y = 0.82; p.position.x = p.userData.bx + (Math.random() - 0.5) * 0.35; }
+    sceneObjs.cAngle = (sceneObjs.cAngle || 0) + 0.0004;
+    if (sceneObjs.coffee) sceneObjs.coffee.rotation.y += 0.0025;
+    sceneObjs.steam && sceneObjs.steam.forEach(p => {
+      const h = p.position.y - 1.25;
+      p.position.y += p.userData.spd * 0.006;
+      p.position.x += Math.sin(t * 0.6 + p.userData.phase) * 0.001;
+      p.material.opacity = 0.32 * Math.sin(Math.min(1, h / 1.5) * Math.PI);
+      if (p.position.y > 2.7) { p.position.y = 1.25; p.position.x = p.userData.bx + (Math.random() - 0.5) * 0.3; }
     });
     const a = sceneObjs.cAngle;
-    camera.position.x = Math.sin(a) * 2.2;
-    camera.position.y = 4.5 + Math.sin(a * 0.7) * 0.3;
+    camera.position.x = Math.sin(a) * 1.8;
+    camera.position.y = 2.5 + Math.sin(a * 0.5) * 0.2;
     camera.lookAt(0, 1.5, 0);
   }
 
-  // ── CORPORATE — Dark office, data network ─────────────────────
+  // ── CORPORATE — Office building + data network ────────────────
   function buildCorporate() {
     const T3 = T();
-    camera.position.set(0, 7, 19); camera.lookAt(0, 3.5, 0);
-    scene.add(new T3.AmbientLight(0x040810, 1.0));
-    const blueL = new T3.PointLight(0x1A5BAA, 3.2, 24); blueL.position.set(-5, 9, 0); scene.add(blueL);
-    const tealL = new T3.PointLight(0x0ACFC0, 2.0, 20); tealL.position.set(6, 7, -2); scene.add(tealL);
-    const grid = new T3.GridHelper(50, 50, 0x08254A, 0x061830); grid.material.opacity = 0.5; grid.material.transparent = true; scene.add(grid);
-    // Background building wireframes
-    [[-9,-8,2,14,2],[-5,-9,3,20,2.5],[0,-10,2.5,16,2.5],[5,-9,3.5,22,3],[9,-8,2,12,2]].forEach(([x, z, w, h, d]) => {
-      const wf = new T3.LineSegments(new T3.EdgesGeometry(new T3.BoxGeometry(w, h, d)), new T3.LineBasicMaterial({ color: 0x0A2A48, transparent: true, opacity: 0.7 }));
-      wf.position.set(x, h / 2, z); scene.add(wf);
+    camera.position.set(0, 8, 22); camera.lookAt(0, 5, 0);
+    scene.fog = new T3.FogExp2(0x060912, 0.018);
+
+    // Floor grid
+    const grid = new T3.GridHelper(50, 50, 0x08254A, 0x061830);
+    grid.material.opacity = 0.5; grid.material.transparent = true; scene.add(grid);
+
+    // Lights
+    scene.add(new T3.AmbientLight(0x040814, 0.9));
+    const blueL = new T3.PointLight(0x1A6DCC, 4.0, 30); blueL.position.set(-8, 14, 2); blueL.castShadow = true; scene.add(blueL);
+    const tealL = new T3.PointLight(0x00CFC0, 2.5, 22); tealL.position.set(8, 10, -4); scene.add(tealL);
+    const rimL  = new T3.PointLight(0x4A9EDB, 1.5, 18); rimL.position.set(0, 5, 10); scene.add(rimL);
+
+    // Dark ground plane
+    const fl = new T3.Mesh(new T3.PlaneGeometry(50, 50), new T3.MeshStandardMaterial({ color: 0x04060E, roughness: 0.9, metalness: 0.3 }));
+    fl.rotation.x = -Math.PI / 2; fl.receiveShadow = true; scene.add(fl);
+
+    // Office building GLB — centrepiece
+    loadGLB('assets/model-office.glb', 14, model => {
+      model.position.set(0, 0, -3);
+      model.traverse(c => { if (c.isMesh && c.material) { c.material.emissive = new T3.Color(0x0A2048); c.material.emissiveIntensity = 0.12; } });
+      scene.add(model);
+      fadeInModel(model, 1.2);
+      sceneObjs.officeModel = model;
     });
-    // Nodes
-    const nPosArr = [
-      [0,4,0],[-3,5.5,-2],[3,4.5,-1],[-1.5,2.5,2.5],[2.5,6.5,-2.5],
-      [-4,3.5,1.5],[4.5,2.8,2],[0,8,-2],[-2,7,-4],[3.5,6,1.5],
-      [1,2,-1],[-3,2.5,-3],[4,4.5,-4],[-1,5,3.5],[2,3.5,4],
+
+    // Data nodes floating around building
+    const nPos = [
+      [-5,3,-1],[5,4,0],[-3,7,-2],[3,6,1],[-6,5,2],[6,3,-1],
+      [-2,9,-3],[2,8,2],[-4,11,0],[4,10,-2],[0,12,-1],[-7,2,1],
     ];
-    const nGeo = new T3.SphereGeometry(0.13, 8, 8);
-    sceneObjs.nodes = nPosArr.map(([x, y, z]) => {
+    const nGeo = new T3.SphereGeometry(0.14, 8, 8);
+    sceneObjs.nodes = nPos.map(([x, y, z]) => {
       const n = new T3.Mesh(nGeo, new T3.MeshBasicMaterial({ color: 0x4A9EDB }));
       n.position.set(x, y, z); n.userData = { base: [x, y, z], phase: Math.random() * Math.PI * 2 };
       scene.add(n); return n;
     });
-    // Connection lines
-    const linePts = [];
-    for (let i = 0; i < nPosArr.length; i++) {
-      for (let j = i + 1; j < nPosArr.length; j++) {
-        const [ax, ay, az] = nPosArr[i]; const [bx, by, bz] = nPosArr[j];
-        if (Math.hypot(ax - bx, ay - by, az - bz) < 5) {
-          linePts.push(new T3.Vector3(ax, ay, az), new T3.Vector3(bx, by, bz));
-        }
-      }
+    // Connecting lines
+    const lpts = [];
+    for (let i = 0; i < nPos.length; i++) for (let j = i + 1; j < nPos.length; j++) {
+      const [ax,ay,az] = nPos[i]; const [bx,by,bz] = nPos[j];
+      if (Math.hypot(ax-bx,ay-by,az-bz) < 6) lpts.push(new T3.Vector3(ax,ay,az), new T3.Vector3(bx,by,bz));
     }
-    scene.add(new T3.LineSegments(new T3.BufferGeometry().setFromPoints(linePts), new T3.LineBasicMaterial({ color: 0x0A4A7A, transparent: true, opacity: 0.45 })));
-    // Data packets along edges
+    scene.add(new T3.LineSegments(new T3.BufferGeometry().setFromPoints(lpts), new T3.LineBasicMaterial({ color: 0x0A4A8A, transparent: true, opacity: 0.5 })));
+    // Packets
     sceneObjs.packets = [];
-    for (let i = 0; i < linePts.length - 1 && sceneObjs.packets.length < 12; i += 2) {
-      const p = new T3.Mesh(new T3.SphereGeometry(0.085, 5, 5), new T3.MeshBasicMaterial({ color: 0x00D4FF }));
-      p.userData = { a: linePts[i].clone(), b: linePts[i + 1].clone(), t: Math.random(), spd: 0.003 + Math.random() * 0.004 };
+    for (let i = 0; i < lpts.length - 1 && sceneObjs.packets.length < 10; i += 2) {
+      const p = new T3.Mesh(new T3.SphereGeometry(0.09, 5, 5), new T3.MeshBasicMaterial({ color: 0x00D4FF }));
+      p.userData = { a: lpts[i].clone(), b: lpts[i+1].clone(), t: Math.random(), spd: 0.004 + Math.random() * 0.004 };
       scene.add(p); sceneObjs.packets.push(p);
     }
     sceneObjs.coAngle = 0;
@@ -3098,66 +3178,85 @@ Object.entries(imageMap).forEach(([id, src]) => {
 
   function updateCorporate() {
     const t = sec();
-    sceneObjs.nodes.forEach(n => {
-      const s = 1 + 0.15 * Math.sin(t * 1.3 + n.userData.phase);
-      n.scale.setScalar(s);
-      n.position.y = n.userData.base[1] + Math.sin(t * 0.5 + n.userData.phase) * 0.12;
+    if (sceneObjs.officeModel) sceneObjs.officeModel.rotation.y += 0.0006;
+    sceneObjs.nodes && sceneObjs.nodes.forEach(n => {
+      n.scale.setScalar(1 + 0.15 * Math.sin(t * 1.3 + n.userData.phase));
+      n.position.y = n.userData.base[1] + Math.sin(t * 0.5 + n.userData.phase) * 0.15;
     });
-    sceneObjs.packets.forEach(p => {
+    sceneObjs.packets && sceneObjs.packets.forEach(p => {
       p.userData.t += p.userData.spd;
       if (p.userData.t >= 1) { p.userData.t = 0; const tmp = p.userData.a; p.userData.a = p.userData.b; p.userData.b = tmp; }
       p.position.lerpVectors(p.userData.a, p.userData.b, p.userData.t);
     });
-    sceneObjs.coAngle = (sceneObjs.coAngle || 0) + 0.0006;
+    sceneObjs.coAngle = (sceneObjs.coAngle || 0) + 0.00055;
     const a = sceneObjs.coAngle;
-    camera.position.x = Math.sin(a) * 15; camera.position.z = Math.cos(a) * 15;
-    camera.position.y = 7 + Math.sin(a * 0.5) * 1.5;
-    camera.lookAt(0, 3.5, 0);
+    camera.position.x = Math.sin(a) * 18;
+    camera.position.z = Math.cos(a) * 18;
+    camera.position.y = 8 + Math.sin(a * 0.4) * 2;
+    camera.lookAt(0, 5, 0);
   }
 
-  // ── DEALERSHIP — Blender wireframe aesthetic ──────────────────
+  // ── DEALERSHIP — Real car model, studio lighting ───────────────
   function buildDealership() {
     const T3 = T();
-    camera.position.set(0, 3.5, 18); camera.lookAt(0, 1.2, 0);
-    scene.add(new T3.AmbientLight(0x080808, 0.5));
-    [[-3,14,5,0xFFFFFF,2.5],[5,11,7,0xE8E8FF,1.5]].forEach(([x,y,z,col,i]) => {
-      const sp = new T3.SpotLight(col, i, 45, Math.PI / 5.5, 0.5); sp.position.set(x, y, z); scene.add(sp);
+    camera.position.set(0, 2.8, 9); camera.lookAt(0, 1.2, 0);
+    scene.fog = new T3.FogExp2(0x080808, 0.03);
+
+    // Showroom floor — glossy dark
+    const fl = new T3.Mesh(new T3.PlaneGeometry(40, 40), new T3.MeshStandardMaterial({ color: 0x0A0A0A, roughness: 0.15, metalness: 0.6 }));
+    fl.rotation.x = -Math.PI / 2; fl.receiveShadow = true; scene.add(fl);
+
+    // Subtle grid overlay
+    const grid = new T3.GridHelper(40, 40, 0x1C1C1C, 0x141414);
+    grid.material.opacity = 0.7; grid.material.transparent = true; scene.add(grid);
+
+    // Studio 3-point lighting for car
+    scene.add(new T3.AmbientLight(0x080808, 0.3));
+
+    const key = new T3.SpotLight(0xFFFFFF, 4.5, 20, Math.PI / 6, 0.3, 1);
+    key.position.set(-4, 9, 5); key.castShadow = true;
+    key.shadow.mapSize.set(2048, 2048); key.shadow.bias = -0.001;
+    scene.add(key); key.target.position.set(0, 1, 0); scene.add(key.target);
+
+    const fill = new T3.SpotLight(0x4488CC, 1.2, 18, Math.PI / 5, 0.5, 1);
+    fill.position.set(6, 5, 4); scene.add(fill); fill.target.position.set(0, 1, 0); scene.add(fill.target);
+
+    const rim = new T3.SpotLight(0xFFFFFF, 3.0, 16, Math.PI / 7, 0.2, 1);
+    rim.position.set(0, 6, -8); scene.add(rim); rim.target.position.set(0, 1, 0); scene.add(rim.target);
+
+    // Subtle colour accent lights (make the car look hero)
+    const accentL = new T3.PointLight(0x2244AA, 2.0, 8); accentL.position.set(-6, 0.5, 0); scene.add(accentL);
+    const accentR = new T3.PointLight(0xAA4422, 1.5, 8); accentR.position.set(6, 0.5, 0); scene.add(accentR);
+
+    // Distant showroom walls
+    const wallMat = new T3.MeshStandardMaterial({ color: 0x0C0C0C, roughness: 1 });
+    [[[40,10,0.1],0,5,-18], [[0.1,10,40],-18,5,0], [[0.1,10,40],18,5,0]].forEach(([[w,h,d],x,y,z]) => {
+      const wl = new T3.Mesh(new T3.BoxGeometry(w,h,d), wallMat); wl.position.set(x,y,z); scene.add(wl);
     });
-    // Blender-style floor grid
-    const gd = new T3.GridHelper(60, 60, 0x2A2A2A, 0x1C1C1C); gd.material.opacity = 0.9; gd.material.transparent = true; scene.add(gd);
 
-    function makeCar(cx, cz, sc, ry) {
-      const wm = new T3.LineBasicMaterial({ color: 0xD2D2D2 });
-      const g = new T3.Group(); g.position.set(cx, 0, cz); g.rotation.y = ry; g.scale.setScalar(sc);
-      // Lower body
-      const lb = new T3.LineSegments(new T3.EdgesGeometry(new T3.BoxGeometry(4.0, 0.55, 1.75)), wm); lb.position.y = 0.52; g.add(lb);
-      // Cabin
-      const uc = new T3.LineSegments(new T3.EdgesGeometry(new T3.BoxGeometry(2.3, 0.65, 1.6)), wm); uc.position.set(-0.1, 1.05, 0); g.add(uc);
-      // Hood wedge
-      const hw = new T3.LineSegments(new T3.EdgesGeometry(new T3.BoxGeometry(1.1, 0.22, 1.65)), wm); hw.position.set(1.15, 0.76, 0); g.add(hw);
-      // 4 Wheels
-      [[1.25, 0.88], [1.25, -0.88], [-1.25, 0.88], [-1.25, -0.88]].forEach(([wx, wz]) => {
-        const wh = new T3.LineSegments(new T3.EdgesGeometry(new T3.CylinderGeometry(0.42, 0.42, 0.26, 12)), wm);
-        wh.rotation.z = Math.PI / 2; wh.position.set(wx, 0.42, wz); g.add(wh);
-      });
-      scene.add(g); return g;
-    }
+    // Platform ring under car
+    const ring = new T3.Mesh(new T3.CylinderGeometry(2.8, 2.8, 0.04, 64), new T3.MeshStandardMaterial({ color: 0x141414, roughness: 0.1, metalness: 0.8 }));
+    ring.position.y = 0.01; scene.add(ring);
 
-    sceneObjs.cars = [makeCar(-6, 0, 0.9, 0.18), makeCar(0, 0, 1.0, 0), makeCar(6, 0, 0.88, -0.22)];
-    // Showroom back wall
-    const bw = new T3.LineSegments(new T3.EdgesGeometry(new T3.BoxGeometry(32, 10, 0.1)), new T3.LineBasicMaterial({ color: 0x282828, transparent: true, opacity: 0.5 }));
-    bw.position.set(0, 5, -10); scene.add(bw);
+    // Car GLB — centrepiece on platform
+    loadGLB('assets/model-car.glb', 4.5, model => {
+      model.position.set(0, 0.05, 0);
+      model.traverse(c => { if (c.isMesh && c.material) { c.material.metalness = Math.max(c.material.metalness || 0, 0.5); c.material.roughness = Math.min(c.material.roughness !== undefined ? c.material.roughness : 0.5, 0.35); } });
+      scene.add(model);
+      fadeInModel(model, 1.5);
+      sceneObjs.car = model;
+    });
     sceneObjs.dAngle = 0;
   }
 
   function updateDealership() {
-    const t = sec();
-    sceneObjs.cars.forEach((c, i) => { c.position.y = Math.sin(t * 0.5 + i * 1.3) * 0.04; });
-    sceneObjs.dAngle = (sceneObjs.dAngle || 0) + 0.00045;
+    // Slow turntable rotation
+    if (sceneObjs.car) sceneObjs.car.rotation.y += 0.003;
+    sceneObjs.dAngle = (sceneObjs.dAngle || 0) + 0.0004;
     const a = sceneObjs.dAngle;
-    camera.position.x = Math.sin(a) * 5;
-    camera.position.y = 3.5 + Math.sin(a * 0.6) * 0.4;
-    camera.position.z = Math.max(11, 18 - t * 0.25);
+    camera.position.x = Math.sin(a) * 3.5;
+    camera.position.y = 2.5 + Math.sin(a * 0.5) * 0.3;
+    camera.position.z = 8.5 + Math.cos(a * 0.7) * 0.8;
     camera.lookAt(0, 1.2, 0);
   }
 

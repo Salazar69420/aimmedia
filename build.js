@@ -260,10 +260,25 @@ async function main() {
     }
   }
 
+  // ── 3D MODELS (cached GLB files) ───────────────────────────────
+  console.log('\n  ◆ PHASE 3: 3D Models (Hunyuan 3D v3.1)\n');
+  const MODEL_FILES = ['model-car.glb', 'model-house.glb', 'model-coffee.glb', 'model-office.glb'];
+  let modelsOk = 0;
+  for (const f of MODEL_FILES) {
+    const p = path.join(ASSETS_DIR, f);
+    if (fs.existsSync(p) && fs.statSync(p).size > 10000) {
+      console.log(`  ✓ [CACHED] ${f} (${fmt(fs.statSync(p).size)})`);
+      modelsOk++;
+    } else {
+      console.log(`  ⚠ ${f} missing — run: node generate3d.js`);
+    }
+  }
+
   // ── SUMMARY ────────────────────────────────────────────────────
   console.log('\n  ────────────────────────────────────────');
   console.log(`  ✓ Images: ${imgSuccess}/${IMAGE_JOBS.length}`);
   console.log(`  ${videoSuccess ? '✓' : '✗'} Hero Video: ${videoSuccess ? 'Generated' : 'Fallback'}`);
+  console.log(`  ✓ 3D Models: ${modelsOk}/${MODEL_FILES.length}`);
   console.log('  ✓ Open index.html in browser to see the experience.');
   console.log('  ────────────────────────────────────────\n');
 }
