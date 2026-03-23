@@ -3002,17 +3002,19 @@ Object.entries(imageMap).forEach(([id, src]) => {
 
   // ── LAZY LOAD Three.js + GLTFLoader ──────────────────────────
   function lazyThree(cb) {
-    if (window.THREE && window.THREE.GLTFLoader) { THREE_lib = window.THREE; cb(); return; }
-    const loadGTLF = () => {
-      const s = document.createElement('script');
-      s.src = 'https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/GLTFLoader.js';
-      s.onload = () => { THREE_lib = window.THREE; cb(); };
-      document.head.appendChild(s);
-    };
-    if (window.THREE) { loadGTLF(); return; }
+    if (window.THREE) { THREE_lib = window.THREE; tryGLTF(cb); return; }
     const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js';
-    s.onload = loadGTLF;
+    s.src = 'https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js';
+    s.onload = () => { THREE_lib = window.THREE; tryGLTF(cb); };
+    s.onerror = () => { console.warn('three.min.js failed'); };
+    document.head.appendChild(s);
+  }
+  function tryGLTF(cb) {
+    if (window.THREE && window.THREE.GLTFLoader) { cb(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js';
+    s.onload = () => cb();
+    s.onerror = () => cb(); // proceed without GLTFLoader — procedural fallback handles it
     document.head.appendChild(s);
   }
 
@@ -3053,6 +3055,7 @@ Object.entries(imageMap).forEach(([id, src]) => {
   // ── GLB HELPER ────────────────────────────────────────────────
   function loadGLB(src, size, cb) {
     const T = T3();
+    if (!T || !T.GLTFLoader) return; // no loader — procedural fallback already handles scene
     new T.GLTFLoader().load(src, gltf => {
       const m = gltf.scene;
       const box = new T.Box3().setFromObject(m);
@@ -3062,7 +3065,139 @@ Object.entries(imageMap).forEach(([id, src]) => {
       const b2 = new T.Box3().setFromObject(m); m.position.y -= b2.min.y;
       m.traverse(c => { if (c.isMesh) { c.castShadow = c.receiveShadow = true; if (c.material) { c.material.envMapIntensity = 1.3; c.material.needsUpdate = true; } } });
       cb(m);
-    }, undefined, e => console.warn('GLB:', e));
+    }, undefined, e => console.warn('GLB load error:', src, e.message || e));
+  }
+
+  // ── PROCEDURAL MODEL HELPERS ───────────────────────────────────
+  function makeCar(T, bodyColor) {
+    const g = new T.Group();
+    const bm = new T.MeshStandardMaterial({color:bodyColor,metalness:0.82,roughness:0.2});
+    const gm = new T.MeshStandardMaterial({color:0x0D0D0D,roughness:0.5});
+    const wm = new T.MeshStandardMaterial({color:0x111111,roughness:0.85});
+    const rm = new T.MeshStandardMaterial({color:0xD4D4D4,metalness:0.95,roughness:0.05});
+    const glm = new T.MeshStandardMaterial({color:0x6688AA,transparent:true,opacity:0.55,roughness:0.05,metalness:0.1});
+    const hm = new T.MeshStandardMaterial({color:0xFFFFEE,emissive:0xFFFFCC,emissiveIntensity:4});
+    const tm = new T.MeshStandardMaterial({color:0xFF1100,emissive:0xFF0000,emissiveIntensity:3});
+    // Chassis
+    const ch = new T.Mesh(new T.BoxGeometry(4.0,0.36,1.92),bm); ch.position.y=0.21; ch.castShadow=true; g.add(ch);
+    // Side sills
+    [-0.94,0.94].forEach(z=>{const s=new T.Mesh(new T.BoxGeometry(3.7,0.1,0.1),gm);s.position.set(0,0.05,z);g.add(s);});
+    // Cabin
+    const cab=new T.Mesh(new T.BoxGeometry(2.15,0.58,1.66),bm);cab.position.set(-0.18,0.69,0);cab.castShadow=true;g.add(cab);
+    // Hood slope
+    const hood=new T.Mesh(new T.BoxGeometry(1.5,0.1,1.8),bm);hood.position.set(1.18,0.43,0);hood.rotation.z=-0.13;g.add(hood);
+    // Windshield
+    const fw=new T.Mesh(new T.PlaneGeometry(0.7,0.5),glm);fw.position.set(0.9,0.7,0);fw.rotation.y=-1.05;g.add(fw);
+    // Rear glass
+    const rw=new T.Mesh(new T.PlaneGeometry(0.62,0.46),glm);rw.position.set(-1.22,0.7,0);rw.rotation.y=1.05;g.add(rw);
+    // Side windows
+    [-0.83].forEach(z=>{const sw=new T.Mesh(new T.PlaneGeometry(1.6,0.44),glm);sw.position.set(-0.18,0.71,z);g.add(sw);});
+    // Wheels
+    [[1.42,-0.9],[1.42,0.9],[-1.42,-0.9],[-1.42,0.9]].forEach(([wx,wz])=>{
+      const t=new T.Mesh(new T.CylinderGeometry(0.32,0.32,0.22,28),wm);t.position.set(wx,0.32,wz);t.rotation.z=Math.PI/2;t.castShadow=true;g.add(t);
+      const r=new T.Mesh(new T.CylinderGeometry(0.19,0.19,0.24,10),rm);r.position.copy(t.position);r.rotation.z=Math.PI/2;g.add(r);
+    });
+    // Headlights
+    [0.62,-0.62].forEach(hz=>{const h=new T.Mesh(new T.BoxGeometry(0.17,0.09,0.32),hm);h.position.set(2.04,0.37,hz);g.add(h);});
+    // Taillights
+    [0.58,-0.58].forEach(tz=>{const t=new T.Mesh(new T.BoxGeometry(0.09,0.16,0.42),tm);t.position.set(-2.04,0.42,tz);g.add(t);});
+    return g;
+  }
+
+  function makeProcHouse(T) {
+    const g = new T.Group();
+    const wm = new T.MeshStandardMaterial({color:0xEEE9E0,roughness:0.75});
+    const rm = new T.MeshStandardMaterial({color:0xC8C2BA,roughness:0.7});
+    const glm = new T.MeshStandardMaterial({color:0x7AAABB,transparent:true,opacity:0.62,metalness:0.25,roughness:0.06});
+    const fm = new T.MeshStandardMaterial({color:0x222222,roughness:0.9});
+    const dm = new T.MeshStandardMaterial({color:0x445566,metalness:0.3,roughness:0.6});
+    // Main body
+    const main=new T.Mesh(new T.BoxGeometry(8,3.6,6),wm);main.position.y=1.8;main.castShadow=true;main.receiveShadow=true;g.add(main);
+    // Flat roof overhang
+    g.add(Object.assign(new T.Mesh(new T.BoxGeometry(9.6,0.18,7.6),rm),{position:new T.Vector3(0,3.69,0),castShadow:true}));
+    // Garage wing
+    const gar=new T.Mesh(new T.BoxGeometry(3.2,2.5,5.6),wm);gar.position.set(-5.3,1.25,0.2);gar.castShadow=true;g.add(gar);
+    g.add(Object.assign(new T.Mesh(new T.BoxGeometry(3.6,0.14,6.1),rm),{position:new T.Vector3(-5.3,2.57,0.2)}));
+    // Garage door (aluminum panel)
+    g.add(Object.assign(new T.Mesh(new T.BoxGeometry(2.5,2.05,0.05),new T.MeshStandardMaterial({color:0xCCCCCC,metalness:0.55,roughness:0.28})),{position:new T.Vector3(-5.3,1.1,-2.82)}));
+    // Front big glass window (floor-to-ceiling)
+    g.add(Object.assign(new T.Mesh(new T.BoxGeometry(3.6,2.9,0.05),glm),{position:new T.Vector3(1.1,1.95,-3.02)}));
+    // Window frames
+    [-0.7,1.1,2.9].forEach(fx=>g.add(Object.assign(new T.Mesh(new T.BoxGeometry(0.06,3.0,0.08),fm),{position:new T.Vector3(fx,1.95,-2.99)})));
+    [3.42,0.44].forEach(fy=>g.add(Object.assign(new T.Mesh(new T.BoxGeometry(3.7,0.07,0.08),fm),{position:new T.Vector3(1.1,fy,-2.99)})));
+    // Side windows (2)
+    [-1.1,0.9].forEach(wx=>g.add(Object.assign(new T.Mesh(new T.BoxGeometry(0.05,1.25,1.85),glm),{position:new T.Vector3(-4.02,2.3,wx)})));
+    // Entry door
+    g.add(Object.assign(new T.Mesh(new T.BoxGeometry(1.05,2.35,0.06),dm),{position:new T.Vector3(-0.6,1.24,-3.02)}));
+    // Entry steps
+    [0,1].forEach(i=>g.add(Object.assign(new T.Mesh(new T.BoxGeometry(2.6-i*0.2,0.1,0.5),new T.MeshStandardMaterial({color:0xD0C8BC})),{position:new T.Vector3(-0.6,i*0.1,-3.02-(1-i)*0.55)})));
+    return g;
+  }
+
+  function makeProcTree(T, h) {
+    const g = new T.Group();
+    const trk=new T.MeshStandardMaterial({color:0x3A2010,roughness:0.95});
+    const lf=new T.MeshStandardMaterial({color:0x1E4D18,roughness:0.85});
+    g.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.07,0.13,h*0.38,8),trk),{position:new T.Vector3(0,h*0.19,0),castShadow:true}));
+    g.add(Object.assign(new T.Mesh(new T.SphereGeometry(h*0.28,8,6),lf),{position:new T.Vector3(0,h*0.55,0),castShadow:true}));
+    g.add(Object.assign(new T.Mesh(new T.SphereGeometry(h*0.16,7,5),lf),{position:new T.Vector3(h*0.12,h*0.72,0)}));
+    g.add(Object.assign(new T.Mesh(new T.SphereGeometry(h*0.13,7,5),lf),{position:new T.Vector3(-h*0.1,h*0.78,h*0.08)}));
+    return g;
+  }
+
+  function makeProcBuilding(T, height, bColor) {
+    const g = new T.Group();
+    const wm=new T.MeshStandardMaterial({color:bColor||0x080E1A,roughness:0.55,metalness:0.4});
+    const winM=new T.MeshStandardMaterial({color:0x4A90D9,emissive:0x1A3A6A,emissiveIntensity:0.5,roughness:0.08,metalness:0.1});
+    const darkW=new T.MeshStandardMaterial({color:0x0A1830,roughness:0.2,metalness:0.2});
+    const tw=4.2, td=4.2;
+    g.add(Object.assign(new T.Mesh(new T.BoxGeometry(tw,height,td),wm),{position:new T.Vector3(0,height/2,0),castShadow:true,receiveShadow:true}));
+    const rows=Math.floor(height/1.5), cols=3;
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+      const lit=Math.random()>0.3;
+      const wx=new T.Mesh(new T.BoxGeometry(1.0,0.88,0.06),lit?winM:darkW);
+      wx.position.set((c-1)*1.3,0.9+r*1.5,td/2+0.04);g.add(wx);
+      const wxb=wx.clone();wxb.position.z=-td/2-0.04;g.add(wxb);
+    }
+    // Rooftop light
+    const rl=new T.Mesh(new T.SphereGeometry(0.1,8,8),new T.MeshStandardMaterial({color:0xFF2200,emissive:0xFF1100,emissiveIntensity:4}));
+    rl.position.y=height+0.15;g.add(rl);
+    return g;
+  }
+
+  function makeProcCoffee(T) {
+    const g = new T.Group();
+    const chrome=new T.MeshStandardMaterial({color:0xCCCCCC,metalness:0.95,roughness:0.05});
+    const blk=new T.MeshStandardMaterial({color:0x111111,roughness:0.4});
+    const brass=new T.MeshStandardMaterial({color:0xB8860B,metalness:0.8,roughness:0.2});
+    const led=new T.MeshStandardMaterial({color:0xFF8800,emissive:0xFF6600,emissiveIntensity:3});
+    // Main body
+    g.add(Object.assign(new T.Mesh(new T.BoxGeometry(0.52,0.54,0.4),chrome),{position:new T.Vector3(0,0.27,0),castShadow:true}));
+    // Front black panel
+    g.add(Object.assign(new T.Mesh(new T.BoxGeometry(0.5,0.4,0.02),blk),{position:new T.Vector3(0,0.27,0.21)}));
+    // Boiler dome
+    g.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.15,0.15,0.14,16),chrome),{position:new T.Vector3(0,0.61,0)}));
+    g.add(Object.assign(new T.Mesh(new T.SphereGeometry(0.15,16,8,0,Math.PI*2,0,Math.PI/2),chrome),{position:new T.Vector3(0,0.68,0)}));
+    // Group head
+    g.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.075,0.075,0.15,12),chrome),{position:new T.Vector3(0,0.11,0.23),rotation:new T.Euler(Math.PI/2,0,0)}));
+    // Portafilter
+    g.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.025,0.025,0.38,8),blk),{position:new T.Vector3(0.14,-0.06,0.3),rotation:new T.Euler(0,0,0.5)}));
+    // Steam wand
+    g.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.018,0.014,0.34,8),chrome),{position:new T.Vector3(0.28,0.14,0.1),rotation:new T.Euler(0,0,0.45)}));
+    // Drip tray
+    g.add(Object.assign(new T.Mesh(new T.BoxGeometry(0.46,0.03,0.32),chrome),{position:new T.Vector3(0,0.015,0.06)}));
+    // Pressure gauge
+    g.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.065,0.065,0.02,16),chrome),{position:new T.Vector3(-0.13,0.36,0.22),rotation:new T.Euler(Math.PI/2,0,0)}));
+    // Status LED
+    g.add(Object.assign(new T.Mesh(new T.SphereGeometry(0.03,8,8),led),{position:new T.Vector3(0.16,0.42,0.22)}));
+    // Cups
+    [-0.16,0.16].forEach(cx=>{
+      const cup=new T.Group();
+      cup.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.055,0.045,0.07,16),new T.MeshStandardMaterial({color:0xFFFFFF,roughness:0.2})),{}));
+      cup.add(Object.assign(new T.Mesh(new T.TorusGeometry(0.05,0.008,8,16),new T.MeshStandardMaterial({color:0xFFFFFF,roughness:0.2})),{position:new T.Vector3(0.06,0,0)}));
+      cup.position.set(cx,0.56,0.06);g.add(cup);
+    });
+    return g;
   }
 
   function fadeIn(model, dur) {
@@ -3079,39 +3214,50 @@ Object.entries(imageMap).forEach(([id, src]) => {
   function buildRealtor() {
     const T = T3();
     camera.position.set(8, 5, 14); camera.lookAt(0, 2, 0);
-    scene.fog = new T.FogExp2(0xDDD5C8, 0.014);
+    scene.fog = new T.FogExp2(0xD8D2C6, 0.012);
 
-    // Ground
-    scene.add(new T.Mesh(new T.PlaneGeometry(80, 80), new T.MeshStandardMaterial({ color: 0xD8D0C4, roughness: 0.9 })).translateY(-0.01).rotateX(-Math.PI / 2));
+    // Ground — warm stone
+    const ground = new T.Mesh(new T.PlaneGeometry(100,100), new T.MeshStandardMaterial({color:0xD0C8BC,roughness:0.88}));
+    ground.rotation.x = -Math.PI/2; ground.receiveShadow = true; scene.add(ground);
+    // Lawn area
+    const lawn = new T.Mesh(new T.PlaneGeometry(22,18), new T.MeshStandardMaterial({color:0x4A7A38,roughness:0.9}));
+    lawn.rotation.x = -Math.PI/2; lawn.position.set(0,0.01,1); scene.add(lawn);
+    // Driveway
+    const drive = new T.Mesh(new T.PlaneGeometry(3.8,12), new T.MeshStandardMaterial({color:0xB0AAA4,roughness:0.7}));
+    drive.rotation.x = -Math.PI/2; drive.position.set(-5.3,0.01,3.5); scene.add(drive);
 
-    // Blueprint grid
-    const g = new T.GridHelper(60, 60, 0x2A5298, 0x3D6CC0); g.material.opacity = 0.18; g.material.transparent = true; scene.add(g);
+    // Blueprint grid overlay
+    const grid = new T.GridHelper(60,60,0x1E3A88,0x2A5298); grid.material.opacity=0.12; grid.material.transparent=true; scene.add(grid);
 
-    // Sun light (casting hard shadow)
-    scene.add(new T.AmbientLight(0xF0ECFF, 0.55));
-    const sun = new T.DirectionalLight(0xFFFAEA, 2.2); sun.position.set(15, 22, 16); sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left:-22, right:22, top:22, bottom:-22, near:0.5, far:90 });
+    // Lighting
+    scene.add(new T.AmbientLight(0xF0ECFF, 0.72));
+    const sun = new T.DirectionalLight(0xFFF5E0, 2.8); sun.position.set(18,28,20); sun.castShadow=true;
+    sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.left=-28; sun.shadow.camera.right=28;
+    sun.shadow.camera.top=28; sun.shadow.camera.bottom=-28; sun.shadow.camera.far=100;
     scene.add(sun);
-    scene.add(Object.assign(new T.DirectionalLight(0xC8D8F8, 0.5), { position: { x:-8, y:14, z:-6, ...{} } }));
+    const fill = new T.DirectionalLight(0xC0D4F8,0.55); fill.position.set(-10,14,-8); scene.add(fill);
+    // Warm ground bounce
+    scene.add(Object.assign(new T.PointLight(0xFFE8B0,0.8,35),{position:new T.Vector3(0,-5,0)}));
 
-    // Silhouette buildings in background
-    const bMat = new T.MeshStandardMaterial({ color: 0xC8C0B4, roughness: 1 });
-    [[-13,-14,2,7,2],[-9,-15,1.4,5,1.4],[11,-12,2.5,9,2],[15,-14,1.8,6,1.8],[-18,-14,3,12,3]].forEach(([x,z,w,h,d]) => {
-      const b = new T.Mesh(new T.BoxGeometry(w,h,d), bMat); b.position.set(x,h/2,z); b.receiveShadow=true; scene.add(b);
+    // Background silhouette buildings
+    const bMat = new T.MeshStandardMaterial({color:0xBCB6AE,roughness:1});
+    [[-14,-16,2.2,7,2],[-10,-17,1.6,5,1.6],[12,-14,2.8,10,2.2],[16,-16,2.0,7,2],[-20,-16,3.2,13,3.2]].forEach(([x,z,w,h,d])=>{
+      const b=new T.Mesh(new T.BoxGeometry(w,h,d),bMat);b.position.set(x,h/2,z);b.castShadow=true;b.receiveShadow=true;scene.add(b);
     });
 
-    // House — centrepiece
-    loadGLB('assets/model-house.glb', 9, model => { model.position.set(0,0,0); fadeIn(model,1.2); scene.add(model); sceneObjs.house = model; });
+    // HOUSE — procedural
+    const house = makeProcHouse(T);
+    house.position.set(0,0,0); scene.add(house); sceneObjs.house = house;
+    // Try GLB enhancement (will replace if loaded)
+    loadGLB('assets/model-house.glb', 9, model => { model.position.set(0,0,0); scene.remove(house); scene.add(model); fadeIn(model,1.2); sceneObjs.house = model; });
 
-    // Trees — scattered around house
-    const treePositions = [[-7,3],[-6,-4],[6,2],[7,-3],[-10,0],[9,1],[-4,-7],[5,-6]];
+    // TREES — procedural scattered
+    const treePos = [[-7,3],[-6,-4],[6,2],[7,-3],[-10,0],[9,1],[-4,-7],[5,-6]];
     sceneObjs.trees = [];
-    treePositions.forEach(([tx,tz], i) => {
-      loadGLB('assets/model-tree.glb', 2.5 + Math.random() * 1.5, model => {
-        model.position.set(tx, 0, tz);
-        model.rotation.y = Math.random() * Math.PI * 2;
-        scene.add(model); fadeIn(model, 0.8 + i * 0.1); sceneObjs.trees.push(model);
-      });
+    treePos.forEach(([tx,tz],i) => {
+      const h = 2.5 + Math.random()*1.8;
+      const t = makeProcTree(T, h); t.position.set(tx,0,tz); t.rotation.y=Math.random()*Math.PI*2; scene.add(t); sceneObjs.trees.push(t);
+      loadGLB('assets/model-tree.glb', h, model => { model.position.set(tx,0,tz); model.rotation.y=t.rotation.y; scene.remove(t); scene.add(model); fadeIn(model,0.8); sceneObjs.trees[i]=model; });
     });
 
     sceneObjs.orbit = 0;
@@ -3155,11 +3301,13 @@ Object.entries(imageMap).forEach(([id, src]) => {
     });
     scene.add(Object.assign(new T.PointLight(0xF0A060,0.9,18), {}).translateX(0).translateY(5).translateZ(-3));
 
-    // Espresso machine — centrepiece
-    loadGLB('assets/model-coffee.glb', 1.5, model => { model.position.set(0,1.09,-1.65); scene.add(model); fadeIn(model,1.0); sceneObjs.machine = model; });
-
-    // Second machine clone offset to side
-    loadGLB('assets/model-coffee.glb', 1.0, model => { model.position.set(-2.1,1.06,-1.6); model.rotation.y = 0.3; scene.add(model); fadeIn(model,1.2); });
+    // Espresso machine — procedural centrepiece
+    const machine = makeProcCoffee(T); machine.position.set(0,1.09,-1.65); scene.add(machine); sceneObjs.machine = machine;
+    // Side machine
+    const machine2 = makeProcCoffee(T); machine2.position.set(-2.1,1.06,-1.6); machine2.rotation.y=0.3; machine2.scale.setScalar(0.88); scene.add(machine2);
+    // Try GLB enhancement
+    loadGLB('assets/model-coffee.glb', 1.5, model => { model.position.set(0,1.09,-1.65); scene.remove(machine); scene.add(model); fadeIn(model,1.0); sceneObjs.machine = model; });
+    loadGLB('assets/model-coffee.glb', 1.0, model => { model.position.set(-2.1,1.06,-1.6); model.rotation.y=0.3; scene.remove(machine2); scene.add(model); fadeIn(model,1.2); });
 
     // Bokeh atmosphere particles
     const bGeo = new T.SphereGeometry(0.04,4,4);
@@ -3219,25 +3367,20 @@ Object.entries(imageMap).forEach(([id, src]) => {
     const tl = new T.PointLight(0x00CFC0,3.0,28); tl.position.set(10,14,-5); scene.add(tl);
     scene.add(Object.assign(new T.PointLight(0x4A9EDB,1.8,22), {}).translateX(0).translateY(6).translateZ(12));
 
-    // Office building — main
+    // Main tower — procedural glass skyscraper
+    const mainB = makeProcBuilding(T, 28, 0x080F1C); mainB.position.set(0,0,-4); scene.add(mainB); sceneObjs.mainBuilding = mainB;
+    const leftB = makeProcBuilding(T, 20, 0x06101E); leftB.position.set(-14,0,-10); leftB.rotation.y=0.18; scene.add(leftB);
+    const rightB = makeProcBuilding(T, 24, 0x06101E); rightB.position.set(14,0,-10); rightB.rotation.y=-0.15; scene.add(rightB);
+    // Try GLB enhancement
     loadGLB('assets/model-office.glb', 16, model => {
-      model.position.set(0,0,-4); model.traverse(c => { if(c.isMesh&&c.material){c.material.emissive=new T.Color(0x0A2048);c.material.emissiveIntensity=0.15;} });
-      scene.add(model); fadeIn(model,1.2); sceneObjs.mainBuilding = model;
+      model.position.set(0,0,-4); model.traverse(c=>{if(c.isMesh&&c.material){c.material.emissive=new T.Color(0x0A2048);c.material.emissiveIntensity=0.15;}});
+      scene.remove(mainB); scene.add(model); fadeIn(model,1.2); sceneObjs.mainBuilding = model;
     });
-    // Clone to left — smaller
-    loadGLB('assets/model-office.glb', 10, model => {
-      model.position.set(-14,0,-10); model.rotation.y=0.2; model.traverse(c=>{if(c.isMesh&&c.material){c.material.emissive=new T.Color(0x051228);c.material.emissiveIntensity=0.1;}});
-      scene.add(model); fadeIn(model,1.4); sceneObjs.bldgL = model;
-    });
-    // Clone to right
-    loadGLB('assets/model-office.glb', 12, model => {
-      model.position.set(14,0,-10); model.rotation.y=-0.18; model.traverse(c=>{if(c.isMesh&&c.material){c.material.emissive=new T.Color(0x051228);c.material.emissiveIntensity=0.1;}});
-      scene.add(model); fadeIn(model,1.4); sceneObjs.bldgR = model;
-    });
-    // Tiny background buildings
-    [[-22,-18,4,24,4],[22,-20,3,18,3],[0,-22,5,28,5],[-30,-18,2,14,2],[28,-20,2,16,2]].forEach(([x,z,w,h,d]) => {
-      const bm = new T.Mesh(new T.BoxGeometry(w,h,d), new T.MeshStandardMaterial({color:0x06101E,roughness:1}));
-      bm.position.set(x,h/2,z); scene.add(bm);
+    // Background box buildings (depth of city)
+    [[-22,-18,4,22,4],[22,-20,3,17,3],[0,-24,5,26,5],[-30,-18,2,13,2],[28,-20,2,15,2],
+     [-8,-20,3,18,3],[9,-22,4,20,4],[-18,-20,2.5,12,2.5],[20,-18,2.5,16,2.5]].forEach(([x,z,w,h,d])=>{
+      const bm=new T.Mesh(new T.BoxGeometry(w,h,d),new T.MeshStandardMaterial({color:0x050D18,roughness:0.9}));
+      bm.position.set(x,h/2,z);scene.add(bm);
     });
 
     // Data nodes
@@ -3322,22 +3465,22 @@ Object.entries(imageMap).forEach(([id, src]) => {
       scene.add(Object.assign(new T.Mesh(new T.CylinderGeometry(2.6,2.6,0.05,64), new T.MeshStandardMaterial({color:0x101010,roughness:0.05,metalness:0.9})),{}).translateX(px).translateY(0.01));
     });
 
-    // Car 1 — centre hero (model-car.glb)
+    // Car 1 — centre hero, dark metallic
+    const car1 = makeCar(T, 0x1A1A2A); car1.position.set(0,0.05,0); scene.add(car1); sceneObjs.car1 = car1;
+    // Car 2 — left, deep red
+    const car2 = makeCar(T, 0x3D0A0A); car2.position.set(-8,0.05,1); car2.rotation.y=0.35; scene.add(car2); sceneObjs.car2 = car2;
+    // Car 3 — right, silver
+    const car3 = makeCar(T, 0x2A2A2A); car3.position.set(8,0.05,1); car3.rotation.y=-0.38; scene.add(car3); sceneObjs.car3 = car3;
+    // Try GLB enhancement (replaces procedural if loaded)
     loadGLB('assets/model-car.glb', 4.8, model => {
-      model.position.set(0,0.05,0);
-      model.traverse(c=>{if(c.isMesh&&c.material){c.material.metalness=Math.max(c.material.metalness||0,0.6);c.material.roughness=Math.min(c.material.roughness??0.5,0.3);}});
-      scene.add(model); fadeIn(model,1.2); sceneObjs.car1 = model;
+      model.position.set(0,0.05,0); model.traverse(c=>{if(c.isMesh&&c.material){c.material.metalness=Math.max(c.material.metalness||0,0.6);c.material.roughness=Math.min(c.material.roughness??0.5,0.3);}});
+      scene.remove(car1); scene.add(model); fadeIn(model,1.2); sceneObjs.car1=model;
     });
-    // Car 2 — left (model-car2.glb)
     loadGLB('assets/model-car2.glb', 4.2, model => {
-      model.position.set(-8,0.05,1); model.rotation.y = 0.35;
-      model.traverse(c=>{if(c.isMesh&&c.material){c.material.metalness=Math.max(c.material.metalness||0,0.55);}});
-      scene.add(model); fadeIn(model,1.4); sceneObjs.car2 = model;
+      model.position.set(-8,0.05,1); model.rotation.y=0.35; scene.remove(car2); scene.add(model); fadeIn(model,1.4); sceneObjs.car2=model;
     });
-    // Car 3 — right (model-car.glb clone, slightly different angle)
     loadGLB('assets/model-car.glb', 3.9, model => {
-      model.position.set(8,0.05,1); model.rotation.y = -0.38;
-      scene.add(model); fadeIn(model,1.4); sceneObjs.car3 = model;
+      model.position.set(8,0.05,1); model.rotation.y=-0.38; scene.remove(car3); scene.add(model); fadeIn(model,1.4); sceneObjs.car3=model;
     });
     sceneObjs.dAngle = 0;
   }
