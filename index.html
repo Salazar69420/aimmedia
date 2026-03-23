@@ -3016,33 +3016,36 @@ Object.entries(imageMap).forEach(([id, src]) => {
 
   // ── SCENE INIT ────────────────────────────────────────────────
   function initScene(cfg) {
-    destroyScene();
+    if (animId) { cancelAnimationFrame(animId); animId = null; }
+    if (scene) scene.clear();
     sceneObjs = {}; sceneStartMs = Date.now();
     const T3 = THREE_lib;
     const W = window.innerWidth, H = window.innerHeight;
-    renderer = new T3.WebGLRenderer({ canvas: document.getElementById('mode-canvas'), antialias: true });
+    // Create renderer ONCE — recreating on same canvas destroys WebGL context for other modes
+    if (!renderer) {
+      renderer = new T3.WebGLRenderer({ canvas: document.getElementById('mode-canvas'), antialias: true });
+      renderer.shadowMap.enabled = true; renderer.shadowMap.type = T3.PCFSoftShadowMap;
+      renderer.outputEncoding = T3.sRGBEncoding;
+      renderer.toneMapping = T3.ACESFilmicToneMapping;
+    }
     renderer.setSize(W, H); renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-    renderer.shadowMap.enabled = true; renderer.shadowMap.type = T3.PCFSoftShadowMap;
-    renderer.outputEncoding = T3.sRGBEncoding;
-    renderer.toneMapping = T3.ACESFilmicToneMapping; renderer.toneMappingExposure = 2.2;
+    renderer.toneMappingExposure = 1.6;
     scene = new T3.Scene(); scene.background = new T3.Color(cfg.bg);
     camera = new T3.PerspectiveCamera(50, W / H, 0.1, 800);
-    sceneObjs.baseCamera = { x: 0, y: 0, z: 0 }; // filled by each scene
     ;({ realtor: buildRealtor, cafe: buildCafe, corporate: buildCorporate, dealership: buildDealership }[cfg.scene])();
     (function loop() {
       animId = requestAnimationFrame(loop);
-      // Mouse parallax — smooth lerp
       tmx += (mx - tmx) * 0.04; tmy += (my - tmy) * 0.04;
-      ;({ realtor: updateRealtor, cafe: updateCafe, corporate: updateCorporate, dealership: updateDealership }[cfg.scene])();
+      try { ({ realtor: updateRealtor, cafe: updateCafe, corporate: updateCorporate, dealership: updateDealership }[cfg.scene])(); } catch(_) {}
       renderer.render(scene, camera);
     })();
   }
 
   function destroyScene() {
     if (animId) { cancelAnimationFrame(animId); animId = null; }
-    if (renderer) renderer.dispose();
-    if (scene) scene.clear();
-    renderer = scene = camera = null; sceneObjs = {};
+    if (scene) { scene.clear(); scene = null; }
+    camera = null; sceneObjs = {};
+    // Renderer kept alive — prevents WebGL context loss on mode switch
   }
 
   function T3() { return THREE_lib; }
@@ -3175,15 +3178,15 @@ Object.entries(imageMap).forEach(([id, src]) => {
     g.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.15,0.15,0.14,16),chrome),{position:new T.Vector3(0,0.61,0)}));
     g.add(Object.assign(new T.Mesh(new T.SphereGeometry(0.15,16,8,0,Math.PI*2,0,Math.PI/2),chrome),{position:new T.Vector3(0,0.68,0)}));
     // Group head
-    g.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.075,0.075,0.15,12),chrome),{position:new T.Vector3(0,0.11,0.23),rotation:new T.Euler(Math.PI/2,0,0)}));
+    const gh=new T.Mesh(new T.CylinderGeometry(0.075,0.075,0.15,12),chrome); gh.position.set(0,0.11,0.23); gh.rotation.x=Math.PI/2; g.add(gh);
     // Portafilter
-    g.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.025,0.025,0.38,8),blk),{position:new T.Vector3(0.14,-0.06,0.3),rotation:new T.Euler(0,0,0.5)}));
+    const pf=new T.Mesh(new T.CylinderGeometry(0.025,0.025,0.38,8),blk); pf.position.set(0.14,-0.06,0.3); pf.rotation.z=0.5; g.add(pf);
     // Steam wand
-    g.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.018,0.014,0.34,8),chrome),{position:new T.Vector3(0.28,0.14,0.1),rotation:new T.Euler(0,0,0.45)}));
+    const stw=new T.Mesh(new T.CylinderGeometry(0.018,0.014,0.34,8),chrome); stw.position.set(0.28,0.14,0.1); stw.rotation.z=0.45; g.add(stw);
     // Drip tray
     g.add(Object.assign(new T.Mesh(new T.BoxGeometry(0.46,0.03,0.32),chrome),{position:new T.Vector3(0,0.015,0.06)}));
     // Pressure gauge
-    g.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.065,0.065,0.02,16),chrome),{position:new T.Vector3(-0.13,0.36,0.22),rotation:new T.Euler(Math.PI/2,0,0)}));
+    const pg=new T.Mesh(new T.CylinderGeometry(0.065,0.065,0.02,16),chrome); pg.position.set(-0.13,0.36,0.22); pg.rotation.x=Math.PI/2; g.add(pg);
     // Status LED
     g.add(Object.assign(new T.Mesh(new T.SphereGeometry(0.03,8,8),led),{position:new T.Vector3(0.16,0.42,0.22)}));
     // Cups
@@ -3225,15 +3228,14 @@ Object.entries(imageMap).forEach(([id, src]) => {
     // Blueprint grid overlay
     const grid = new T.GridHelper(60,60,0x1E3A88,0x2A5298); grid.material.opacity=0.12; grid.material.transparent=true; scene.add(grid);
 
-    // Lighting
-    scene.add(new T.AmbientLight(0xF0ECFF, 0.72));
-    const sun = new T.DirectionalLight(0xFFF5E0, 2.8); sun.position.set(18,28,20); sun.castShadow=true;
-    sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.left=-28; sun.shadow.camera.right=28;
-    sun.shadow.camera.top=28; sun.shadow.camera.bottom=-28; sun.shadow.camera.far=100;
+    // Lighting — bright daylight
+    scene.add(new T.AmbientLight(0xFFFFFF, 2.5));
+    const sun = new T.DirectionalLight(0xFFF5E0, 4.5); sun.position.set(18,28,20); sun.castShadow=true;
+    sun.shadow.mapSize.set(2048,2048); sun.shadow.camera.left=-30; sun.shadow.camera.right=30;
+    sun.shadow.camera.top=30; sun.shadow.camera.bottom=-30; sun.shadow.camera.far=120;
     scene.add(sun);
-    const fill = new T.DirectionalLight(0xC0D4F8,0.55); fill.position.set(-10,14,-8); scene.add(fill);
-    // Warm ground bounce
-    scene.add(Object.assign(new T.PointLight(0xFFE8B0,0.8,35),{position:new T.Vector3(0,-5,0)}));
+    const fill = new T.DirectionalLight(0xC0D4F8, 1.5); fill.position.set(-10,14,-8); scene.add(fill);
+    const bounce = new T.PointLight(0xFFE8B0, 1.5, 40); bounce.position.set(0, 2, 5); scene.add(bounce);
 
     // Background silhouette buildings
     const bMat = new T.MeshStandardMaterial({color:0xBCB6AE,roughness:1});
@@ -3272,30 +3274,38 @@ Object.entries(imageMap).forEach(([id, src]) => {
   function buildCafe() {
     const T = T3();
     camera.position.set(0, 2.2, 6); camera.lookAt(0, 1.4, 0);
-    scene.fog = new T.FogExp2(0x0E0704, 0.045);
-    scene.add(new T.AmbientLight(0xAA6633, 1.4));
+    scene.fog = new T.FogExp2(0x0E0704, 0.04);
 
-    // Floor
-    scene.add(Object.assign(new T.Mesh(new T.PlaneGeometry(30,30), new T.MeshStandardMaterial({ color:0x120806, roughness:0.9, metalness:0.08 })), { rotation:{ x:-Math.PI/2 }, receiveShadow:true }).rotateX(-Math.PI/2));
+    // Bright warm lighting first — everything must be visible
+    scene.add(new T.AmbientLight(0xFFDDB8, 3.0));
+    [[-2,3.0,-1.2],[0,3.0,-1.0],[2,3.0,-1.2]].forEach(([x,y,z]) => {
+      const pt = new T.PointLight(0xFF8C3A, 15, 10); pt.position.set(x,y,z); pt.castShadow=true; scene.add(pt);
+    });
+    const topL = new T.PointLight(0xF0A060, 3, 20); topL.position.set(0,5,-3); scene.add(topL);
 
-    // Marble bar counter
+    // Floor — proper rotation via direct property
+    const cafeFloor = new T.Mesh(new T.PlaneGeometry(30,30), new T.MeshStandardMaterial({ color:0x1A0E08, roughness:0.85 }));
+    cafeFloor.rotation.x = -Math.PI/2; cafeFloor.receiveShadow=true; scene.add(cafeFloor);
+
+    // Bar counter
     const ctr = new T.Mesh(new T.BoxGeometry(6, 0.14, 1.6), new T.MeshStandardMaterial({ color:0x281A14, roughness:0.25, metalness:0.25 }));
     ctr.position.set(0, 1.02, -1.5); ctr.castShadow=true; scene.add(ctr);
 
     // Back wall + shelves
-    scene.add(Object.assign(new T.Mesh(new T.PlaneGeometry(16,8), new T.MeshStandardMaterial({ color:0x100806 })), {}).translateZ(-4).translateY(3));
+    const cafeWall = new T.Mesh(new T.PlaneGeometry(16,8), new T.MeshStandardMaterial({ color:0x100806 }));
+    cafeWall.position.set(0,3,-4); scene.add(cafeWall);
     [[-1.8,1.55,-2.8],[1.8,1.55,-2.8]].forEach(([x,y,z]) => {
-      scene.add(Object.assign(new T.Mesh(new T.BoxGeometry(1.2,0.06,0.3), new T.MeshStandardMaterial({color:0x3A1C0C})), {}).translateX(x).translateY(y).translateZ(z));
+      const sh = new T.Mesh(new T.BoxGeometry(1.2,0.06,0.3), new T.MeshStandardMaterial({color:0x3A1C0C}));
+      sh.position.set(x,y,z); scene.add(sh);
     });
 
-    // Pendant lamps — 3 above bar
+    // Pendant lamps — visible glowing mesh
     [[-2,3.0,-1.2],[0,3.0,-1.0],[2,3.0,-1.2]].forEach(([x,y,z]) => {
-      const pt = new T.PointLight(0xE8802A, 3.2, 6); pt.position.set(x,y,z); pt.castShadow=true; scene.add(pt);
-      const lamp = new T.Mesh(new T.CylinderGeometry(0.04,0.2,0.28,8), new T.MeshStandardMaterial({color:0x8B5A30,emissive:0xE8802A,emissiveIntensity:0.45,roughness:0.5}));
-      lamp.position.set(x,y+0.14,z); scene.add(lamp);
-      scene.add(Object.assign(new T.Mesh(new T.CylinderGeometry(0.01,0.01,1.8,4), new T.MeshStandardMaterial({color:0x2A1808})), {}).translateX(x).translateY(y+0.94).translateZ(z));
+      const lamp = new T.Mesh(new T.CylinderGeometry(0.04,0.2,0.28,8), new T.MeshStandardMaterial({color:0x8B5A30,emissive:0xE8802A,emissiveIntensity:4,roughness:0.5}));
+      lamp.position.set(x,y,z); scene.add(lamp);
+      const cord = new T.Mesh(new T.CylinderGeometry(0.01,0.01,1.8,4), new T.MeshStandardMaterial({color:0x2A1808}));
+      cord.position.set(x,y+1.04,z); scene.add(cord);
     });
-    scene.add(Object.assign(new T.PointLight(0xF0A060,0.9,18), {}).translateX(0).translateY(5).translateZ(-3));
 
     // Espresso machine — procedural centrepiece
     const machine = makeProcCoffee(T); machine.position.set(0,1.09,-1.65); scene.add(machine); sceneObjs.machine = machine;
@@ -3353,15 +3363,16 @@ Object.entries(imageMap).forEach(([id, src]) => {
     camera.position.set(0, 8, 24); camera.lookAt(0, 6, 0);
     scene.fog = new T.FogExp2(0x030710, 0.011);
 
-    // Floor
-    scene.add(Object.assign(new T.Mesh(new T.PlaneGeometry(80,80), new T.MeshStandardMaterial({color:0x060D18,roughness:0.85,metalness:0.3})), {receiveShadow:true}).rotateX(-Math.PI/2));
+    // Floor — proper rotation
+    const corpFloor = new T.Mesh(new T.PlaneGeometry(80,80), new T.MeshStandardMaterial({color:0x060D18,roughness:0.85,metalness:0.3}));
+    corpFloor.rotation.x = -Math.PI/2; corpFloor.receiveShadow=true; scene.add(corpFloor);
     const grid = new T.GridHelper(70,70,0x0A2050,0x071535); grid.material.opacity=0.65; grid.material.transparent=true; scene.add(grid);
 
-    // Lighting
-    scene.add(new T.AmbientLight(0x2244AA, 2.0));
-    const bl = new T.PointLight(0x1A70DD,5.0,36); bl.position.set(-10,18,4); bl.castShadow=true; scene.add(bl);
-    const tl = new T.PointLight(0x00CFC0,3.0,28); tl.position.set(10,14,-5); scene.add(tl);
-    scene.add(Object.assign(new T.PointLight(0x4A9EDB,1.8,22), {}).translateX(0).translateY(6).translateZ(12));
+    // Lighting — very bright blue/cyan city glow
+    scene.add(new T.AmbientLight(0x2255CC, 5.0));
+    const bl = new T.PointLight(0x1A70DD, 20, 60); bl.position.set(-10,18,4); bl.castShadow=true; scene.add(bl);
+    const tl = new T.PointLight(0x00CFC0, 14, 50); tl.position.set(10,14,-5); scene.add(tl);
+    const fl = new T.PointLight(0x4A9EDB, 8, 35); fl.position.set(0,6,12); scene.add(fl);
 
     // Main tower — procedural glass skyscraper
     const mainB = makeProcBuilding(T, 28, 0x080F1C); mainB.position.set(0,0,-4); scene.add(mainB); sceneObjs.mainBuilding = mainB;
@@ -3426,57 +3437,68 @@ Object.entries(imageMap).forEach(([id, src]) => {
     camera.lookAt(0,6,0);
   }
 
-  // ── DEALERSHIP — 3-car showroom, studio lighting ───────────────
+  // ── DEALERSHIP — premium 3-car showroom ───────────────────────
   function buildDealership() {
     const T = T3();
     camera.position.set(0,2.5,10); camera.lookAt(0,1.2,0);
-    scene.fog = new T.FogExp2(0x050505,0.025);
+    scene.fog = new T.FogExp2(0x050508, 0.018);
 
-    // Showroom floor — polished dark
-    scene.add(Object.assign(new T.Mesh(new T.PlaneGeometry(50,50), new T.MeshStandardMaterial({color:0x151515,roughness:0.15,metalness:0.5})),{receiveShadow:true}).rotateX(-Math.PI/2));
-    const gd = new T.GridHelper(50,50,0x2A2A2A,0x1A1A1A); gd.material.opacity=0.8; gd.material.transparent=true; scene.add(gd);
+    // Ultra-glossy showroom floor
+    const dlrFloor = new T.Mesh(new T.PlaneGeometry(60,60), new T.MeshStandardMaterial({color:0x080810,roughness:0.06,metalness:0.92}));
+    dlrFloor.rotation.x = -Math.PI/2; dlrFloor.receiveShadow=true; scene.add(dlrFloor);
+    const gd = new T.GridHelper(60,60,0x1A1A30,0x0D0D20); gd.material.opacity=0.55; gd.material.transparent=true; scene.add(gd);
 
     // Walls
-    const wm = new T.MeshStandardMaterial({color:0x181818,roughness:0.8});
-    [new T.Mesh(new T.BoxGeometry(50,12,0.1),wm), new T.Mesh(new T.BoxGeometry(0.1,12,50),wm), new T.Mesh(new T.BoxGeometry(0.1,12,50),wm)].forEach((m,i) => {
-      m.position.set(i===1?-20:i===2?20:0, 6, i===0?-18:0); scene.add(m);
-    });
+    const wm = new T.MeshStandardMaterial({color:0x0C0C18,roughness:0.9});
+    const wb = new T.Mesh(new T.BoxGeometry(60,14,0.1),wm); wb.position.set(0,7,-22); scene.add(wb);
+    const wl = new T.Mesh(new T.BoxGeometry(0.1,14,60),wm); wl.position.set(-22,7,0); scene.add(wl);
+    const wr = new T.Mesh(new T.BoxGeometry(0.1,14,60),wm); wr.position.set(22,7,0); scene.add(wr);
 
-    // Overhead strip lights (linear)
-    scene.add(new T.AmbientLight(0x888888, 1.2));
+    // Premium showroom lighting
+    scene.add(new T.AmbientLight(0x222240, 2.5));
     [[-8,0],[0,0],[8,0]].forEach(([lx]) => {
-      const strip = new T.RectAreaLight ? null : null; // fallback to spotlights
-      const sp = new T.SpotLight(0xFFFFFF,3.5,22,Math.PI/7,0.2,1.5);
-      sp.position.set(lx,10,0); sp.castShadow=true; sp.shadow.mapSize.set(512,512);
+      const sp = new T.SpotLight(0xFFFFFF, 50, 35, Math.PI/10, 0.3, 1.2);
+      sp.position.set(lx, 12, 2); sp.castShadow=true; sp.shadow.mapSize.set(1024,1024);
       scene.add(sp); sp.target.position.set(lx,0,0); scene.add(sp.target);
+      // LED strip glow
+      const strip = new T.Mesh(new T.BoxGeometry(2.2,0.06,0.12), new T.MeshBasicMaterial({color:0xFFFFFF}));
+      strip.position.set(lx,12,2); scene.add(strip);
     });
-    // Coloured accent gels
-    const aL = new T.PointLight(0x1133AA,2.5,16); aL.position.set(-18,1,0); scene.add(aL);
-    const aR = new T.PointLight(0xAA2211,2.0,16); aR.position.set(18,1,0); scene.add(aR);
-    const rim = new T.SpotLight(0xFFFFFF,4.0,20,Math.PI/8,0.15,1); rim.position.set(0,8,-14); scene.add(rim);
-    rim.target.position.set(0,1,0); scene.add(rim.target);
+    // Dramatic rim / gel lights
+    const rimL = new T.SpotLight(0x3355FF, 30, 50, Math.PI/10, 0.2, 1); rimL.position.set(-20,4,10); scene.add(rimL); rimL.target.position.set(-4,0,0); scene.add(rimL.target);
+    const rimR = new T.SpotLight(0xFF3311, 25, 50, Math.PI/10, 0.2, 1); rimR.position.set(20,4,10); scene.add(rimR); rimR.target.position.set(4,0,0); scene.add(rimR.target);
+    const rimB = new T.SpotLight(0xFFFFFF, 35, 35, Math.PI/9, 0.15, 1); rimB.position.set(0,6,-18); scene.add(rimB); rimB.target.position.set(0,1,0); scene.add(rimB.target);
 
-    // Platform rings
+    // Platform rings with neon blue edge
     [[-8,0],[0,0],[8,0]].forEach(([px]) => {
-      scene.add(Object.assign(new T.Mesh(new T.CylinderGeometry(2.6,2.6,0.05,64), new T.MeshStandardMaterial({color:0x101010,roughness:0.05,metalness:0.9})),{}).translateX(px).translateY(0.01));
+      const ring = new T.Mesh(new T.CylinderGeometry(2.8,2.8,0.04,64), new T.MeshStandardMaterial({color:0x050510,roughness:0.04,metalness:0.98}));
+      ring.position.set(px,0.02,0); scene.add(ring);
+      const glow = new T.Mesh(new T.TorusGeometry(2.8,0.05,8,64), new T.MeshBasicMaterial({color:0x4488FF,transparent:true,opacity:0.7}));
+      glow.rotation.x = Math.PI/2; glow.position.set(px,0.05,0); scene.add(glow);
     });
 
-    // Car 1 — centre hero, dark metallic
-    const car1 = makeCar(T, 0x1A1A2A); car1.position.set(0,0.05,0); scene.add(car1); sceneObjs.car1 = car1;
-    // Car 2 — left, deep red
-    const car2 = makeCar(T, 0x3D0A0A); car2.position.set(-8,0.05,1); car2.rotation.y=0.35; scene.add(car2); sceneObjs.car2 = car2;
-    // Car 3 — right, silver
-    const car3 = makeCar(T, 0x2A2A2A); car3.position.set(8,0.05,1); car3.rotation.y=-0.38; scene.add(car3); sceneObjs.car3 = car3;
-    // Try GLB enhancement (replaces procedural if loaded)
+    // Procedural cars as instant fallback
+    const car1 = makeCar(T, 0x0A0A1E); car1.position.set(0,0.05,0); scene.add(car1); sceneObjs.car1 = car1;
+    const car2 = makeCar(T, 0x1A0608); car2.position.set(-8,0.05,1); car2.rotation.y=0.35; scene.add(car2); sceneObjs.car2 = car2;
+    const car3 = makeCar(T, 0x1A1A1C); car3.position.set(8,0.05,1); car3.rotation.y=-0.38; scene.add(car3); sceneObjs.car3 = car3;
+
+    // Override GLB materials with premium metallic paint
+    const applyMat = (model, hex) => model.traverse(c => {
+      if (!c.isMesh) return;
+      c.castShadow = c.receiveShadow = true;
+      c.material = new T.MeshStandardMaterial({color:hex, metalness:0.92, roughness:0.08});
+    });
     loadGLB('assets/model-car.glb', 4.8, model => {
-      model.position.set(0,0.05,0); model.traverse(c=>{if(c.isMesh&&c.material){c.material.metalness=Math.max(c.material.metalness||0,0.6);c.material.roughness=Math.min(c.material.roughness??0.5,0.3);}});
+      if(!scene) return; model.position.set(0,0.05,0); applyMat(model, 0x0D1224);
       scene.remove(car1); scene.add(model); fadeIn(model,1.2); sceneObjs.car1=model;
     });
     loadGLB('assets/model-car2.glb', 4.2, model => {
-      model.position.set(-8,0.05,1); model.rotation.y=0.35; scene.remove(car2); scene.add(model); fadeIn(model,1.4); sceneObjs.car2=model;
+      if(!scene) return; model.position.set(-8,0.05,1); model.rotation.y=0.35; applyMat(model, 0x1C0408);
+      scene.remove(car2); scene.add(model); fadeIn(model,1.4); sceneObjs.car2=model;
     });
     loadGLB('assets/model-car.glb', 3.9, model => {
-      model.position.set(8,0.05,1); model.rotation.y=-0.38; scene.remove(car3); scene.add(model); fadeIn(model,1.4); sceneObjs.car3=model;
+      if(!scene) return; model.position.set(8,0.05,1); model.rotation.y=-0.38; applyMat(model, 0x141416);
+      scene.remove(car3); scene.add(model); fadeIn(model,1.4); sceneObjs.car3=model;
     });
     sceneObjs.dAngle = 0;
   }
@@ -3490,9 +3512,7 @@ Object.entries(imageMap).forEach(([id, src]) => {
     if(sceneObjs.car3) sceneObjs.car3.position.y = 0.05 + Math.sin(t*0.6+1.5)*0.025;
     sceneObjs.dAngle = (sceneObjs.dAngle||0) + 0.0003;
     const a = sceneObjs.dAngle;
-    camera.position.x = Math.sin(a)*4 + tmx*2.5;
-    camera.position.y = 2.5 + Math.sin(a*0.6)*0.4 + tmy*-1;
-    camera.position.z = 9.5 + Math.cos(a*0.8)*0.8;
+    camera.position.set(Math.sin(a)*4+tmx*2.5, 2.5+Math.sin(a*0.6)*0.4+tmy*-1, 9.5+Math.cos(a*0.8)*0.8);
     camera.lookAt(0, 1.2, 0);
   }
 
