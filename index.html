@@ -1211,6 +1211,158 @@ footer {
   .nav-links { display: none; }
   nav { padding: 1.1rem 1.5rem; }
 }
+
+/* ────────────────────────────────────────────────────────
+   INDUSTRY MODES
+   ──────────────────────────────────────────────────────── */
+
+/* Mode selector button */
+.mode-btn {
+  display: flex; align-items: center; gap: 0.45rem;
+  padding: 0.42rem 0.95rem;
+  border: 1px solid var(--accent); border-radius: 100px;
+  background: transparent;
+  color: var(--accent);
+  font: 600 0.67rem/1 var(--sans);
+  letter-spacing: 0.13em; text-transform: uppercase;
+  cursor: none; user-select: none;
+  position: relative;
+  transition: background 0.22s, color 0.22s;
+  white-space: nowrap;
+}
+.mode-btn:hover { background: var(--accent); color: #1C1917; }
+.mode-btn-chev { display: flex; align-items: center; transition: transform 0.22s; }
+.mode-btn.open .mode-btn-chev { transform: rotate(180deg); }
+
+/* Dropdown */
+.mode-dropdown {
+  position: absolute; top: calc(100% + 0.7rem); right: 0;
+  min-width: 195px;
+  background: #2A2521; border: 1px solid rgba(245,240,235,0.09);
+  border-radius: 1rem; padding: 0.4rem;
+  opacity: 0; pointer-events: none;
+  transform: translateY(-10px) scale(0.96);
+  transform-origin: top right;
+  transition: opacity 0.22s var(--ease), transform 0.22s var(--ease);
+  z-index: 600;
+}
+.mode-btn.open .mode-dropdown { opacity: 1; pointer-events: all; transform: none; }
+
+.mode-opt {
+  display: flex; align-items: center; gap: 0.75rem;
+  padding: 0.72rem 1rem; border-radius: 0.65rem;
+  font: 500 0.8rem/1 var(--sans); letter-spacing: 0.04em;
+  cursor: none;
+  transition: background 0.18s, color 0.18s;
+}
+.mode-opt:hover { background: rgba(217,119,87,0.12); color: var(--accent); }
+.mode-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── Overlay container ── */
+#mode-overlay {
+  position: fixed; inset: 0; z-index: 8500;
+  clip-path: circle(0% at var(--mox,90%) var(--moy,48px));
+  transition: clip-path 0.9s cubic-bezier(0.76,0,0.24,1);
+  overflow: hidden; pointer-events: none;
+}
+#mode-overlay.m-open {
+  clip-path: circle(160% at var(--mox,90%) var(--moy,48px));
+  pointer-events: all;
+}
+#mode-overlay.m-closing {
+  clip-path: circle(0% at var(--mox,90%) var(--moy,48px));
+  pointer-events: none;
+  transition: clip-path 0.75s cubic-bezier(0.76,0,0.24,1);
+}
+#mode-canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+
+/* UI layer above canvas */
+.mode-ui { position: absolute; inset: 0; pointer-events: none; }
+
+.mode-exit-btn {
+  position: absolute; top: 1.6rem; right: 1.8rem;
+  padding: 0.48rem 1.15rem;
+  border: 1px solid currentColor; border-radius: 100px;
+  background: transparent;
+  font: 600 0.67rem/1 var(--sans);
+  letter-spacing: 0.12em; text-transform: uppercase;
+  cursor: none; pointer-events: all; z-index: 10;
+  transition: background 0.2s;
+}
+.mode-exit-btn:hover { background: rgba(255,255,255,0.1); }
+
+.mode-badge-lbl {
+  position: absolute; top: 1.75rem; left: 50%;
+  transform: translateX(-50%);
+  font: 700 0.62rem/1 var(--sans);
+  letter-spacing: 0.22em; text-transform: uppercase;
+  opacity: 0.6; white-space: nowrap;
+}
+
+/* Bottom gradient + content panel */
+.mode-grad {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.78) 24%, transparent 100%);
+  pointer-events: none;
+}
+#mode-overlay[data-mode="realtor"] .mode-grad {
+  background: linear-gradient(to top, rgba(212,202,186,0.92) 22%, transparent 100%);
+}
+
+.mode-panel {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 5rem 5vw 3.5rem;
+  display: grid; grid-template-columns: 1fr auto;
+  gap: 2.5rem; align-items: end;
+  opacity: 0; transform: translateY(28px);
+  transition: opacity 0.55s var(--ease), transform 0.55s var(--ease);
+}
+.mode-panel.vis { opacity: 1; transform: none; }
+
+.mode-headline {
+  font: 700 clamp(2.2rem,4.5vw,4rem)/1.08 var(--serif);
+  margin-bottom: 0.9rem;
+}
+.mode-headline em { font-style: italic; font-weight: 400; }
+.mode-sub {
+  font-size: 0.96rem; line-height: 1.65; opacity: 0.7;
+  margin-bottom: 1.8rem; max-width: 420px;
+}
+.mode-svcs {
+  display: flex; flex-wrap: wrap; gap: 0.45rem; list-style: none;
+}
+.mode-svcs li {
+  padding: 0.32rem 0.85rem;
+  border: 1px solid currentColor; border-radius: 100px;
+  font: 600 0.64rem/1 var(--sans); letter-spacing: 0.09em;
+  text-transform: uppercase; opacity: 0.78;
+}
+
+/* Case reference card */
+.mode-case {
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 1.4rem;
+  padding: 1.8rem 2rem; backdrop-filter: blur(20px);
+  background: rgba(0,0,0,0.28); min-width: 270px;
+}
+#mode-overlay[data-mode="realtor"] .mode-case {
+  border-color: rgba(0,0,0,0.09); background: rgba(0,0,0,0.06);
+}
+.mode-case-tag {
+  font: 700 0.6rem/1 var(--sans);
+  letter-spacing: 0.18em; text-transform: uppercase;
+  opacity: 0.65; margin-bottom: 0.65rem;
+}
+.mode-case-stat {
+  font: 900 3rem/1 var(--serif); margin-bottom: 0.3rem;
+}
+.mode-case-name { font: 600 0.9rem/1.3 var(--sans); margin-bottom: 0.5rem; }
+.mode-case-desc { font-size: 0.78rem; line-height: 1.55; opacity: 0.62; max-width: 240px; }
+
+@media (max-width: 720px) {
+  .mode-panel { grid-template-columns: 1fr; padding: 2.5rem 1.5rem 3.5rem; }
+  .mode-case { min-width: unset; }
+  .mode-label-txt { display: none; }
+}
   </style>
 </head>
 <body>
@@ -1255,6 +1407,16 @@ footer {
     <li><a href="#founders">Founders</a></li>
     <li><a href="#cta">Contact</a></li>
   </ul>
+  <div class="mode-btn" id="mode-btn" role="button" tabindex="0" aria-label="Explore industry modes" aria-haspopup="listbox" aria-expanded="false">
+    <span class="mode-label-txt">MODES</span>
+    <span class="mode-btn-chev"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="mode-dropdown" id="mode-dropdown" role="listbox">
+      <div class="mode-opt" data-mode="realtor" role="option"><span class="mode-dot" style="background:#3D6CC0"></span>Realtor</div>
+      <div class="mode-opt" data-mode="cafe" role="option"><span class="mode-dot" style="background:#D4956A"></span>Cafe</div>
+      <div class="mode-opt" data-mode="corporate" role="option"><span class="mode-dot" style="background:#4A9EDB"></span>Corporate</div>
+      <div class="mode-opt" data-mode="dealership" role="option"><span class="mode-dot" style="background:#C0C0C0"></span>Car Dealership</div>
+    </div>
+  </div>
 </nav>
 
 <!-- ── HERO ───────────────────────────────────────────── -->
@@ -2633,6 +2795,380 @@ Object.entries(imageMap).forEach(([id, src]) => {
 })();
 
 })(); // end IIFE
+</script>
+
+<!-- ── INDUSTRY MODE OVERLAY ────────────────────────────── -->
+<div id="mode-overlay" data-mode="">
+  <canvas id="mode-canvas"></canvas>
+  <div class="mode-ui">
+    <button class="mode-exit-btn" id="mode-exit-btn"><span>✕ EXIT</span></button>
+    <div class="mode-badge-lbl" id="mode-badge-lbl"></div>
+    <div class="mode-grad"></div>
+    <div class="mode-panel" id="mode-panel">
+      <div class="mode-left">
+        <h2 class="mode-headline" id="mode-headline"></h2>
+        <p class="mode-sub" id="mode-sub"></p>
+        <ul class="mode-svcs" id="mode-svcs"></ul>
+      </div>
+      <div class="mode-right">
+        <div class="mode-case" id="mode-case">
+          <div class="mode-case-tag" id="mode-case-tag"></div>
+          <div class="mode-case-stat" id="mode-case-stat"></div>
+          <div class="mode-case-name" id="mode-case-name"></div>
+          <div class="mode-case-desc" id="mode-case-desc"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── INDUSTRY MODES (lazy Three.js) ────────────────────────────
+(function() {
+  const MODES = {
+    realtor: {
+      badge: 'REALTOR MODE',
+      bg: '#F0ECE3', accent: '#1B3A6B', text: '#0A0A14',
+      headline: 'Intelligence.<br><em>Automated.</em><br>For Realtors.',
+      sub: 'AI systems that handle the admin, route the prospects, and create the content so you close more deals.',
+      services: ['Admin Automation', 'Prospect Route Optimization', 'Content Creation', 'Paid Campaign Management'],
+      cs: { tag: 'Real Estate × AI', stat: 'Same Day', name: 'Kris Ramotar', desc: 'AI call agent built and deployed on day one of the partnership.' },
+      scene: 'realtor',
+    },
+    cafe: {
+      badge: 'CAFE MODE',
+      bg: '#1A0F08', accent: '#D4956A', text: '#F5E6D3',
+      headline: 'Intelligence.<br><em>Automated.</em><br>For Cafes.',
+      sub: 'Content that stops the scroll, campaigns that fill the seats, and reach that builds regulars.',
+      services: ['Content Creation', 'Reach & Customer Acquisition', 'Paid Campaign Management', 'Brand Storytelling'],
+      cs: { tag: 'Hospitality × Content', stat: '200K+', name: 'Ram Bharose', desc: 'Organic views in 6 days. Cinematic short-form content for Windsor\'s best-kept restaurant secret.' },
+      scene: 'cafe',
+    },
+    corporate: {
+      badge: 'ENTERPRISE MODE',
+      bg: '#060912', accent: '#4A9EDB', text: '#E8F4FD',
+      headline: 'Intelligence.<br><em>Automated.</em><br>For Enterprises.',
+      sub: 'Workflows that run themselves. Pipelines that never sleep. CRM systems that think.',
+      services: ['Admin Task Automation', 'Workflow Optimization', 'Content Pipelines', 'KPI Management', 'CRM Automation'],
+      cs: { tag: 'SaaS × CRM Automation', stat: '100%', name: 'WEtech Alliance', desc: 'Full pipeline automated via Fact OS, our proprietary HubSpot CRM operating system.' },
+      scene: 'corporate',
+    },
+    dealership: {
+      badge: 'DEALERSHIP MODE',
+      bg: '#080808', accent: '#C8C8C8', text: '#FFFFFF',
+      headline: 'Intelligence.<br><em>Automated.</em><br>For Dealerships.',
+      sub: 'High-end AI video ads, social presence, paid campaigns, and zero paperwork headaches.',
+      services: ['Content Creation & AI Video', 'Social Media Management', 'Paid Ad Campaigns', 'Admin & Paperwork Automation'],
+      cs: { tag: 'Automotive × AI Video', stat: '10×', name: 'VIP Motors', desc: 'Production value at zero production budget. Cinematic AI ads for exotic and luxury inventory.' },
+      scene: 'dealership',
+    },
+  };
+
+  const overlay   = document.getElementById('mode-overlay');
+  const modePanel = document.getElementById('mode-panel');
+  const modeBtn   = document.getElementById('mode-btn');
+  const exitBtn   = document.getElementById('mode-exit-btn');
+
+  let THREE_lib, scene, camera, renderer, animId;
+  let sceneStartMs = 0, sceneObjs = {}, currentMode = null;
+
+  // ── DROPDOWN ──────────────────────────────────────────────────
+  modeBtn.addEventListener('click', e => { e.stopPropagation(); modeBtn.classList.toggle('open'); });
+  document.addEventListener('click', () => modeBtn.classList.remove('open'));
+  document.querySelectorAll('.mode-opt').forEach(opt => {
+    opt.addEventListener('click', e => { e.stopPropagation(); modeBtn.classList.remove('open'); activateMode(opt.dataset.mode); });
+  });
+  exitBtn.addEventListener('click', deactivateMode);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && currentMode) deactivateMode(); });
+
+  // ── ACTIVATE ──────────────────────────────────────────────────
+  function activateMode(key) {
+    const cfg = MODES[key]; if (!cfg) return;
+    currentMode = key;
+    const r = modeBtn.getBoundingClientRect();
+    overlay.style.setProperty('--mox', (r.left + r.width / 2) + 'px');
+    overlay.style.setProperty('--moy', (r.top + r.height / 2) + 'px');
+    overlay.setAttribute('data-mode', key);
+    overlay.style.color = cfg.text;
+    document.getElementById('mode-badge-lbl').textContent = cfg.badge;
+    document.getElementById('mode-badge-lbl').style.color = cfg.accent;
+    document.getElementById('mode-headline').innerHTML = cfg.headline;
+    document.getElementById('mode-sub').textContent = cfg.sub;
+    document.getElementById('mode-svcs').innerHTML = cfg.services.map(s => '<li>' + s + '</li>').join('');
+    document.getElementById('mode-case-tag').textContent = cfg.cs.tag;
+    document.getElementById('mode-case-tag').style.color = cfg.accent;
+    document.getElementById('mode-case-stat').textContent = cfg.cs.stat;
+    document.getElementById('mode-case-stat').style.color = cfg.accent;
+    document.getElementById('mode-case-name').textContent = cfg.cs.name;
+    document.getElementById('mode-case-desc').textContent = cfg.cs.desc;
+    exitBtn.style.color = cfg.accent; exitBtn.style.borderColor = cfg.accent;
+    document.body.style.overflow = 'hidden';
+    overlay.classList.remove('m-closing');
+    overlay.classList.add('m-open');
+    setTimeout(() => lazyThree(() => initScene(cfg)), 250);
+    setTimeout(() => modePanel.classList.add('vis'), 1050);
+  }
+
+  function deactivateMode() {
+    modePanel.classList.remove('vis');
+    overlay.classList.remove('m-open');
+    overlay.classList.add('m-closing');
+    document.body.style.overflow = '';
+    setTimeout(() => { overlay.classList.remove('m-closing'); destroyScene(); currentMode = null; }, 820);
+  }
+
+  // ── LAZY LOAD THREE.JS ────────────────────────────────────────
+  function lazyThree(cb) {
+    if (window.THREE) { THREE_lib = window.THREE; cb(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js';
+    s.onload = () => { THREE_lib = window.THREE; cb(); };
+    document.head.appendChild(s);
+  }
+
+  // ── SCENE LIFECYCLE ───────────────────────────────────────────
+  function initScene(cfg) {
+    destroyScene();
+    sceneObjs = {}; sceneStartMs = Date.now();
+    const W = window.innerWidth, H = window.innerHeight;
+    const T = THREE_lib;
+    renderer = new T.WebGLRenderer({ canvas: document.getElementById('mode-canvas'), antialias: true });
+    renderer.setSize(W, H); renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    scene = new T.Scene(); scene.background = new T.Color(cfg.bg);
+    camera = new T.PerspectiveCamera(55, W / H, 0.1, 500);
+    ({ realtor: buildRealtor, cafe: buildCafe, corporate: buildCorporate, dealership: buildDealership }[cfg.scene])(cfg);
+    (function loop() { animId = requestAnimationFrame(loop); ({ realtor: updateRealtor, cafe: updateCafe, corporate: updateCorporate, dealership: updateDealership }[cfg.scene])(); renderer.render(scene, camera); })();
+  }
+
+  function destroyScene() {
+    if (animId) { cancelAnimationFrame(animId); animId = null; }
+    if (renderer) { renderer.dispose(); }
+    if (scene) { scene.clear(); }
+    renderer = scene = camera = null; sceneObjs = {};
+  }
+
+  function T() { return THREE_lib; }
+  function sec() { return (Date.now() - sceneStartMs) / 1000; }
+
+  // ── REALTOR — Blueprint grid + rising buildings ───────────────
+  function buildRealtor() {
+    const T3 = T();
+    camera.position.set(0, 10, 22); camera.lookAt(0, 4, 0);
+    const grid = new T3.GridHelper(50, 50, 0x2A5298, 0x3D6CC0);
+    grid.material.opacity = 0.28; grid.material.transparent = true; scene.add(grid);
+    scene.add(new T3.AmbientLight(0xffffff, 0.88));
+    const sun = new T3.DirectionalLight(0xD6E8FF, 1.3); sun.position.set(10, 20, 15); scene.add(sun);
+    const fill = new T3.DirectionalLight(0xBDD4F0, 0.35); fill.position.set(-10, 5, -5); scene.add(fill);
+    const BLDGS = [
+      [-6, -2, 2.0, 8,  2.0, 0.0], [-3,  1, 2.8, 12, 2.2, 0.4],
+      [ 0, -3, 1.6, 6,  1.6, 0.2], [ 2.5, 0, 3.2, 15, 2.6, 0.6],
+      [ 5.5,-1, 2.2, 9,  2.2, 0.25],[-5,  4, 1.4,  5, 1.4, 0.5],
+      [ 1.5, 4.5,2.0,7,  1.8, 0.35],[ 7.5, 2, 1.2, 4, 1.2, 0.7],
+    ];
+    sceneObjs.buildings = BLDGS.map(([x, z, w, h, d, dl]) => {
+      const geo = new T3.BoxGeometry(w, h, d);
+      const mesh = new T3.Mesh(geo, new T3.MeshLambertMaterial({ color: 0xCDDDF0 }));
+      const wire = new T3.LineSegments(new T3.EdgesGeometry(geo), new T3.LineBasicMaterial({ color: 0x1B3A6B, transparent: true, opacity: 0.55 }));
+      const g = new T3.Group(); g.add(mesh); g.add(wire);
+      g.position.set(x, -(h / 2) - 0.2, z);
+      g.userData = { tY: h / 2, dl, h };
+      scene.add(g); return g;
+    });
+    sceneObjs.rAngle = 0;
+  }
+
+  function updateRealtor() {
+    const t = sec();
+    sceneObjs.buildings.forEach(g => {
+      const tl = Math.max(0, t - g.userData.dl);
+      if (tl > 0) {
+        const p = Math.min(1, tl / 1.8);
+        const e = 1 - Math.pow(1 - p, 3);
+        g.position.y = -(g.userData.h / 2) + e * (g.userData.h / 2 + 0.2);
+      }
+    });
+    sceneObjs.rAngle = (sceneObjs.rAngle || 0) + 0.0007;
+    const a = sceneObjs.rAngle;
+    camera.position.x = Math.sin(a) * 18; camera.position.z = Math.cos(a) * 18;
+    camera.position.y = 10 + Math.sin(a * 0.5);
+    camera.lookAt(0, 5, 0);
+  }
+
+  // ── CAFE — Warm low-poly interior + steam ─────────────────────
+  function buildCafe() {
+    const T3 = T();
+    camera.position.set(0, 5, 12); camera.lookAt(0, 1.5, 0);
+    scene.add(new T3.AmbientLight(0x1A0808, 0.8));
+    const pendPos = [[-3, 3.2, -1], [0, 3.2, 0.2], [3, 3.2, -1]];
+    pendPos.forEach(([x, y, z]) => { const pt = new T3.PointLight(0xD4823A, 2.5, 9); pt.position.set(x, y, z); scene.add(pt); });
+    const bl = new T3.PointLight(0xF0A060, 0.7, 20); bl.position.set(0, 5, -4); scene.add(bl);
+    // Floor
+    const fl = new T3.Mesh(new T3.PlaneGeometry(24, 24), new T3.MeshLambertMaterial({ color: 0x140804 }));
+    fl.rotation.x = -Math.PI / 2; scene.add(fl);
+    // Counter
+    const cnt = new T3.Mesh(new T3.BoxGeometry(9, 1.0, 1.0), new T3.MeshLambertMaterial({ color: 0x2C1208 })); cnt.position.set(0, 0.5, -5); scene.add(cnt);
+    // Back wall
+    const bw = new T3.Mesh(new T3.PlaneGeometry(14, 6), new T3.MeshLambertMaterial({ color: 0x1A0C06 })); bw.position.set(0, 3, -5.6); scene.add(bw);
+    // Tables
+    const tMat = new T3.MeshLambertMaterial({ color: 0x3A1C0C });
+    const lMat = new T3.MeshLambertMaterial({ color: 0x2A1408 });
+    [[-3, 1.5], [0, 1.5], [3, 1.5]].forEach(([tx, tz]) => {
+      const top = new T3.Mesh(new T3.BoxGeometry(0.9, 0.06, 0.9), tMat); top.position.set(tx, 0.76, tz); scene.add(top);
+      const leg = new T3.Mesh(new T3.CylinderGeometry(0.04, 0.04, 0.76, 6), lMat); leg.position.set(tx, 0.38, tz); scene.add(leg);
+    });
+    // Pendant lamps
+    pendPos.forEach(([x, y, z]) => {
+      const lamp = new T3.Mesh(new T3.CylinderGeometry(0.05, 0.22, 0.3, 8), new T3.MeshLambertMaterial({ color: 0x9B7040, emissive: 0xD4823A, emissiveIntensity: 0.4 })); lamp.position.set(x, y + 0.15, z); scene.add(lamp);
+      const cord = new T3.Mesh(new T3.CylinderGeometry(0.012, 0.012, 1.8, 4), lMat); cord.position.set(x, y + 1.05, z); scene.add(cord);
+    });
+    // Steam particles
+    const sGeo = new T3.SphereGeometry(0.034, 5, 5);
+    const tableXs = [-3, 0, 3];
+    sceneObjs.steam = Array.from({ length: 45 }, (_, i) => {
+      const tx = tableXs[i % 3];
+      const s = new T3.Mesh(sGeo, new T3.MeshBasicMaterial({ color: 0xF5E6D3, transparent: true, opacity: 0 }));
+      s.position.set(tx + (Math.random() - 0.5) * 0.35, 0.82 + Math.random() * 1.9, 1.5 + (Math.random() - 0.5) * 0.3);
+      s.userData = { bx: tx, phase: Math.random() * Math.PI * 2, spd: 0.28 + Math.random() * 0.45 };
+      scene.add(s); return s;
+    });
+    sceneObjs.cAngle = 0;
+  }
+
+  function updateCafe() {
+    const t = sec();
+    sceneObjs.cAngle = (sceneObjs.cAngle || 0) + 0.0005;
+    sceneObjs.steam.forEach(p => {
+      const h = p.position.y - 0.82;
+      p.position.y += p.userData.spd * 0.007;
+      p.position.x += Math.sin(t * 0.6 + p.userData.phase) * 0.0015;
+      p.material.opacity = 0.38 * Math.sin(Math.min(1, h / 2.3) * Math.PI);
+      if (p.position.y > 3.3) { p.position.y = 0.82; p.position.x = p.userData.bx + (Math.random() - 0.5) * 0.35; }
+    });
+    const a = sceneObjs.cAngle;
+    camera.position.x = Math.sin(a) * 2.2;
+    camera.position.y = 4.5 + Math.sin(a * 0.7) * 0.3;
+    camera.lookAt(0, 1.5, 0);
+  }
+
+  // ── CORPORATE — Dark office, data network ─────────────────────
+  function buildCorporate() {
+    const T3 = T();
+    camera.position.set(0, 7, 19); camera.lookAt(0, 3.5, 0);
+    scene.add(new T3.AmbientLight(0x040810, 1.0));
+    const blueL = new T3.PointLight(0x1A5BAA, 3.2, 24); blueL.position.set(-5, 9, 0); scene.add(blueL);
+    const tealL = new T3.PointLight(0x0ACFC0, 2.0, 20); tealL.position.set(6, 7, -2); scene.add(tealL);
+    const grid = new T3.GridHelper(50, 50, 0x08254A, 0x061830); grid.material.opacity = 0.5; grid.material.transparent = true; scene.add(grid);
+    // Background building wireframes
+    [[-9,-8,2,14,2],[-5,-9,3,20,2.5],[0,-10,2.5,16,2.5],[5,-9,3.5,22,3],[9,-8,2,12,2]].forEach(([x, z, w, h, d]) => {
+      const wf = new T3.LineSegments(new T3.EdgesGeometry(new T3.BoxGeometry(w, h, d)), new T3.LineBasicMaterial({ color: 0x0A2A48, transparent: true, opacity: 0.7 }));
+      wf.position.set(x, h / 2, z); scene.add(wf);
+    });
+    // Nodes
+    const nPosArr = [
+      [0,4,0],[-3,5.5,-2],[3,4.5,-1],[-1.5,2.5,2.5],[2.5,6.5,-2.5],
+      [-4,3.5,1.5],[4.5,2.8,2],[0,8,-2],[-2,7,-4],[3.5,6,1.5],
+      [1,2,-1],[-3,2.5,-3],[4,4.5,-4],[-1,5,3.5],[2,3.5,4],
+    ];
+    const nGeo = new T3.SphereGeometry(0.13, 8, 8);
+    sceneObjs.nodes = nPosArr.map(([x, y, z]) => {
+      const n = new T3.Mesh(nGeo, new T3.MeshBasicMaterial({ color: 0x4A9EDB }));
+      n.position.set(x, y, z); n.userData = { base: [x, y, z], phase: Math.random() * Math.PI * 2 };
+      scene.add(n); return n;
+    });
+    // Connection lines
+    const linePts = [];
+    for (let i = 0; i < nPosArr.length; i++) {
+      for (let j = i + 1; j < nPosArr.length; j++) {
+        const [ax, ay, az] = nPosArr[i]; const [bx, by, bz] = nPosArr[j];
+        if (Math.hypot(ax - bx, ay - by, az - bz) < 5) {
+          linePts.push(new T3.Vector3(ax, ay, az), new T3.Vector3(bx, by, bz));
+        }
+      }
+    }
+    scene.add(new T3.LineSegments(new T3.BufferGeometry().setFromPoints(linePts), new T3.LineBasicMaterial({ color: 0x0A4A7A, transparent: true, opacity: 0.45 })));
+    // Data packets along edges
+    sceneObjs.packets = [];
+    for (let i = 0; i < linePts.length - 1 && sceneObjs.packets.length < 12; i += 2) {
+      const p = new T3.Mesh(new T3.SphereGeometry(0.085, 5, 5), new T3.MeshBasicMaterial({ color: 0x00D4FF }));
+      p.userData = { a: linePts[i].clone(), b: linePts[i + 1].clone(), t: Math.random(), spd: 0.003 + Math.random() * 0.004 };
+      scene.add(p); sceneObjs.packets.push(p);
+    }
+    sceneObjs.coAngle = 0;
+  }
+
+  function updateCorporate() {
+    const t = sec();
+    sceneObjs.nodes.forEach(n => {
+      const s = 1 + 0.15 * Math.sin(t * 1.3 + n.userData.phase);
+      n.scale.setScalar(s);
+      n.position.y = n.userData.base[1] + Math.sin(t * 0.5 + n.userData.phase) * 0.12;
+    });
+    sceneObjs.packets.forEach(p => {
+      p.userData.t += p.userData.spd;
+      if (p.userData.t >= 1) { p.userData.t = 0; const tmp = p.userData.a; p.userData.a = p.userData.b; p.userData.b = tmp; }
+      p.position.lerpVectors(p.userData.a, p.userData.b, p.userData.t);
+    });
+    sceneObjs.coAngle = (sceneObjs.coAngle || 0) + 0.0006;
+    const a = sceneObjs.coAngle;
+    camera.position.x = Math.sin(a) * 15; camera.position.z = Math.cos(a) * 15;
+    camera.position.y = 7 + Math.sin(a * 0.5) * 1.5;
+    camera.lookAt(0, 3.5, 0);
+  }
+
+  // ── DEALERSHIP — Blender wireframe aesthetic ──────────────────
+  function buildDealership() {
+    const T3 = T();
+    camera.position.set(0, 3.5, 18); camera.lookAt(0, 1.2, 0);
+    scene.add(new T3.AmbientLight(0x080808, 0.5));
+    [[-3,14,5,0xFFFFFF,2.5],[5,11,7,0xE8E8FF,1.5]].forEach(([x,y,z,col,i]) => {
+      const sp = new T3.SpotLight(col, i, 45, Math.PI / 5.5, 0.5); sp.position.set(x, y, z); scene.add(sp);
+    });
+    // Blender-style floor grid
+    const gd = new T3.GridHelper(60, 60, 0x2A2A2A, 0x1C1C1C); gd.material.opacity = 0.9; gd.material.transparent = true; scene.add(gd);
+
+    function makeCar(cx, cz, sc, ry) {
+      const wm = new T3.LineBasicMaterial({ color: 0xD2D2D2 });
+      const g = new T3.Group(); g.position.set(cx, 0, cz); g.rotation.y = ry; g.scale.setScalar(sc);
+      // Lower body
+      const lb = new T3.LineSegments(new T3.EdgesGeometry(new T3.BoxGeometry(4.0, 0.55, 1.75)), wm); lb.position.y = 0.52; g.add(lb);
+      // Cabin
+      const uc = new T3.LineSegments(new T3.EdgesGeometry(new T3.BoxGeometry(2.3, 0.65, 1.6)), wm); uc.position.set(-0.1, 1.05, 0); g.add(uc);
+      // Hood wedge
+      const hw = new T3.LineSegments(new T3.EdgesGeometry(new T3.BoxGeometry(1.1, 0.22, 1.65)), wm); hw.position.set(1.15, 0.76, 0); g.add(hw);
+      // 4 Wheels
+      [[1.25, 0.88], [1.25, -0.88], [-1.25, 0.88], [-1.25, -0.88]].forEach(([wx, wz]) => {
+        const wh = new T3.LineSegments(new T3.EdgesGeometry(new T3.CylinderGeometry(0.42, 0.42, 0.26, 12)), wm);
+        wh.rotation.z = Math.PI / 2; wh.position.set(wx, 0.42, wz); g.add(wh);
+      });
+      scene.add(g); return g;
+    }
+
+    sceneObjs.cars = [makeCar(-6, 0, 0.9, 0.18), makeCar(0, 0, 1.0, 0), makeCar(6, 0, 0.88, -0.22)];
+    // Showroom back wall
+    const bw = new T3.LineSegments(new T3.EdgesGeometry(new T3.BoxGeometry(32, 10, 0.1)), new T3.LineBasicMaterial({ color: 0x282828, transparent: true, opacity: 0.5 }));
+    bw.position.set(0, 5, -10); scene.add(bw);
+    sceneObjs.dAngle = 0;
+  }
+
+  function updateDealership() {
+    const t = sec();
+    sceneObjs.cars.forEach((c, i) => { c.position.y = Math.sin(t * 0.5 + i * 1.3) * 0.04; });
+    sceneObjs.dAngle = (sceneObjs.dAngle || 0) + 0.00045;
+    const a = sceneObjs.dAngle;
+    camera.position.x = Math.sin(a) * 5;
+    camera.position.y = 3.5 + Math.sin(a * 0.6) * 0.4;
+    camera.position.z = Math.max(11, 18 - t * 0.25);
+    camera.lookAt(0, 1.2, 0);
+  }
+
+  // ── RESIZE ────────────────────────────────────────────────────
+  window.addEventListener('resize', () => {
+    if (!renderer || !camera) return;
+    const W = window.innerWidth, H = window.innerHeight;
+    renderer.setSize(W, H); camera.aspect = W / H; camera.updateProjectionMatrix();
+  });
+
+})();
 </script>
 </body>
 </html>
