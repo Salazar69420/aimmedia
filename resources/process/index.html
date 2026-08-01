@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Process — AIM Media</title>
+  <meta name="description" content="How AIM Media builds and manages an AI voice system, from discovery and system design through deployment and continuous improvement." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/site.css" />
+
+  <!-- GSAP ecosystem -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Lenis smooth scroll -->
+  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+  <!-- Three.js — loaded eagerly so mode scenes are always ready -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+<body>
+
+<!-- ── GRAIN ──────────────────────────────────────────── -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ── PROGRESS ───────────────────────────────────────── -->
+<div id="progress" aria-hidden="true"></div>
+
+<!-- ── PRELOADER ──────────────────────────────────────── -->
+<div id="preloader" aria-hidden="true">
+  <div class="pre-wordmark">
+    <span class="pre-char" style="animation-delay:0.0s">A</span>
+    <span class="pre-char" style="animation-delay:0.08s">I</span>
+    <span class="pre-char" style="animation-delay:0.16s">M</span>
+    <span class="pre-char space" style="animation-delay:0.24s">&nbsp;</span>
+    <span class="pre-char" style="animation-delay:0.30s">M</span>
+    <span class="pre-char" style="animation-delay:0.38s">E</span>
+    <span class="pre-char" style="animation-delay:0.46s">D</span>
+    <span class="pre-char" style="animation-delay:0.54s">I</span>
+    <span class="pre-char" style="animation-delay:0.62s">A</span>
+  </div>
+  <div class="pre-tagline">Intelligence. Automated.</div>
+  <div class="pre-line"></div>
+</div>
+
+<!-- ── CURSOR ─────────────────────────────────────────── -->
+<div id="cursor" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<!-- ── SOUND TOGGLE ───────────────────────────────────── -->
+<button id="sound-btn" aria-label="Toggle sound">🔇</button>
+
+<!-- ── NAV ────────────────────────────────────────────── -->
+<nav id="nav">
+  <a href="/" class="nav-logo">AIM Media</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li class="nav-drop">
+      <a href="/services/voice-system-design" class="nav-drop-trigger">Services</a>
+      <ul class="nav-drop-menu">
+        <li><a href="/services/voice-system-design">Voice System Design</a></li>
+        <li><a href="/services/infra-as-a-service">Infra-as-a-Service</a></li>
+        <li><a href="/services/managed-voice-operations">Managed Voice Operations</a></li>
+      </ul>
+    </li>
+    <li class="nav-drop">
+      <a href="/use-cases/front-desk" class="nav-drop-trigger">Use Cases</a>
+      <ul class="nav-drop-menu">
+        <li><a href="/use-cases/front-desk">Front Desk</a></li>
+        <li><a href="/use-cases/customer-support">Customer Support</a></li>
+        <li><a href="/use-cases/intake">Intake</a></li>
+        <li><a href="/use-cases/call-center">Call Center</a></li>
+      </ul>
+    </li>
+    <li><a href="/demos">Demos</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+    <li><a href="/resources/process" class="active">Process</a></li>
+    <li><a href="/resources/about">About</a></li>
+    <li><a href="mailto:kaushikkrish831@gmail.com">Contact</a></li>
+  </ul>
+  <div class="mode-btn" id="mode-btn" role="button" tabindex="0" aria-label="Explore industry modes" aria-haspopup="listbox" aria-expanded="false">
+    <span class="mode-label-txt">MODES</span>
+    <span class="mode-btn-chev"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="mode-dropdown" id="mode-dropdown" role="listbox">
+      <div class="mode-opt" data-mode="realtor" role="option"><span class="mode-dot" style="background:#3D6CC0"></span>Real Estate</div>
+      <div class="mode-opt" data-mode="cafe" role="option"><span class="mode-dot" style="background:#D4956A"></span>Hospitality</div>
+      <div class="mode-opt" data-mode="corporate" role="option"><span class="mode-dot" style="background:#4A9EDB"></span>Enterprise</div>
+      <div class="mode-opt" data-mode="dealership" role="option"><span class="mode-dot" style="background:#C0C0C0"></span>Dealership</div>
+    </div>
+  </div>
+  <button id="nav-burger" class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div id="nav-mobile" class="nav-mobile" aria-hidden="true">
+  <a href="/">Home</a>
+  <div class="nav-mobile-group-label">Services</div>
+  <div class="nav-mobile-sub">
+    <a href="/services/voice-system-design">Voice System Design</a>
+    <a href="/services/infra-as-a-service">Infra-as-a-Service</a>
+    <a href="/services/managed-voice-operations">Managed Voice Operations</a>
+  </div>
+  <div class="nav-mobile-group-label">Use Cases</div>
+  <div class="nav-mobile-sub">
+    <a href="/use-cases/front-desk">Front Desk</a>
+    <a href="/use-cases/customer-support">Customer Support</a>
+    <a href="/use-cases/intake">Intake</a>
+    <a href="/use-cases/call-center">Call Center</a>
+  </div>
+  <a href="/demos">Demos</a>
+  <a href="/pricing">Pricing</a>
+  <a href="/resources/process" class="active">Process</a>
+  <a href="/resources/about">About</a>
+  <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+</div>
+
+
+<!-- ── HERO ───────────────────────────────────────────── -->
+<section id="hero" class="hero-inner hero-tight">
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-vignette" aria-hidden="true"></div>
+  <div class="hero-bg-num" aria-hidden="true">06</div>
+  <div class="hero-content">
+    <div class="crumb"><a href="/">Home</a><span>/</span><span>Process</span></div>
+    <div class="hero-eyebrow">How We Work</div>
+    <h1 class="hero-headline">
+      <span class="hero-line hero-line-italic"><span>Six stages.</span></span>
+      <span class="hero-line hero-line-bold"><span>One system.</span></span>
+    </h1>
+    <p class="hero-sub">Every engagement moves through the same six stages, whether it's a single front desk or a multi-location operation — from understanding how you take calls today to improving the system for as long as we manage it.</p>
+    
+  </div>
+</section>
+
+<section class="sect">
+  <div class="container">
+    <div class="process-list">
+      <div class="p-step rev">
+        <div class="p-step-n">01</div>
+        <div>
+          <div class="p-step-title">Discovery</div>
+          <div class="p-step-desc">Understand call volume, departments, tools, workflows, and bottlenecks — the operational reality the system has to fit.</div>
+        </div>
+      </div>
+      <div class="p-step rev">
+        <div class="p-step-n">02</div>
+        <div>
+          <div class="p-step-title">System Design</div>
+          <div class="p-step-desc">Define agent roles, call flows, routing logic, integrations, and escalation rules — the blueprint for the deployed system.</div>
+        </div>
+      </div>
+      <div class="p-step rev">
+        <div class="p-step-n">03</div>
+        <div>
+          <div class="p-step-title">Build + Integration</div>
+          <div class="p-step-desc">Connect voice platforms, CRM systems, calendars, ticketing tools, dispatch systems, and notifications into one working system.</div>
+        </div>
+      </div>
+      <div class="p-step rev">
+        <div class="p-step-n">04</div>
+        <div>
+          <div class="p-step-title">Testing + Optimization</div>
+          <div class="p-step-desc">Test real conversations, refine responses, validate automations, and improve handoffs before anything goes live.</div>
+        </div>
+      </div>
+      <div class="p-step rev">
+        <div class="p-step-n">05</div>
+        <div>
+          <div class="p-step-title">Deployment</div>
+          <div class="p-step-desc">Launch the production system with monitoring, reliability, and operational safeguards already in place.</div>
+        </div>
+      </div>
+      <div class="p-step rev">
+        <div class="p-step-n">06</div>
+        <div>
+          <div class="p-step-title">Continuous Improvement</div>
+          <div class="p-step-desc">Improve conversation quality, routing, workflows, and system performance over time — described further under <a href="/services/managed-voice-operations" style="color:var(--accent)">Managed Voice Operations</a>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── CTA ─────────────────────────────────────────────── -->
+<section id="cta">
+  <div class="cta-orb-1" aria-hidden="true"></div>
+  <div class="cta-orb-2" aria-hidden="true"></div>
+  <div class="cta-inner">
+    <div class="cta-eye rev">Start with stage one</div>
+    <h2 class="cta-headline rev">Let's start with<br><strong>discovery.</strong></h2>
+    <p class="cta-sub rev">Discovery · System Design · Build · Deployment · Managed Operations</p>
+    <a href="mailto:kaushikkrish831@gmail.com" class="btn-primary rev">Design Your Voice System →</a>
+  </div>
+</section>
+
+
+<!-- ── FOOTER ──────────────────────────────────────────── -->
+<footer>
+  <div class="ft-top">
+    <div class="ft-brand">
+      <div class="ft-logo">AIM Media</div>
+      <div class="ft-tag">"Intelligence. Automated."</div>
+      <div class="ft-r" style="text-align:left"><a href="mailto:kaushikkrish831@gmail.com">kaushikkrish831@gmail.com</a></div>
+    </div>
+    <div class="ft-sitemap">
+      <div class="ft-col">
+        <div class="ft-col-title">Site</div>
+        <a href="/">Home</a>
+        <a href="/demos">Demos</a>
+        <a href="/pricing">Pricing</a>
+      </div>
+      <div class="ft-col">
+        <div class="ft-col-title">Services</div>
+        <a href="/services/voice-system-design">Voice System Design</a>
+        <a href="/services/infra-as-a-service">Infra-as-a-Service</a>
+        <a href="/services/managed-voice-operations">Managed Voice Operations</a>
+      </div>
+      <div class="ft-col">
+        <div class="ft-col-title">Use Cases</div>
+        <a href="/use-cases/front-desk">Front Desk</a>
+        <a href="/use-cases/customer-support">Customer Support</a>
+        <a href="/use-cases/intake">Intake</a>
+        <a href="/use-cases/call-center">Call Center</a>
+      </div>
+      <div class="ft-col">
+        <div class="ft-col-title">Company</div>
+        <a href="/resources/about">About</a>
+        <a href="/resources/process">Process</a>
+        <a href="/resources/vision">Vision</a>
+        <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+      </div>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <span>&copy; 2026 AIM Media. All rights reserved.</span>
+    <div class="ft-legal-links">
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<div id="spotlight" aria-hidden="true"></div>
+
+<!-- ── EXPANDING CARD MODAL ────────────────────────────────── -->
+<div id="cs-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <button id="cs-close" aria-label="Close">✕</button>
+  <div id="cs-m-bg"></div>
+  <div class="cs-m-ov"></div>
+  <div class="cs-m-body">
+    <div class="cs-m-tag-el" id="cs-m-tag"></div>
+    <div class="cs-m-name-el" id="cs-m-name"><span></span></div>
+    <div class="cs-m-result-el" id="cs-m-result"></div>
+  </div>
+  <div class="cs-m-swipe">↓ swipe down to close</div>
+</div>
+
+<!-- ── CINEMATIC FLASH ────────────────────────────────────── -->
+<div id="mode-flash"></div>
+
+<!-- ── INDUSTRY MODE OVERLAY ────────────────────────────── -->
+<div id="mode-overlay" data-mode="">
+  <canvas id="mode-canvas"></canvas>
+  <div class="mode-vignette"></div>
+  <div class="mode-topbar">
+    <div class="mode-topbar-logo">AIM Media</div>
+    <div class="mode-badge-lbl" id="mode-badge-lbl"></div>
+    <button class="mode-exit-btn" id="mode-exit-btn">✕ EXIT</button>
+  </div>
+  <div class="mode-hud-hl" id="mode-hud-hl">
+    <div class="mode-eyebrow" id="mode-eyebrow"></div>
+    <h2 class="mode-headline" id="mode-headline"></h2>
+    <ul class="mode-svcs" id="mode-svcs"></ul>
+  </div>
+  <div class="mode-hud-case" id="mode-hud-case">
+    <div class="mode-case">
+      <div class="mode-case-tag" id="mode-case-tag"></div>
+      <div class="mode-case-stat" id="mode-case-stat"></div>
+      <div class="mode-case-name" id="mode-case-name"></div>
+      <div class="mode-case-desc" id="mode-case-desc"></div>
+    </div>
+  </div>
+  <div class="mode-hint">Move cursor to explore</div>
+</div>
+
+<script src="/assets/js/core.js"></script>
+<script src="/assets/js/modes.js"></script>
+</body>
+</html>

@@ -13,10 +13,19 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ASSETS_DIR = path.join(__dirname, 'assets');
-const API_KEY = '84cec76d1d6c3f0e860e43e7c7519d90a8a3a6838a24e6f59a3a249f8b86ce7a';
+const API_KEY = process.env.WAVESPEED_API_KEY;
 const BASE_URL = 'https://api.wavespeed.ai/api/v3';
 
 if (!fs.existsSync(ASSETS_DIR)) fs.mkdirSync(ASSETS_DIR, { recursive: true });
+
+if (!API_KEY) {
+  console.error('\n  ✗ WAVESPEED_API_KEY is not set.');
+  console.error('  This script only regenerates AI-generated assets (images/video/3D).');
+  console.error('  All committed assets are already cached in /assets, so the site');
+  console.error('  works without running this script. Set WAVESPEED_API_KEY in your');
+  console.error('  environment (see .env.example) if you need to regenerate assets.\n');
+  process.exit(0);
+}
 
 // ── HELPERS ──────────────────────────────────────────────────────
 

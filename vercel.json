@@ -1,5 +1,7 @@
 {
   "outputDirectory": ".",
-  "buildCommand": null,
-  "installCommand": null
+  "buildCommand": "npm run build",
+  "installCommand": null,
+  "cleanUrls": true,
+  "trailingSlash": false
 }

@@ -1,15 +1,13 @@
 {
   "name": "aim-media-website",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "type": "module",
-  "description": "AIM Media — World-Class Agency Website",
-  "main": "build.js",
+  "description": "AIM Media — AI Voice Infrastructure · Managed Operations",
+  "main": "scripts/build-pages.js",
   "scripts": {
-    "build": "node build.js",
-    "start": "node build.js"
-  },
-  "dependencies": {
-    "@google/stitch-sdk": "latest",
-    "node-fetch": "^3.3.2"
+    "build": "node scripts/build-pages.js",
+    "pages": "node scripts/build-pages.js",
+    "generate:assets": "node build.js",
+    "generate:models": "node generate3d.js"
   }
 }

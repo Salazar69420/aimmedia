@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service — AIM Media</title>
+  <meta name="description" content="The terms that govern engagements with AIM Media for the design, deployment, and management of AI voice infrastructure." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="/assets/css/site.css" />
+
+  <!-- GSAP ecosystem -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <!-- Lenis smooth scroll -->
+  <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
+  <!-- Three.js — loaded eagerly so mode scenes are always ready -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+<body>
+
+<!-- ── GRAIN ──────────────────────────────────────────── -->
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ── PROGRESS ───────────────────────────────────────── -->
+<div id="progress" aria-hidden="true"></div>
+
+<!-- ── PRELOADER ──────────────────────────────────────── -->
+<div id="preloader" aria-hidden="true">
+  <div class="pre-wordmark">
+    <span class="pre-char" style="animation-delay:0.0s">A</span>
+    <span class="pre-char" style="animation-delay:0.08s">I</span>
+    <span class="pre-char" style="animation-delay:0.16s">M</span>
+    <span class="pre-char space" style="animation-delay:0.24s">&nbsp;</span>
+    <span class="pre-char" style="animation-delay:0.30s">M</span>
+    <span class="pre-char" style="animation-delay:0.38s">E</span>
+    <span class="pre-char" style="animation-delay:0.46s">D</span>
+    <span class="pre-char" style="animation-delay:0.54s">I</span>
+    <span class="pre-char" style="animation-delay:0.62s">A</span>
+  </div>
+  <div class="pre-tagline">Intelligence. Automated.</div>
+  <div class="pre-line"></div>
+</div>
+
+<!-- ── CURSOR ─────────────────────────────────────────── -->
+<div id="cursor" aria-hidden="true"></div>
+<div id="cursor-ring" aria-hidden="true"></div>
+
+<!-- ── SOUND TOGGLE ───────────────────────────────────── -->
+<button id="sound-btn" aria-label="Toggle sound">🔇</button>
+
+<!-- ── NAV ────────────────────────────────────────────── -->
+<nav id="nav">
+  <a href="/" class="nav-logo">AIM Media</a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li class="nav-drop">
+      <a href="/services/voice-system-design" class="nav-drop-trigger">Services</a>
+      <ul class="nav-drop-menu">
+        <li><a href="/services/voice-system-design">Voice System Design</a></li>
+        <li><a href="/services/infra-as-a-service">Infra-as-a-Service</a></li>
+        <li><a href="/services/managed-voice-operations">Managed Voice Operations</a></li>
+      </ul>
+    </li>
+    <li class="nav-drop">
+      <a href="/use-cases/front-desk" class="nav-drop-trigger">Use Cases</a>
+      <ul class="nav-drop-menu">
+        <li><a href="/use-cases/front-desk">Front Desk</a></li>
+        <li><a href="/use-cases/customer-support">Customer Support</a></li>
+        <li><a href="/use-cases/intake">Intake</a></li>
+        <li><a href="/use-cases/call-center">Call Center</a></li>
+      </ul>
+    </li>
+    <li><a href="/demos">Demos</a></li>
+    <li><a href="/pricing">Pricing</a></li>
+    <li><a href="/resources/process">Process</a></li>
+    <li><a href="/resources/about">About</a></li>
+    <li><a href="mailto:kaushikkrish831@gmail.com">Contact</a></li>
+  </ul>
+  <div class="mode-btn" id="mode-btn" role="button" tabindex="0" aria-label="Explore industry modes" aria-haspopup="listbox" aria-expanded="false">
+    <span class="mode-label-txt">MODES</span>
+    <span class="mode-btn-chev"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="mode-dropdown" id="mode-dropdown" role="listbox">
+      <div class="mode-opt" data-mode="realtor" role="option"><span class="mode-dot" style="background:#3D6CC0"></span>Real Estate</div>
+      <div class="mode-opt" data-mode="cafe" role="option"><span class="mode-dot" style="background:#D4956A"></span>Hospitality</div>
+      <div class="mode-opt" data-mode="corporate" role="option"><span class="mode-dot" style="background:#4A9EDB"></span>Enterprise</div>
+      <div class="mode-opt" data-mode="dealership" role="option"><span class="mode-dot" style="background:#C0C0C0"></span>Dealership</div>
+    </div>
+  </div>
+  <button id="nav-burger" class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<div id="nav-mobile" class="nav-mobile" aria-hidden="true">
+  <a href="/">Home</a>
+  <div class="nav-mobile-group-label">Services</div>
+  <div class="nav-mobile-sub">
+    <a href="/services/voice-system-design">Voice System Design</a>
+    <a href="/services/infra-as-a-service">Infra-as-a-Service</a>
+    <a href="/services/managed-voice-operations">Managed Voice Operations</a>
+  </div>
+  <div class="nav-mobile-group-label">Use Cases</div>
+  <div class="nav-mobile-sub">
+    <a href="/use-cases/front-desk">Front Desk</a>
+    <a href="/use-cases/customer-support">Customer Support</a>
+    <a href="/use-cases/intake">Intake</a>
+    <a href="/use-cases/call-center">Call Center</a>
+  </div>
+  <a href="/demos">Demos</a>
+  <a href="/pricing">Pricing</a>
+  <a href="/resources/process">Process</a>
+  <a href="/resources/about">About</a>
+  <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+</div>
+
+
+<!-- ── HERO ───────────────────────────────────────────── -->
+<section id="hero" class="hero-inner hero-tight">
+  <canvas id="particles" aria-hidden="true"></canvas>
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-vignette" aria-hidden="true"></div>
+  <div class="hero-bg-num" aria-hidden="true">§</div>
+  <div class="hero-content">
+    <div class="crumb"><a href="/">Home</a><span>/</span><span>Terms</span></div>
+    <div class="hero-eyebrow">Legal</div>
+    <h1 class="hero-headline">
+      <span class="hero-line hero-line-italic"><span>Terms of</span></span>
+      <span class="hero-line hero-line-bold"><span>Service.</span></span>
+    </h1>
+    <p class="hero-sub">The terms that govern engagements with AIM Media for the design, deployment, and management of AI voice infrastructure.</p>
+    
+  </div>
+</section>
+
+<section class="sect">
+  <div class="container">
+    <div class="legal-content">
+      <span class="legal-updated">Last updated · August 2026</span>
+
+      <h2>Agreement To Terms</h2>
+      <p>These terms govern your use of this website and any engagement with AIM Media for voice system design, infrastructure management, or related services. By engaging AIM Media or using this site, you agree to these terms.</p>
+
+      <h2>Description Of Services</h2>
+      <p>AIM Media designs, deploys, and manages AI voice infrastructure for call-driven businesses, including voice system design, infrastructure management, and ongoing managed operations as described on this site. The specific scope of any engagement is defined in a separate proposal or agreement between AIM Media and the client.</p>
+
+      <h2>Client Responsibilities</h2>
+      <p>Clients are responsible for providing accurate operational information during discovery, for securing any rights needed to connect AIM Media's systems to their existing tools, and for confirming that their use of a deployed voice system complies with laws and regulations applicable to their industry and jurisdiction, including any obligations related to call recording or caller consent.</p>
+
+      <h2>No Guaranteed Outcomes</h2>
+      <p>AI voice systems augment a business's operations; they do not guarantee specific business results, call volume, or revenue outcomes. AIM Media works to design, deploy, and maintain a reliable system, but outcomes depend on factors outside our control, including a client's own operations, market conditions, and third-party service availability.</p>
+
+      <h2>Intellectual Property</h2>
+      <p>Each party retains ownership of its own pre-existing intellectual property. Ownership of custom configurations, integrations, and materials developed specifically for a client engagement is addressed in that engagement's agreement.</p>
+
+      <h2>Third-Party Services</h2>
+      <p>Our services rely on third-party voice platforms, AI models, telephony carriers, and integration partners. AIM Media is not responsible for outages, changes, or limitations originating from third-party providers, though we work to select reliable providers and to respond promptly when issues arise.</p>
+
+      <h2>Limitation Of Liability</h2>
+      <p>To the maximum extent permitted by law, AIM Media is not liable for indirect, incidental, or consequential damages arising from the use of a deployed voice system or this website. Nothing in these terms limits liability that cannot be limited under applicable law.</p>
+
+      <h2>Changes To These Terms</h2>
+      <p>We may update these terms from time to time. Continued use of our services after an update constitutes acceptance of the revised terms.</p>
+
+      <h2>Governing Law</h2>
+      <p>These terms are governed by the laws of the Province of Ontario, Canada, without regard to conflict-of-law principles.</p>
+
+      <h2>Contact</h2>
+      <p>Questions about these terms can be directed to <a href="mailto:kaushikkrish831@gmail.com" style="color:var(--accent)">kaushikkrish831@gmail.com</a>.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FOOTER ──────────────────────────────────────────── -->
+<footer>
+  <div class="ft-top">
+    <div class="ft-brand">
+      <div class="ft-logo">AIM Media</div>
+      <div class="ft-tag">"Intelligence. Automated."</div>
+      <div class="ft-r" style="text-align:left"><a href="mailto:kaushikkrish831@gmail.com">kaushikkrish831@gmail.com</a></div>
+    </div>
+    <div class="ft-sitemap">
+      <div class="ft-col">
+        <div class="ft-col-title">Site</div>
+        <a href="/">Home</a>
+        <a href="/demos">Demos</a>
+        <a href="/pricing">Pricing</a>
+      </div>
+      <div class="ft-col">
+        <div class="ft-col-title">Services</div>
+        <a href="/services/voice-system-design">Voice System Design</a>
+        <a href="/services/infra-as-a-service">Infra-as-a-Service</a>
+        <a href="/services/managed-voice-operations">Managed Voice Operations</a>
+      </div>
+      <div class="ft-col">
+        <div class="ft-col-title">Use Cases</div>
+        <a href="/use-cases/front-desk">Front Desk</a>
+        <a href="/use-cases/customer-support">Customer Support</a>
+        <a href="/use-cases/intake">Intake</a>
+        <a href="/use-cases/call-center">Call Center</a>
+      </div>
+      <div class="ft-col">
+        <div class="ft-col-title">Company</div>
+        <a href="/resources/about">About</a>
+        <a href="/resources/process">Process</a>
+        <a href="/resources/vision">Vision</a>
+        <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+      </div>
+    </div>
+  </div>
+  <div class="ft-bottom">
+    <span>&copy; 2026 AIM Media. All rights reserved.</span>
+    <div class="ft-legal-links">
+      <a href="/privacy">Privacy</a>
+      <a href="/terms">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<div id="spotlight" aria-hidden="true"></div>
+
+<!-- ── EXPANDING CARD MODAL ────────────────────────────────── -->
+<div id="cs-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <button id="cs-close" aria-label="Close">✕</button>
+  <div id="cs-m-bg"></div>
+  <div class="cs-m-ov"></div>
+  <div class="cs-m-body">
+    <div class="cs-m-tag-el" id="cs-m-tag"></div>
+    <div class="cs-m-name-el" id="cs-m-name"><span></span></div>
+    <div class="cs-m-result-el" id="cs-m-result"></div>
+  </div>
+  <div class="cs-m-swipe">↓ swipe down to close</div>
+</div>
+
+<!-- ── CINEMATIC FLASH ────────────────────────────────────── -->
+<div id="mode-flash"></div>
+
+<!-- ── INDUSTRY MODE OVERLAY ────────────────────────────── -->
+<div id="mode-overlay" data-mode="">
+  <canvas id="mode-canvas"></canvas>
+  <div class="mode-vignette"></div>
+  <div class="mode-topbar">
+    <div class="mode-topbar-logo">AIM Media</div>
+    <div class="mode-badge-lbl" id="mode-badge-lbl"></div>
+    <button class="mode-exit-btn" id="mode-exit-btn">✕ EXIT</button>
+  </div>
+  <div class="mode-hud-hl" id="mode-hud-hl">
+    <div class="mode-eyebrow" id="mode-eyebrow"></div>
+    <h2 class="mode-headline" id="mode-headline"></h2>
+    <ul class="mode-svcs" id="mode-svcs"></ul>
+  </div>
+  <div class="mode-hud-case" id="mode-hud-case">
+    <div class="mode-case">
+      <div class="mode-case-tag" id="mode-case-tag"></div>
+      <div class="mode-case-stat" id="mode-case-stat"></div>
+      <div class="mode-case-name" id="mode-case-name"></div>
+      <div class="mode-case-desc" id="mode-case-desc"></div>
+    </div>
+  </div>
+  <div class="mode-hint">Move cursor to explore</div>
+</div>
+
+<script src="/assets/js/core.js"></script>
+<script src="/assets/js/modes.js"></script>
+</body>
+</html>
