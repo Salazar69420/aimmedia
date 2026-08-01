@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AIM Media — AI Voice Infrastructure · Managed Operations</title>
-  <meta name="description" content="AIM Media designs, deploys, and manages AI voice systems for businesses that run on calls — answering, qualifying, scheduling, routing, and following up inside the tools your team already uses." />
+  <title>AIM Media — AI Voice Agents for Ontario Businesses</title>
+  <meta name="description" content="AIM Media builds AI voice agents that answer the calls your team misses — after hours and during overflow. Every caller is answered, qualified and logged. Serving Ontario, Canada." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,9 +17,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <!-- Lenis smooth scroll -->
   <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
-  <!-- Three.js — loaded eagerly so mode scenes are always ready -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
 
@@ -75,22 +72,17 @@
         <li><a href="/use-cases/call-center">Call Center</a></li>
       </ul>
     </li>
-    <li><a href="/demos">Demos</a></li>
     <li><a href="/pricing">Pricing</a></li>
-    <li><a href="/resources/process">Process</a></li>
-    <li><a href="/resources/about">About</a></li>
-    <li><a href="mailto:kaushikkrish831@gmail.com">Contact</a></li>
+    <li class="nav-drop">
+      <a href="/resources/about" class="nav-drop-trigger">Company</a>
+      <ul class="nav-drop-menu">
+        <li><a href="/resources/about">About</a></li>
+        <li><a href="/resources/process">Process</a></li>
+        <li><a href="/resources/vision">Vision</a></li>
+      </ul>
+    </li>
+    <li><a href="/demo" class="nav-cta">Hear a Demo</a></li>
   </ul>
-  <div class="mode-btn" id="mode-btn" role="button" tabindex="0" aria-label="Explore industry modes" aria-haspopup="listbox" aria-expanded="false">
-    <span class="mode-label-txt">MODES</span>
-    <span class="mode-btn-chev"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    <div class="mode-dropdown" id="mode-dropdown" role="listbox">
-      <div class="mode-opt" data-mode="realtor" role="option"><span class="mode-dot" style="background:#3D6CC0"></span>Real Estate</div>
-      <div class="mode-opt" data-mode="cafe" role="option"><span class="mode-dot" style="background:#D4956A"></span>Hospitality</div>
-      <div class="mode-opt" data-mode="corporate" role="option"><span class="mode-dot" style="background:#4A9EDB"></span>Enterprise</div>
-      <div class="mode-opt" data-mode="dealership" role="option"><span class="mode-dot" style="background:#C0C0C0"></span>Dealership</div>
-    </div>
-  </div>
   <button id="nav-burger" class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
     <span></span><span></span><span></span>
   </button>
@@ -111,11 +103,15 @@
     <a href="/use-cases/intake">Intake</a>
     <a href="/use-cases/call-center">Call Center</a>
   </div>
-  <a href="/demos">Demos</a>
   <a href="/pricing">Pricing</a>
-  <a href="/resources/process">Process</a>
-  <a href="/resources/about">About</a>
-  <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+  <div class="nav-mobile-group-label">Company</div>
+  <div class="nav-mobile-sub">
+    <a href="/resources/about">About</a>
+    <a href="/resources/process">Process</a>
+    <a href="/resources/vision">Vision</a>
+  </div>
+  <a href="/demo">Hear a Demo</a>
+  <a href="mailto:krish@theaimmedia.ca">Contact</a>
 </div>
 
 <!-- ── HERO ───────────────────────────────────────────── -->
@@ -132,15 +128,15 @@
   <div class="hero-bg-num" aria-hidden="true">AI</div>
 
   <div class="hero-content">
-    <div class="hero-eyebrow">AI Voice Infrastructure · Managed Operations</div>
+    <div class="hero-eyebrow">AI Voice Agents · Ontario, Canada</div>
     <h1 class="hero-headline">
       <span class="hero-line hero-line-italic"><span>Intelligence.</span></span>
       <span class="hero-line hero-line-bold"><span>Automated.</span></span>
     </h1>
-    <p class="hero-sub">AIM Media designs, deploys, and manages AI voice systems for businesses that run on calls. Answer, qualify, schedule, route, and follow up inside the tools your team already uses.</p>
+    <p class="hero-sub">Your phone stops working at 5pm. Ours doesn't. AIM Media builds AI voice agents that answer your after-hours and overflow calls, qualify the caller, and send you the summary.</p>
     <div class="hero-cta">
-      <a href="mailto:kaushikkrish831@gmail.com" class="btn-primary" id="cta-btn-hero">Design Your Voice System →</a>
-      <a href="/services/infra-as-a-service" class="btn-ghost">Explore the Infrastructure</a>
+      <a href="/demo" class="btn-primary" id="cta-btn-hero">Hear a Demo →</a>
+      <a href="/pricing" class="btn-ghost">See pricing</a>
     </div>
   </div>
 
@@ -150,138 +146,140 @@
   </div>
 </section>
 
-<!-- ── STATS TICKER ────────────────────────────────────── -->
+<!-- ── TICKER ──────────────────────────────────────────── -->
 <div id="stats">
   <div class="ticker-wrap">
     <div class="ticker-row row-1">
       <div class="t-item"><span class="t-num">24/7</span><span class="t-lbl">Call Coverage</span></div>
-      <div class="t-item"><span class="t-num">Every Call</span><span class="t-lbl">Structured Capture</span></div>
-      <div class="t-item"><span class="t-num">One Layer</span><span class="t-lbl">Voice + CRM + Calendar</span></div>
-      <div class="t-item"><span class="t-num">Managed</span><span class="t-lbl">Monitor + Improve</span></div>
-      <div class="t-item"><span class="t-num">Scalable</span><span class="t-lbl">More Volume, No New Headcount</span></div>
-      <!-- duplicate for loop -->
+      <div class="t-item"><span class="t-num">Every Call</span><span class="t-lbl">Answered + Logged</span></div>
+      <div class="t-item"><span class="t-num">No Contract</span><span class="t-lbl">Month to Month</span></div>
+      <div class="t-item"><span class="t-num">Live in Days</span><span class="t-lbl">Not Months</span></div>
+      <div class="t-item"><span class="t-num">Ontario</span><span class="t-lbl">Canada</span></div>
       <div class="t-item"><span class="t-num">24/7</span><span class="t-lbl">Call Coverage</span></div>
-      <div class="t-item"><span class="t-num">Every Call</span><span class="t-lbl">Structured Capture</span></div>
-      <div class="t-item"><span class="t-num">One Layer</span><span class="t-lbl">Voice + CRM + Calendar</span></div>
-      <div class="t-item"><span class="t-num">Managed</span><span class="t-lbl">Monitor + Improve</span></div>
-      <div class="t-item"><span class="t-num">Scalable</span><span class="t-lbl">More Volume, No New Headcount</span></div>
+      <div class="t-item"><span class="t-num">Every Call</span><span class="t-lbl">Answered + Logged</span></div>
+      <div class="t-item"><span class="t-num">No Contract</span><span class="t-lbl">Month to Month</span></div>
+      <div class="t-item"><span class="t-num">Live in Days</span><span class="t-lbl">Not Months</span></div>
+      <div class="t-item"><span class="t-num">Ontario</span><span class="t-lbl">Canada</span></div>
     </div>
     <div class="ticker-row row-2">
-      <div class="t-item"><span class="t-num">AI Voice Agents</span><span class="t-lbl">Core Offering</span></div>
-      <div class="t-item"><span class="t-num">Front Desk</span><span class="t-lbl">Use Case</span></div>
-      <div class="t-item"><span class="t-num">Customer Support</span><span class="t-lbl">Use Case</span></div>
-      <div class="t-item"><span class="t-num">Intake Operations</span><span class="t-lbl">Use Case</span></div>
-      <div class="t-item"><span class="t-num">Call Centers</span><span class="t-lbl">Use Case</span></div>
-      <div class="t-item"><span class="t-num">CRM Integrations</span><span class="t-lbl">Integration</span></div>
-      <div class="t-item"><span class="t-num">Workflow Automation</span><span class="t-lbl">Integration</span></div>
-      <!-- duplicate -->
-      <div class="t-item"><span class="t-num">AI Voice Agents</span><span class="t-lbl">Core Offering</span></div>
-      <div class="t-item"><span class="t-num">Front Desk</span><span class="t-lbl">Use Case</span></div>
-      <div class="t-item"><span class="t-num">Customer Support</span><span class="t-lbl">Use Case</span></div>
-      <div class="t-item"><span class="t-num">Intake Operations</span><span class="t-lbl">Use Case</span></div>
-      <div class="t-item"><span class="t-num">Call Centers</span><span class="t-lbl">Use Case</span></div>
+      <div class="t-item"><span class="t-num">After Hours</span><span class="t-lbl">Covered</span></div>
+      <div class="t-item"><span class="t-num">Overflow</span><span class="t-lbl">Covered</span></div>
+      <div class="t-item"><span class="t-num">Intake</span><span class="t-lbl">Structured</span></div>
+      <div class="t-item"><span class="t-num">Booking</span><span class="t-lbl">Automatic</span></div>
+      <div class="t-item"><span class="t-num">CRM Sync</span><span class="t-lbl">Every Call</span></div>
+      <div class="t-item"><span class="t-num">After Hours</span><span class="t-lbl">Covered</span></div>
+      <div class="t-item"><span class="t-num">Overflow</span><span class="t-lbl">Covered</span></div>
+      <div class="t-item"><span class="t-num">Intake</span><span class="t-lbl">Structured</span></div>
+      <div class="t-item"><span class="t-num">Booking</span><span class="t-lbl">Automatic</span></div>
+      <div class="t-item"><span class="t-num">CRM Sync</span><span class="t-lbl">Every Call</span></div>
     </div>
   </div>
 </div>
 
-<!-- ── PROBLEM ─────────────────────────────────────────── -->
-<section id="problem">
+<section class="sect">
   <div class="container">
-    <div class="about-grid">
-      <div>
-        <div class="s-tag rev">The Problem</div>
-        <h2 class="s-title rev">Calls are still<br><em>where deals slip.</em></h2>
-        <p class="about-text rev" style="margin-top:1.75rem">Every missed call is a customer who called a competitor next. Every inconsistent answer is a caller who got a different experience than the one before them. Manual intake, long hold times, after-hours gaps, and systems that don't talk to each other turn ordinary call volume into lost revenue and daily operational friction.</p>
-        <p class="about-text rev">Most call-driven businesses feel this every week — not as one big failure, but as a hundred small ones. A voicemail that doesn't get returned. A lead that sits in a notepad instead of the CRM. A queue that backs up the moment two calls land at once.</p>
-        <div class="about-quote rev">"The phone is still the front door for most call-driven businesses. Most of them are leaving it unattended."</div>
+    <div class="split">
+      <div class="split-copy">
+        <div class="s-tag rev">The Leak</div>
+        <div class="viz-figure rev"><span class="viz-num" data-count="80">0</span><span class="viz-unit">%</span></div>
+        <p class="viz-cap rev">of callers who reach a voicemail hang up without leaving a message. Most of them call <strong>the next company on the list</strong>.</p>
       </div>
-      <div class="stat-grid rev">
-        <div class="stat-card"><div class="stat-n">Missed</div><div class="stat-l">Calls that go to voicemail become calls to a competitor.</div></div>
-        <div class="stat-card"><div class="stat-n">Inconsistent</div><div class="stat-l">Every caller gets a different answer, depending on who picks up.</div></div>
-        <div class="stat-card"><div class="stat-n">After-Hours</div><div class="stat-l">The phone stops working the moment your team goes home.</div></div>
-        <div class="stat-card"><div class="stat-n">Disconnected</div><div class="stat-l">Call notes that never make it into the CRM or the calendar.</div></div>
+      <canvas class="viz-canvas viz-leak-canvas rev" data-viz="leak" role="img" aria-label="Fifty dots representing callers who reach voicemail; forty of them fall away, leaving ten."></canvas>
+    </div>
+  </div>
+</section>
+
+<section class="sect">
+  <div class="container">
+    <div class="split split-narrow">
+      <canvas class="viz-canvas viz-clock-canvas rev" data-viz="clock" role="img" aria-label="A 24-hour ring showing eight staffed hours, with the remaining sixteen hours filled in by AIM Media."></canvas>
+      <div class="split-copy">
+        <div class="s-tag rev">The Gap</div>
+        <h2 class="s-title rev">Open eight hours.<br><em>Called twenty-four.</em></h2>
+        <p class="viz-cap rev">Nights, weekends, lunch rushes and the three calls that land while you are already on one. That is the gap we cover.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── SOLUTION ────────────────────────────────────────── -->
-<section id="solution" class="sect">
+<!-- ── WHAT HAPPENS ON A CALL ──────────────────────────── -->
+<section class="sect">
   <div class="container">
-    <div class="s-tag rev">The AIM Media Solution</div>
-    <h2 class="s-title rev">Managed voice<br><em>infrastructure.</em></h2>
-    <p class="sect-lead rev">AIM Media isn't a chatbot vendor and it isn't a piece of software you have to configure yourself. We design, deploy, and manage the AI voice systems that answer, qualify, schedule, route, and follow up on every call — then we operate that infrastructure for you, the same way a utility keeps the lights on.</p>
-    <div class="about-quote rev" style="max-width:820px">"We don't sell you a voice agent. We operate your voice infrastructure — design, integrations, monitoring, and improvement, on an ongoing basis."</div>
+    <div class="s-tag rev">On Every Call</div>
+    <h2 class="s-title rev">Ring to record<br><em>in one pass.</em></h2>
+    <ol class="flow" data-viz-dom>
+      <li class="flow-node"><span class="flow-dot"></span><span class="flow-k">Ring</span><span class="flow-v">Answered on the first ring, day or night</span></li>
+      <li class="flow-node"><span class="flow-dot"></span><span class="flow-k">Answer</span><span class="flow-v">A natural voice, not a phone tree</span></li>
+      <li class="flow-node"><span class="flow-dot"></span><span class="flow-k">Qualify</span><span class="flow-v">Job type, urgency, location, contact</span></li>
+      <li class="flow-node"><span class="flow-dot"></span><span class="flow-k">Book</span><span class="flow-v">Straight into your calendar</span></li>
+      <li class="flow-node"><span class="flow-dot"></span><span class="flow-k">Sync</span><span class="flow-v">Summary to your inbox and CRM</span></li>
+    </ol>
   </div>
 </section>
 
-<!-- ── WHAT WE BUILD ───────────────────────────────────── -->
-<section id="build" class="sect">
+<!-- ── VS ANSWERING SERVICE ────────────────────────────── -->
+<section class="sect">
   <div class="container">
-    <div class="s-tag rev">What We Build</div>
-    <h2 class="s-title rev" style="margin-bottom:3.5rem">One system.<br><em>Every call handled.</em></h2>
-    <div class="bento">
-      <div class="bcard rev"><canvas class="bcard-anim" id="bc-nn"></canvas><span class="bcard-icon">☎</span><div class="bcard-num">01</div><div class="bcard-title">AI Voice Agents</div><div class="bcard-desc">Conversational agents that answer inbound calls, qualify the caller, and carry a natural conversation instead of a rigid phone tree.</div></div>
-      <div class="bcard rev"><canvas class="bcard-anim" id="bc-wave"></canvas><span class="bcard-icon">📞</span><div class="bcard-num">02</div><div class="bcard-title">Call Handling Automation</div><div class="bcard-desc">Inbound answering, intelligent routing, escalation to a human, and after-hours or overflow coverage built into every deployment.</div></div>
-      <div class="bcard rev"><canvas class="bcard-anim" id="bc-flow"></canvas><span class="bcard-icon">🔗</span><div class="bcard-num">03</div><div class="bcard-title">CRM, Calendar &amp; Dispatch Integrations</div><div class="bcard-desc">Every call becomes a structured record across your CRM, calendar, dispatch, ticketing, and notification tools — automatically.</div></div>
-      <div class="bcard rev"><canvas class="bcard-anim" id="bc-chart"></canvas><span class="bcard-icon">⚙</span><div class="bcard-num">04</div><div class="bcard-title">Workflow Orchestration</div><div class="bcard-desc">Call outcomes trigger the next action automatically, across the systems your team already runs the business on.</div></div>
-      <div class="bcard rev"><canvas class="bcard-anim" id="bc-scan"></canvas><span class="bcard-icon">📡</span><div class="bcard-num">05</div><div class="bcard-title">Monitoring &amp; Multi-Location Operations</div><div class="bcard-desc">Live monitoring and reliability checks that scale across every location and call volume without adding headcount.</div></div>
+    <div class="s-tag rev">The Alternative</div>
+    <h2 class="s-title rev">Same coverage.<br><em>A fraction of the bill.</em></h2>
+    
+    <div class="cost" data-viz-dom>
+      <div class="cost-row">
+        <div class="cost-head">
+          <span class="cost-label">Traditional answering service</span>
+          <span class="cost-val">$750–$800 / mo</span>
+        </div>
+        <div class="cost-bar"><span class="cost-fill cost-fill-them" style="--w:100%"></span></div>
+      </div>
+      <div class="cost-row cost-row-us">
+        <div class="cost-head">
+          <span class="cost-label">AIM Media voice agent</span>
+          <span class="cost-val">60–70% less</span>
+        </div>
+        <div class="cost-bar"><span class="cost-fill cost-fill-us" style="--w:33%"></span></div>
+      </div>
+      <p class="cost-note">Typical quotes our Ontario clients were paying before switching. Your price depends on call volume — ask us for a number.</p>
+    </div>
+    <div class="facts rev">
+      <div class="fact"><div class="fact-n">Month&nbsp;to&nbsp;month</div><div class="fact-l">No long-term agreement. Cancel before your next billing period.</div></div>
+      <div class="fact"><div class="fact-n">Sounds human</div><div class="fact-l">Built to hold a real conversation — most callers never clock it.</div></div>
+      <div class="fact"><div class="fact-n">Backup, not replacement</div><div class="fact-l">Your team still picks up first. The agent catches what they cannot.</div></div>
     </div>
   </div>
 </section>
 
-<!-- ── MANAGED INFRASTRUCTURE ──────────────────────────── -->
-<section id="infra" class="sect">
-  <div class="container">
-    <div class="s-tag rev">Managed Infrastructure</div>
-    <h2 class="s-title rev">We operate it.<br><em>You run the business.</em></h2>
-    <p class="sect-lead rev">A voice agent is only as good as the system behind it. AIM Media handles the full stack — system design, deployment, integrations, monitoring, maintenance, routing logic, and continuous improvement — so your team never has to become telephony engineers.</p>
-    <div class="chk-grid rev">
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>System design</strong> — call flows, agent roles, and escalation rules mapped to how your business actually operates.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Deployment &amp; integration</strong> — connected to your CRM, calendar, dispatch, and ticketing tools from day one.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Monitoring &amp; reliability</strong> — call quality and uptime checked on an ongoing basis, not left to chance.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Routing logic</strong> — the right call reaches the right person, department, or queue every time.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Maintenance</strong> — updates, fixes, and adjustments handled as your business and call volume change.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Continuous improvement</strong> — conversations, routing, and workflows refined on a recurring basis.</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ── OPERATING ENVIRONMENTS ──────────────────────────── -->
-<section id="environments" class="sect" style="padding-left:0;padding-right:0">
+<!-- ── WHERE IT WORKS ──────────────────────────────────── -->
+<section class="sect" style="padding-left:0;padding-right:0">
   <div class="work-header container">
     <div>
-      <div class="s-tag rev">Where It Runs</div>
-      <h2 class="s-title rev">Built for the businesses<br><em>that live on the phone.</em></h2>
+      <div class="s-tag rev">Where It Works</div>
+      <h2 class="s-title rev">Built for businesses<br><em>that run on the phone.</em></h2>
     </div>
     <div class="work-hint rev">Drag to explore</div>
   </div>
-  <div class="cases-track" id="envTrack">
-    <div class="ccase e08" role="button" tabindex="0" data-key="e08" aria-label="Open Real Estate environment"><div class="ccase-bg" id="img-kris-ramotar"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Real Estate</div><div class="ccase-name">Real Estate</div><div class="ccase-result">Qualifies buyer and seller leads, books showings, and updates the CRM the moment a call ends.</div></div></div>
-    <div class="ccase e09" role="button" tabindex="0" data-key="e09" aria-label="Open Automotive environment"><div class="ccase-bg" id="img-vip-motors"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Automotive</div><div class="ccase-name">Automotive</div><div class="ccase-result">Handles inventory questions, books service appointments, and captures every sales lead.</div></div></div>
-    <div class="ccase e10" role="button" tabindex="0" data-key="e10" aria-label="Open Hospitality environment"><div class="ccase-bg" id="img-coffee-exchange"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Hospitality</div><div class="ccase-name">Hospitality</div><div class="ccase-result">Takes reservations, answers hours and menu questions, and covers overflow and after-hours calls.</div></div></div>
-    <div class="ccase e04" role="button" tabindex="0" data-key="e04" aria-label="Open Call Centers environment"><div class="ccase-bg" id="img-wetech"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Call Centers</div><div class="ccase-name">Call Centers</div><div class="ccase-result">Triages high call volume and hands off complex calls to an agent with full context.</div></div></div>
-    <div class="ccase e11" role="button" tabindex="0" data-key="e11" aria-label="Open Logistics environment"><div class="ccase-bg" id="img-tdottruck"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Logistics</div><div class="ccase-name">Logistics</div><div class="ccase-result">Routes dispatch calls and status inquiries across a moving fleet and multiple terminals.</div></div></div>
-    <div class="ccase e05" role="button" tabindex="0" data-key="e05" aria-label="Open Service Businesses environment"><div class="ccase-bg" id="img-ram-bharose"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Service Businesses</div><div class="ccase-name">Service Businesses</div><div class="ccase-result">Covers scheduling, quotes, and follow-up for trades and local service operations.</div></div></div>
-    <div class="ccase e01 ccase-flat" role="button" tabindex="0" data-key="e01" aria-label="Open Front Desk environment"><div class="ccase-bg"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Front Desk</div><div class="ccase-name">Front Desk Operations</div><div class="ccase-result">Answers every inbound call, books appointments, and routes to the right department.</div></div></div>
-    <div class="ccase e02 ccase-flat" role="button" tabindex="0" data-key="e02" aria-label="Open Customer Support environment"><div class="ccase-bg"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Customer Support</div><div class="ccase-name">Customer Support</div><div class="ccase-result">Handles account questions and opens tickets with full context when a human is needed.</div></div></div>
-    <div class="ccase e03 ccase-flat" role="button" tabindex="0" data-key="e03" aria-label="Open Intake Operations environment"><div class="ccase-bg"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Intake</div><div class="ccase-name">Intake Operations</div><div class="ccase-result">Captures and qualifies every lead, then routes it to the right person automatically.</div></div></div>
-    <div class="ccase e06 ccase-flat" role="button" tabindex="0" data-key="e06" aria-label="Open Healthcare environment"><div class="ccase-bg"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Healthcare</div><div class="ccase-name">Healthcare</div><div class="ccase-result">Manages appointment scheduling and intake questions alongside the systems your practice runs on.</div></div></div>
-    <div class="ccase e07 ccase-flat" role="button" tabindex="0" data-key="e07" aria-label="Open Legal environment"><div class="ccase-bg"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Legal</div><div class="ccase-name">Legal</div><div class="ccase-result">Captures new-matter intake and routine questions, then routes qualified inquiries to your team.</div></div></div>
-    <div class="ccase e12 ccase-flat" role="button" tabindex="0" data-key="e12" aria-label="Open Property Management environment"><div class="ccase-bg"></div><div class="ccase-ov"></div><div class="ccase-expand" aria-hidden="true">⤢</div><div class="ccase-body"><div class="ccase-tag">Property Management</div><div class="ccase-name">Property Management</div><div class="ccase-result">Fields maintenance requests and after-hours emergencies, routed to the right on-call contact.</div></div></div>
+  <div class="cases-track">
+    <div class="ccase"><div class="ccase-bg" id="img-tdottruck"></div><div class="ccase-ov"></div><div class="ccase-label"><div class="ccase-name">Towing &amp; Logistics</div><div class="ccase-line">Emergency calls answered at 2am.</div></div></div>
+    <div class="ccase"><div class="ccase-bg" id="img-kris-ramotar"></div><div class="ccase-ov"></div><div class="ccase-label"><div class="ccase-name">Real Estate</div><div class="ccase-line">Leads qualified and showings booked.</div></div></div>
+    <div class="ccase"><div class="ccase-bg" id="img-vip-motors"></div><div class="ccase-ov"></div><div class="ccase-label"><div class="ccase-name">Dealerships</div><div class="ccase-line">Inventory questions and service bookings.</div></div></div>
+    <div class="ccase"><div class="ccase-bg" id="img-atiyas"></div><div class="ccase-ov"></div><div class="ccase-label"><div class="ccase-name">Home &amp; Field Services</div><div class="ccase-line">Quotes, dispatch and scheduling.</div></div></div>
+    <div class="ccase"><div class="ccase-bg" id="img-coffee-exchange"></div><div class="ccase-ov"></div><div class="ccase-label"><div class="ccase-name">Hospitality</div><div class="ccase-line">Reservations and hours, around the clock.</div></div></div>
+    <div class="ccase"><div class="ccase-bg" id="img-wetech"></div><div class="ccase-ov"></div><div class="ccase-label"><div class="ccase-name">Professional Services</div><div class="ccase-line">New-client intake, captured properly.</div></div></div>
+    <div class="ccase"><div class="ccase-bg" id="img-ram-bharose"></div><div class="ccase-ov"></div><div class="ccase-label"><div class="ccase-name">Restaurants</div><div class="ccase-line">Takeout and booking calls, never missed.</div></div></div>
+  </div>
+  <div class="container">
+    <div class="tags rev"><span class="tag">Junk removal</span><span class="tag">Dumpster rental</span><span class="tag">Towing</span><span class="tag">Locksmiths</span><span class="tag">HVAC &amp; plumbing</span><span class="tag">Restoration</span><span class="tag">Cleaning</span><span class="tag">Medical &amp; dental</span><span class="tag">Law firms</span><span class="tag">Property management</span><span class="tag">Real estate</span><span class="tag">Dealerships</span></div>
   </div>
 </section>
 
 
-<!-- ── CTA ─────────────────────────────────────────────── -->
 <section id="cta">
   <div class="cta-orb-1" aria-hidden="true"></div>
   <div class="cta-orb-2" aria-hidden="true"></div>
   <div class="cta-inner">
-    <div class="cta-eye rev">Your voice infrastructure, designed and managed</div>
-    <h2 class="cta-headline rev">Ready to put your<br><strong>calls to work?</strong></h2>
-    <p class="cta-sub rev">AI Voice Infrastructure · Managed Operations</p>
-    <a href="mailto:kaushikkrish831@gmail.com" class="btn-primary rev">Design Your Voice System →</a>
+    <div class="cta-eye rev">Built for your business, before you pay anything</div>
+    <h2 class="cta-headline rev">Hear it answer<br><strong>your phone.</strong></h2>
+    <p class="cta-sub rev">We build a demo agent for your business, then call you so you can hear it live.</p>
+    <a href="/demo" class="btn-primary rev">Hear a Demo →</a>
   </div>
 </section>
 
@@ -292,13 +290,13 @@
     <div class="ft-brand">
       <div class="ft-logo">AIM Media</div>
       <div class="ft-tag">"Intelligence. Automated."</div>
-      <div class="ft-r" style="text-align:left"><a href="mailto:kaushikkrish831@gmail.com">kaushikkrish831@gmail.com</a></div>
+      <div class="ft-r" style="text-align:left">Ontario, Canada<br><a href="mailto:krish@theaimmedia.ca">krish@theaimmedia.ca</a></div>
     </div>
     <div class="ft-sitemap">
       <div class="ft-col">
         <div class="ft-col-title">Site</div>
         <a href="/">Home</a>
-        <a href="/demos">Demos</a>
+        <a href="/demo">Hear a Demo</a>
         <a href="/pricing">Pricing</a>
       </div>
       <div class="ft-col">
@@ -319,12 +317,12 @@
         <a href="/resources/about">About</a>
         <a href="/resources/process">Process</a>
         <a href="/resources/vision">Vision</a>
-        <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+        <a href="mailto:krish@theaimmedia.ca">Contact</a>
       </div>
     </div>
   </div>
   <div class="ft-bottom">
-    <span>&copy; 2026 AIM Media. All rights reserved.</span>
+    <span>&copy; 2026 AIM Media. Serving businesses across Ontario, Canada.</span>
     <div class="ft-legal-links">
       <a href="/privacy">Privacy</a>
       <a href="/terms">Terms</a>
@@ -334,48 +332,7 @@
 
 <div id="spotlight" aria-hidden="true"></div>
 
-<!-- ── EXPANDING CARD MODAL ────────────────────────────────── -->
-<div id="cs-modal" aria-hidden="true" role="dialog" aria-modal="true">
-  <button id="cs-close" aria-label="Close">✕</button>
-  <div id="cs-m-bg"></div>
-  <div class="cs-m-ov"></div>
-  <div class="cs-m-body">
-    <div class="cs-m-tag-el" id="cs-m-tag"></div>
-    <div class="cs-m-name-el" id="cs-m-name"><span></span></div>
-    <div class="cs-m-result-el" id="cs-m-result"></div>
-  </div>
-  <div class="cs-m-swipe">↓ swipe down to close</div>
-</div>
-
-<!-- ── CINEMATIC FLASH ────────────────────────────────────── -->
-<div id="mode-flash"></div>
-
-<!-- ── INDUSTRY MODE OVERLAY ────────────────────────────── -->
-<div id="mode-overlay" data-mode="">
-  <canvas id="mode-canvas"></canvas>
-  <div class="mode-vignette"></div>
-  <div class="mode-topbar">
-    <div class="mode-topbar-logo">AIM Media</div>
-    <div class="mode-badge-lbl" id="mode-badge-lbl"></div>
-    <button class="mode-exit-btn" id="mode-exit-btn">✕ EXIT</button>
-  </div>
-  <div class="mode-hud-hl" id="mode-hud-hl">
-    <div class="mode-eyebrow" id="mode-eyebrow"></div>
-    <h2 class="mode-headline" id="mode-headline"></h2>
-    <ul class="mode-svcs" id="mode-svcs"></ul>
-  </div>
-  <div class="mode-hud-case" id="mode-hud-case">
-    <div class="mode-case">
-      <div class="mode-case-tag" id="mode-case-tag"></div>
-      <div class="mode-case-stat" id="mode-case-stat"></div>
-      <div class="mode-case-name" id="mode-case-name"></div>
-      <div class="mode-case-desc" id="mode-case-desc"></div>
-    </div>
-  </div>
-  <div class="mode-hint">Move cursor to explore</div>
-</div>
-
 <script src="/assets/js/core.js"></script>
-<script src="/assets/js/modes.js"></script>
+<script src="/assets/js/viz.js"></script>
 </body>
 </html>

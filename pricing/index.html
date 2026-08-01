@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pricing & Engagement Model — AIM Media</title>
-  <meta name="description" content="AIM Media prices AI voice infrastructure around your call volume and scope, not a one-size-fits-all plan. Here is how an engagement is structured, from discovery to managed operations." />
+  <title>Pricing — AIM Media</title>
+  <meta name="description" content="AI voice agents priced on call volume, typically 60 to 70 percent less than a traditional answering service. Month to month, no long-term agreement." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,9 +17,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <!-- Lenis smooth scroll -->
   <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
-  <!-- Three.js — loaded eagerly so mode scenes are always ready -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
 
@@ -75,22 +72,17 @@
         <li><a href="/use-cases/call-center">Call Center</a></li>
       </ul>
     </li>
-    <li><a href="/demos">Demos</a></li>
     <li><a href="/pricing" class="active">Pricing</a></li>
-    <li><a href="/resources/process">Process</a></li>
-    <li><a href="/resources/about">About</a></li>
-    <li><a href="mailto:kaushikkrish831@gmail.com">Contact</a></li>
+    <li class="nav-drop">
+      <a href="/resources/about" class="nav-drop-trigger">Company</a>
+      <ul class="nav-drop-menu">
+        <li><a href="/resources/about">About</a></li>
+        <li><a href="/resources/process">Process</a></li>
+        <li><a href="/resources/vision">Vision</a></li>
+      </ul>
+    </li>
+    <li><a href="/demo" class="nav-cta">Hear a Demo</a></li>
   </ul>
-  <div class="mode-btn" id="mode-btn" role="button" tabindex="0" aria-label="Explore industry modes" aria-haspopup="listbox" aria-expanded="false">
-    <span class="mode-label-txt">MODES</span>
-    <span class="mode-btn-chev"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    <div class="mode-dropdown" id="mode-dropdown" role="listbox">
-      <div class="mode-opt" data-mode="realtor" role="option"><span class="mode-dot" style="background:#3D6CC0"></span>Real Estate</div>
-      <div class="mode-opt" data-mode="cafe" role="option"><span class="mode-dot" style="background:#D4956A"></span>Hospitality</div>
-      <div class="mode-opt" data-mode="corporate" role="option"><span class="mode-dot" style="background:#4A9EDB"></span>Enterprise</div>
-      <div class="mode-opt" data-mode="dealership" role="option"><span class="mode-dot" style="background:#C0C0C0"></span>Dealership</div>
-    </div>
-  </div>
   <button id="nav-burger" class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
     <span></span><span></span><span></span>
   </button>
@@ -111,104 +103,95 @@
     <a href="/use-cases/intake">Intake</a>
     <a href="/use-cases/call-center">Call Center</a>
   </div>
-  <a href="/demos">Demos</a>
   <a href="/pricing" class="active">Pricing</a>
-  <a href="/resources/process">Process</a>
-  <a href="/resources/about">About</a>
-  <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+  <div class="nav-mobile-group-label">Company</div>
+  <div class="nav-mobile-sub">
+    <a href="/resources/about">About</a>
+    <a href="/resources/process">Process</a>
+    <a href="/resources/vision">Vision</a>
+  </div>
+  <a href="/demo">Hear a Demo</a>
+  <a href="mailto:krish@theaimmedia.ca">Contact</a>
 </div>
 
 
-<!-- ── HERO ───────────────────────────────────────────── -->
-<section id="hero" class="hero-inner hero-tight">
+<section id="hero" class="hero-inner">
   <canvas id="particles" aria-hidden="true"></canvas>
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-vignette" aria-hidden="true"></div>
   <div class="hero-bg-num" aria-hidden="true">$</div>
   <div class="hero-content">
     <div class="crumb"><a href="/">Home</a><span>/</span><span>Pricing</span></div>
-    <div class="hero-eyebrow">Pricing · Engagement Model</div>
+    <div class="hero-eyebrow">Pricing</div>
     <h1 class="hero-headline">
-      <span class="hero-line hero-line-italic"><span>Built for your</span></span>
+      <span class="hero-line hero-line-italic"><span>Priced on</span></span>
       <span class="hero-line hero-line-bold"><span>call volume.</span></span>
     </h1>
-    <p class="hero-sub">AI voice infrastructure isn't a shelf product, so we don't price it like one. Every engagement is scoped around your call volume, departments, and integrations — here is exactly how that scoping works.</p>
-    <div class="hero-cta"><a href="mailto:kaushikkrish831@gmail.com" class="btn-primary">Request a Quote →</a></div>
+    <p class="hero-sub">You pay for a minute package that includes building, maintaining and improving your agent. No setup trap, no lock-in.</p>
+    <div class="hero-cta"><a href="mailto:krish@theaimmedia.ca?subject=Quote%20request" class="btn-primary">Get a Quote →</a></div>
   </div>
 </section>
 
 <section class="sect">
   <div class="container">
-    <div class="s-tag rev">How Engagements Are Scoped</div>
-    <h2 class="s-title rev" style="margin-bottom:1.5rem">Six stages.<br><em>One managed system.</em></h2>
-    <p class="sect-lead rev">Every engagement moves through the same stages, whether you're a single front desk or a multi-location operation. What changes is scope — how many departments, integrations, and call flows are in play.</p>
-    <div class="engage-flow rev">
-      <div class="engage-node"><div class="engage-node-n">01</div><div class="engage-node-t">Discovery &amp; Call-Operations Mapping</div></div>
-      <div class="engage-node"><div class="engage-node-n">02</div><div class="engage-node-t">System Design</div></div>
-      <div class="engage-node"><div class="engage-node-n">03</div><div class="engage-node-t">Build &amp; Integration</div></div>
-      <div class="engage-node"><div class="engage-node-n">04</div><div class="engage-node-t">Deployment</div></div>
-      <div class="engage-node"><div class="engage-node-n">05</div><div class="engage-node-t">Managed Operations</div></div>
-      <div class="engage-node"><div class="engage-node-n">06</div><div class="engage-node-t">Continuous Improvement</div></div>
+    <div class="s-tag rev">The Comparison</div>
+    <h2 class="s-title rev">What you would<br><em>otherwise pay.</em></h2>
+    
+    <div class="cost" data-viz-dom>
+      <div class="cost-row">
+        <div class="cost-head">
+          <span class="cost-label">Traditional answering service</span>
+          <span class="cost-val">$750–$800 / mo</span>
+        </div>
+        <div class="cost-bar"><span class="cost-fill cost-fill-them" style="--w:100%"></span></div>
+      </div>
+      <div class="cost-row cost-row-us">
+        <div class="cost-head">
+          <span class="cost-label">AIM Media voice agent</span>
+          <span class="cost-val">60–70% less</span>
+        </div>
+        <div class="cost-bar"><span class="cost-fill cost-fill-us" style="--w:33%"></span></div>
+      </div>
+      <p class="cost-note">Typical quotes our Ontario clients were paying before switching. Your price depends on call volume — ask us for a number.</p>
     </div>
   </div>
 </section>
 
 <section class="sect">
   <div class="container">
-    <div class="s-tag rev">Scope Guide</div>
-    <h2 class="s-title rev" style="margin-bottom:1.5rem">Three shapes of<br><em>engagement.</em></h2>
-    <p class="sect-lead rev">These aren't fixed price tiers — they're a starting point for a conversation. Every quote is tailored to your call volume, department count, and integration list after a discovery call.</p>
-    <div class="pricing-grid">
-      <div class="price-card rev">
-        <div class="price-tier-label">Single Location</div>
-        <div class="price-tier-name">Front Desk Deployment</div>
-        <p class="price-tier-desc">One voice agent covering inbound answering, scheduling, and after-hours coverage for a single location or department.</p>
-        <ul class="price-tier-list">
-          <li>Inbound call answering</li>
-          <li>Appointment scheduling</li>
-          <li>One CRM or calendar integration</li>
-          <li>After-hours &amp; overflow coverage</li>
-          <li>Standard monitoring</li>
-        </ul>
-      </div>
-      <div class="price-card price-featured rev">
-        <div class="price-tier-label">Growing Operations</div>
-        <div class="price-tier-name">Multi-Department Voice System</div>
-        <p class="price-tier-desc">A voice system spanning several departments or call types, with structured routing and multiple integrations.</p>
-        <ul class="price-tier-list">
-          <li>Everything in Front Desk Deployment</li>
-          <li>Multiple call flows &amp; departments</li>
-          <li>CRM, calendar, and ticketing integrations</li>
-          <li>Escalation &amp; handoff logic</li>
-          <li>Recurring conversation optimization</li>
-        </ul>
-      </div>
-      <div class="price-card rev">
-        <div class="price-tier-label">Multi-Location / High Volume</div>
-        <div class="price-tier-name">Enterprise Managed Infrastructure</div>
-        <p class="price-tier-desc">Full managed voice infrastructure across multiple locations, departments, and high call volume, with dedicated monitoring.</p>
-        <ul class="price-tier-list">
-          <li>Everything in Multi-Department Voice System</li>
-          <li>Multi-location routing &amp; reporting</li>
-          <li>Dispatch, billing &amp; notification integrations</li>
-          <li>Priority monitoring &amp; reliability review</li>
-          <li>Ongoing scaling support</li>
-        </ul>
-      </div>
+    <div class="s-tag rev">What Is Included</div>
+    <h2 class="s-title rev" style="margin-bottom:1rem">Everything except<br><em>the lock-in.</em></h2>
+    <div class="tags rev"><span class="tag">Agent build</span><span class="tag">Ongoing maintenance</span><span class="tag">Conversation tuning</span><span class="tag">Call summaries</span><span class="tag">CRM &amp; calendar sync</span><span class="tag">Call forwarding setup</span><span class="tag">Routing changes</span><span class="tag">Support</span></div>
+    <div class="facts rev">
+      <div class="fact"><div class="fact-n">Month&nbsp;to&nbsp;month</div><div class="fact-l">Cancel before your next billing period. That is the whole process.</div></div>
+      <div class="fact"><div class="fact-n">Minute packages</div><div class="fact-l">Priced to your actual call volume, not a headcount you do not have.</div></div>
+      <div class="fact"><div class="fact-n">Days to live</div><div class="fact-l">Build, test on a forwarding number, then switch it on.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="sect">
+  <div class="container">
+    <div class="s-tag rev">Getting Started</div>
+    <h2 class="s-title rev">From call to live<br><em>in four moves.</em></h2>
+    <div class="steps" data-viz-dom>
+      <div class="step"><span class="step-n">01</span><div class="step-t">Demo</div><div class="step-d">We build an agent for your business and call you so you can hear it.</div></div>
+      <div class="step"><span class="step-n">02</span><div class="step-t">Tune</div><div class="step-d">We adjust the script, the questions and the booking rules until it sounds right.</div></div>
+      <div class="step"><span class="step-n">03</span><div class="step-t">Test</div><div class="step-d">You get a forwarding number to call as much as you like before anything goes live.</div></div>
+      <div class="step"><span class="step-n">04</span><div class="step-t">Switch on</div><div class="step-d">We walk you through call forwarding. Usually a few days end to end.</div></div>
     </div>
   </div>
 </section>
 
 
-<!-- ── CTA ─────────────────────────────────────────────── -->
 <section id="cta">
   <div class="cta-orb-1" aria-hidden="true"></div>
   <div class="cta-orb-2" aria-hidden="true"></div>
   <div class="cta-inner">
-    <div class="cta-eye rev">Every engagement starts with one conversation</div>
-    <h2 class="cta-headline rev">Talk to us about<br><strong>your call volume.</strong></h2>
-    <p class="cta-sub rev">Discovery call · Tailored quote · No fixed shelf pricing</p>
-    <a href="mailto:kaushikkrish831@gmail.com" class="btn-primary rev">Book a Discovery Call →</a>
+    <div class="cta-eye rev">Tell us your call volume, we will tell you the number</div>
+    <h2 class="cta-headline rev">Get your<br><strong>quote.</strong></h2>
+    <p class="cta-sub rev">Month to month · No long-term agreement · Ontario, Canada</p>
+    <a href="mailto:krish@theaimmedia.ca?subject=Quote%20request" class="btn-primary rev">Get a Quote →</a>
   </div>
 </section>
 
@@ -219,13 +202,13 @@
     <div class="ft-brand">
       <div class="ft-logo">AIM Media</div>
       <div class="ft-tag">"Intelligence. Automated."</div>
-      <div class="ft-r" style="text-align:left"><a href="mailto:kaushikkrish831@gmail.com">kaushikkrish831@gmail.com</a></div>
+      <div class="ft-r" style="text-align:left">Ontario, Canada<br><a href="mailto:krish@theaimmedia.ca">krish@theaimmedia.ca</a></div>
     </div>
     <div class="ft-sitemap">
       <div class="ft-col">
         <div class="ft-col-title">Site</div>
         <a href="/">Home</a>
-        <a href="/demos">Demos</a>
+        <a href="/demo">Hear a Demo</a>
         <a href="/pricing">Pricing</a>
       </div>
       <div class="ft-col">
@@ -246,12 +229,12 @@
         <a href="/resources/about">About</a>
         <a href="/resources/process">Process</a>
         <a href="/resources/vision">Vision</a>
-        <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+        <a href="mailto:krish@theaimmedia.ca">Contact</a>
       </div>
     </div>
   </div>
   <div class="ft-bottom">
-    <span>&copy; 2026 AIM Media. All rights reserved.</span>
+    <span>&copy; 2026 AIM Media. Serving businesses across Ontario, Canada.</span>
     <div class="ft-legal-links">
       <a href="/privacy">Privacy</a>
       <a href="/terms">Terms</a>
@@ -261,48 +244,7 @@
 
 <div id="spotlight" aria-hidden="true"></div>
 
-<!-- ── EXPANDING CARD MODAL ────────────────────────────────── -->
-<div id="cs-modal" aria-hidden="true" role="dialog" aria-modal="true">
-  <button id="cs-close" aria-label="Close">✕</button>
-  <div id="cs-m-bg"></div>
-  <div class="cs-m-ov"></div>
-  <div class="cs-m-body">
-    <div class="cs-m-tag-el" id="cs-m-tag"></div>
-    <div class="cs-m-name-el" id="cs-m-name"><span></span></div>
-    <div class="cs-m-result-el" id="cs-m-result"></div>
-  </div>
-  <div class="cs-m-swipe">↓ swipe down to close</div>
-</div>
-
-<!-- ── CINEMATIC FLASH ────────────────────────────────────── -->
-<div id="mode-flash"></div>
-
-<!-- ── INDUSTRY MODE OVERLAY ────────────────────────────── -->
-<div id="mode-overlay" data-mode="">
-  <canvas id="mode-canvas"></canvas>
-  <div class="mode-vignette"></div>
-  <div class="mode-topbar">
-    <div class="mode-topbar-logo">AIM Media</div>
-    <div class="mode-badge-lbl" id="mode-badge-lbl"></div>
-    <button class="mode-exit-btn" id="mode-exit-btn">✕ EXIT</button>
-  </div>
-  <div class="mode-hud-hl" id="mode-hud-hl">
-    <div class="mode-eyebrow" id="mode-eyebrow"></div>
-    <h2 class="mode-headline" id="mode-headline"></h2>
-    <ul class="mode-svcs" id="mode-svcs"></ul>
-  </div>
-  <div class="mode-hud-case" id="mode-hud-case">
-    <div class="mode-case">
-      <div class="mode-case-tag" id="mode-case-tag"></div>
-      <div class="mode-case-stat" id="mode-case-stat"></div>
-      <div class="mode-case-name" id="mode-case-name"></div>
-      <div class="mode-case-desc" id="mode-case-desc"></div>
-    </div>
-  </div>
-  <div class="mode-hint">Move cursor to explore</div>
-</div>
-
 <script src="/assets/js/core.js"></script>
-<script src="/assets/js/modes.js"></script>
+<script src="/assets/js/viz.js"></script>
 </body>
 </html>

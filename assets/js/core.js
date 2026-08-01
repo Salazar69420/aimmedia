@@ -1,7 +1,7 @@
 /**
  * AIM Media — Core Chrome
  * Preloader, cursor, spotlight, nav, hero entrance, ambient audio, particles,
- * GSAP/Lenis motion, drag-scroll cards, modal, founder canvas.
+ * GSAP/Lenis motion, drag-scroll cards, founder canvas.
  * Shared across every page. Every DOM lookup that isn't guaranteed to exist
  * on every page is null-guarded so this file runs safely site-wide.
  */
@@ -449,6 +449,17 @@ function initMotion() {
 const gsapPoll = setInterval(() => {
   if (typeof gsap !== 'undefined') { clearInterval(gsapPoll); initMotion(); }
 }, 80);
+
+// Safety net: .rev elements start at opacity 0 and rely on GSAP to reveal them.
+// If the CDN is blocked or slow, show everything rather than ship a blank page.
+setTimeout(() => {
+  clearInterval(gsapPoll);
+  if (gsapReady) return;
+  document.querySelectorAll('.rev, .rev-l, .rev-r').forEach(el => {
+    el.style.opacity = '1';
+    el.style.transform = 'none';
+  });
+}, 3000);
 
 // ── HERO ENTRANCE (after preloader) ─────────────────────────
 function startHeroAnimation() {
@@ -910,94 +921,6 @@ Object.entries(imageMap).forEach(([id, src]) => {
     });
   }, { threshold: 0.7 });
   statEls.forEach(el => io.observe(el));
-})();
-
-// ── EXPANDING CARD MODAL — operating environments ─────────────
-(function() {
-  const ENVIRONMENTS = {
-    e01: { tag: 'Front Desk',           name: 'Front Desk Operations', result: 'Answers every inbound call, books and reshuffles appointments, and logs caller details straight into the calendar your staff already uses.' },
-    e02: { tag: 'Customer Support',     name: 'Customer Support',      result: 'Handles order and account questions, resolves common issues, and opens a ticket with full context the moment a human needs to step in.' },
-    e03: { tag: 'Intake',               name: 'Intake Operations',     result: 'Captures and qualifies every lead or inquiry — service type, urgency, geography — then routes it to the right person automatically.' },
-    e04: { tag: 'Call Centers',         name: 'Call Centers',          result: 'Triages high call volume, resolves routine issues on the spot, and hands off complex calls to an agent with the full conversation intact.' },
-    e05: { tag: 'Service Businesses',   name: 'Service Businesses',    result: 'Covers scheduling, quotes, and follow-up for trades and local service operations that run on the phone.' },
-    e06: { tag: 'Healthcare',           name: 'Healthcare',            result: 'Manages appointment scheduling, intake questions, and after-hours coverage alongside the systems your practice already runs on.' },
-    e07: { tag: 'Legal',                name: 'Legal',                 result: 'Captures new-matter intake and routine client questions, then routes qualified inquiries to the right team member.' },
-    e08: { tag: 'Real Estate',          name: 'Real Estate',           result: 'Qualifies buyer and seller leads, books showings, and pushes every detail into the CRM the moment a call ends.' },
-    e09: { tag: 'Automotive',           name: 'Automotive',            result: 'Handles inventory questions, service bookings, and lead capture for dealership and service-bay phone lines.' },
-    e10: { tag: 'Hospitality',          name: 'Hospitality',           result: 'Takes reservations, answers hours and menu questions, and covers overflow and after-hours calls without a missed booking.' },
-    e11: { tag: 'Logistics',            name: 'Logistics',             result: 'Routes dispatch calls, status inquiries, and scheduling requests across a moving fleet and multiple terminals.' },
-    e12: { tag: 'Property Management',  name: 'Property Management',   result: 'Fields maintenance requests, tenant questions, and after-hours emergencies, then routes each to the right on-call contact.' },
-  };
-
-  const modal    = document.getElementById('cs-modal');
-  const mBg      = document.getElementById('cs-m-bg');
-  const mTag     = document.getElementById('cs-m-tag');
-  const mName    = document.getElementById('cs-m-name');
-  const mResult  = document.getElementById('cs-m-result');
-  const closeBtn = document.getElementById('cs-close');
-  if (!modal) return;
-
-  let isOpen = false;
-
-  function openModal(card) {
-    const key = card.dataset.key;
-    const data = ENVIRONMENTS[key];
-    if (!data || isOpen) return;
-    isOpen = true;
-
-    // Populate content
-    mTag.textContent = data.tag;
-    mName.querySelector('span').textContent = data.name;
-    mResult.textContent = data.result;
-
-    // Copy background from card (photo or flat gradient)
-    const bgEl = card.querySelector('.ccase-bg');
-    mBg.style.backgroundImage = bgEl?.style.backgroundImage || '';
-    mBg.className = 'cs-m-bg-el' + (card.classList.contains('ccase-flat') ? ' cs-m-bg-flat' : '');
-
-    // Clip-path expand from card's position
-    const rect = card.getBoundingClientRect();
-    const vw = window.innerWidth, vh = window.innerHeight;
-    modal.style.clipPath = `inset(${rect.top}px ${vw - rect.right}px ${vh - rect.bottom}px ${rect.left}px round 1.1rem)`;
-    modal.style.transition = 'none';
-    modal.style.opacity = '1';
-    modal.style.pointerEvents = 'all';
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      modal.style.transition = 'clip-path 0.8s cubic-bezier(0.16,1,0.3,1)';
-      modal.style.clipPath = 'inset(0px 0px 0px 0px round 0px)';
-      modal.classList.add('open');
-    }));
-  }
-
-  function closeModal() {
-    if (!isOpen) return;
-    modal.classList.remove('open');
-    setTimeout(() => {
-      isOpen = false;
-      modal.style.opacity = '0';
-      modal.style.pointerEvents = 'none';
-      modal.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }, 650);
-  }
-
-  document.querySelectorAll('.ccase').forEach(card => {
-    card.addEventListener('click', () => openModal(card));
-    card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') openModal(card); });
-  });
-
-  if (closeBtn) closeBtn.addEventListener('click', closeModal);
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-
-  // Swipe-down to close on mobile
-  let ty0 = 0;
-  modal.addEventListener('touchstart', e => { ty0 = e.touches[0].clientY; }, { passive: true });
-  modal.addEventListener('touchend', e => {
-    if (e.changedTouches[0].clientY - ty0 > 90) closeModal();
-  }, { passive: true });
 })();
 
 // ── HERO VISUAL LOAD ─────────────────────────────────────────

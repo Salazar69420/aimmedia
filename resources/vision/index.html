@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Vision — AIM Media</title>
-  <meta name="description" content="AIM Media's thesis: business communications are becoming AI-native, and voice should operate as reliable infrastructure, not a novelty." />
+  <meta name="description" content="What AIM Media believes about AI voice: it should be reliable infrastructure that backs up human teams, not a novelty that replaces them." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,9 +17,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <!-- Lenis smooth scroll -->
   <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
-  <!-- Three.js — loaded eagerly so mode scenes are always ready -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
 
@@ -75,22 +72,17 @@
         <li><a href="/use-cases/call-center">Call Center</a></li>
       </ul>
     </li>
-    <li><a href="/demos">Demos</a></li>
     <li><a href="/pricing">Pricing</a></li>
-    <li><a href="/resources/process">Process</a></li>
-    <li><a href="/resources/about">About</a></li>
-    <li><a href="mailto:kaushikkrish831@gmail.com">Contact</a></li>
+    <li class="nav-drop">
+      <a href="/resources/about" class="nav-drop-trigger active">Company</a>
+      <ul class="nav-drop-menu">
+        <li><a href="/resources/about">About</a></li>
+        <li><a href="/resources/process">Process</a></li>
+        <li><a href="/resources/vision" class="active">Vision</a></li>
+      </ul>
+    </li>
+    <li><a href="/demo" class="nav-cta">Hear a Demo</a></li>
   </ul>
-  <div class="mode-btn" id="mode-btn" role="button" tabindex="0" aria-label="Explore industry modes" aria-haspopup="listbox" aria-expanded="false">
-    <span class="mode-label-txt">MODES</span>
-    <span class="mode-btn-chev"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    <div class="mode-dropdown" id="mode-dropdown" role="listbox">
-      <div class="mode-opt" data-mode="realtor" role="option"><span class="mode-dot" style="background:#3D6CC0"></span>Real Estate</div>
-      <div class="mode-opt" data-mode="cafe" role="option"><span class="mode-dot" style="background:#D4956A"></span>Hospitality</div>
-      <div class="mode-opt" data-mode="corporate" role="option"><span class="mode-dot" style="background:#4A9EDB"></span>Enterprise</div>
-      <div class="mode-opt" data-mode="dealership" role="option"><span class="mode-dot" style="background:#C0C0C0"></span>Dealership</div>
-    </div>
-  </div>
   <button id="nav-burger" class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
     <span></span><span></span><span></span>
   </button>
@@ -111,54 +103,55 @@
     <a href="/use-cases/intake">Intake</a>
     <a href="/use-cases/call-center">Call Center</a>
   </div>
-  <a href="/demos">Demos</a>
   <a href="/pricing">Pricing</a>
-  <a href="/resources/process">Process</a>
-  <a href="/resources/about">About</a>
-  <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+  <div class="nav-mobile-group-label">Company</div>
+  <div class="nav-mobile-sub">
+    <a href="/resources/about">About</a>
+    <a href="/resources/process">Process</a>
+    <a href="/resources/vision" class="active">Vision</a>
+  </div>
+  <a href="/demo">Hear a Demo</a>
+  <a href="mailto:krish@theaimmedia.ca">Contact</a>
 </div>
 
 
-<!-- ── HERO ───────────────────────────────────────────── -->
-<section id="hero" class="hero-inner hero-tight">
+<section id="hero" class="hero-inner">
   <canvas id="particles" aria-hidden="true"></canvas>
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-vignette" aria-hidden="true"></div>
   <div class="hero-bg-num" aria-hidden="true">∞</div>
   <div class="hero-content">
     <div class="crumb"><a href="/">Home</a><span>/</span><span>Vision</span></div>
-    <div class="hero-eyebrow">Our Vision</div>
+    <div class="hero-eyebrow">What We Believe</div>
     <h1 class="hero-headline">
-      <span class="hero-line hero-line-italic"><span>Voice becomes</span></span>
-      <span class="hero-line hero-line-bold"><span>infrastructure.</span></span>
+      <span class="hero-line hero-line-italic"><span>A backup line</span></span>
+      <span class="hero-line hero-line-bold"><span>that never sleeps.</span></span>
     </h1>
-    <p class="hero-sub">Business communications are becoming AI-native. We think voice should be treated like the infrastructure it already is — not a novelty bolted onto a phone number.</p>
-    
+    <p class="hero-sub">Four things we tell every business that asks us what this is actually for.</p>
+    <div class="hero-cta"><a href="/demo" class="btn-primary">Hear a Demo →</a></div>
   </div>
 </section>
 
 <section class="sect">
   <div class="container">
-    <div class="prose-block rev">
-      <p>Business communications are becoming AI-native. The businesses that get ahead of that shift won't be the ones with the flashiest demo — they'll be the ones whose voice systems are reliable enough to disappear into the background of daily operations, the way electricity or internet connectivity already have.</p>
-      <p>That means AI voice has to be treated as operational infrastructure, not a novelty. A voice agent that impresses in a demo but breaks under real call volume, or that can't tell a CRM system what just happened on a call, hasn't solved the actual problem. Businesses need reliable systems — not another disconnected tool bolted onto the ones they already have.</p>
-      <p>We also believe AI should augment human teams, not attempt to replace them. The judgment, empathy, and relationship-building that make a business worth calling still belong to people. AI's job is to handle the structured, repeatable work around every call so people can spend their time on what actually needs them.</p>
-      <p>Voice agents should coordinate work across departments, not operate as an isolated feature. A call about a service issue should be able to trigger a ticket, update a CRM record, and notify the right person — automatically, without someone manually relaying the information afterward. Call outcomes should trigger useful action across the systems a business already runs on.</p>
-      <p>AIM Media exists to manage that complexity so businesses can focus on their customers and their operations — not on stitching together voice platforms, AI models, and integrations themselves.</p>
+    <div class="steps" data-viz-dom>
+      <div class="step"><span class="step-n">01</span><div class="step-t">Voicemail is a leak, not a safety net</div><div class="step-d">Four out of five callers who hit it hang up and dial someone else. A recording is not coverage.</div></div>
+      <div class="step"><span class="step-n">02</span><div class="step-t">AI should back up people, not replace them</div><div class="step-d">Your team handles a call better. The agent exists for the hours and the moments nobody is free.</div></div>
+      <div class="step"><span class="step-n">03</span><div class="step-t">A call is only useful if it becomes a record</div><div class="step-d">An answered call that never reaches your CRM or calendar has solved nothing.</div></div>
+      <div class="step"><span class="step-n">04</span><div class="step-t">Reliability beats novelty</div><div class="step-d">A voice agent that impresses once and breaks under real volume is worse than no agent at all.</div></div>
     </div>
   </div>
 </section>
 
 
-<!-- ── CTA ─────────────────────────────────────────────── -->
 <section id="cta">
   <div class="cta-orb-1" aria-hidden="true"></div>
   <div class="cta-orb-2" aria-hidden="true"></div>
   <div class="cta-inner">
-    <div class="cta-eye rev">Building toward AI-native communications</div>
-    <h2 class="cta-headline rev">Let's build the system<br><strong>your business runs on.</strong></h2>
-    <p class="cta-sub rev">AI Voice Infrastructure · Managed Operations</p>
-    <a href="mailto:kaushikkrish831@gmail.com" class="btn-primary rev">Design Your Voice System →</a>
+    <div class="cta-eye rev">See what that looks like on your line</div>
+    <h2 class="cta-headline rev">Hear the<br><strong>difference.</strong></h2>
+    <p class="cta-sub rev">Free custom demo · Ontario, Canada</p>
+    <a href="/demo" class="btn-primary rev">Hear a Demo →</a>
   </div>
 </section>
 
@@ -169,13 +162,13 @@
     <div class="ft-brand">
       <div class="ft-logo">AIM Media</div>
       <div class="ft-tag">"Intelligence. Automated."</div>
-      <div class="ft-r" style="text-align:left"><a href="mailto:kaushikkrish831@gmail.com">kaushikkrish831@gmail.com</a></div>
+      <div class="ft-r" style="text-align:left">Ontario, Canada<br><a href="mailto:krish@theaimmedia.ca">krish@theaimmedia.ca</a></div>
     </div>
     <div class="ft-sitemap">
       <div class="ft-col">
         <div class="ft-col-title">Site</div>
         <a href="/">Home</a>
-        <a href="/demos">Demos</a>
+        <a href="/demo">Hear a Demo</a>
         <a href="/pricing">Pricing</a>
       </div>
       <div class="ft-col">
@@ -196,12 +189,12 @@
         <a href="/resources/about">About</a>
         <a href="/resources/process">Process</a>
         <a href="/resources/vision">Vision</a>
-        <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+        <a href="mailto:krish@theaimmedia.ca">Contact</a>
       </div>
     </div>
   </div>
   <div class="ft-bottom">
-    <span>&copy; 2026 AIM Media. All rights reserved.</span>
+    <span>&copy; 2026 AIM Media. Serving businesses across Ontario, Canada.</span>
     <div class="ft-legal-links">
       <a href="/privacy">Privacy</a>
       <a href="/terms">Terms</a>
@@ -211,48 +204,7 @@
 
 <div id="spotlight" aria-hidden="true"></div>
 
-<!-- ── EXPANDING CARD MODAL ────────────────────────────────── -->
-<div id="cs-modal" aria-hidden="true" role="dialog" aria-modal="true">
-  <button id="cs-close" aria-label="Close">✕</button>
-  <div id="cs-m-bg"></div>
-  <div class="cs-m-ov"></div>
-  <div class="cs-m-body">
-    <div class="cs-m-tag-el" id="cs-m-tag"></div>
-    <div class="cs-m-name-el" id="cs-m-name"><span></span></div>
-    <div class="cs-m-result-el" id="cs-m-result"></div>
-  </div>
-  <div class="cs-m-swipe">↓ swipe down to close</div>
-</div>
-
-<!-- ── CINEMATIC FLASH ────────────────────────────────────── -->
-<div id="mode-flash"></div>
-
-<!-- ── INDUSTRY MODE OVERLAY ────────────────────────────── -->
-<div id="mode-overlay" data-mode="">
-  <canvas id="mode-canvas"></canvas>
-  <div class="mode-vignette"></div>
-  <div class="mode-topbar">
-    <div class="mode-topbar-logo">AIM Media</div>
-    <div class="mode-badge-lbl" id="mode-badge-lbl"></div>
-    <button class="mode-exit-btn" id="mode-exit-btn">✕ EXIT</button>
-  </div>
-  <div class="mode-hud-hl" id="mode-hud-hl">
-    <div class="mode-eyebrow" id="mode-eyebrow"></div>
-    <h2 class="mode-headline" id="mode-headline"></h2>
-    <ul class="mode-svcs" id="mode-svcs"></ul>
-  </div>
-  <div class="mode-hud-case" id="mode-hud-case">
-    <div class="mode-case">
-      <div class="mode-case-tag" id="mode-case-tag"></div>
-      <div class="mode-case-stat" id="mode-case-stat"></div>
-      <div class="mode-case-name" id="mode-case-name"></div>
-      <div class="mode-case-desc" id="mode-case-desc"></div>
-    </div>
-  </div>
-  <div class="mode-hint">Move cursor to explore</div>
-</div>
-
 <script src="/assets/js/core.js"></script>
-<script src="/assets/js/modes.js"></script>
+<script src="/assets/js/viz.js"></script>
 </body>
 </html>

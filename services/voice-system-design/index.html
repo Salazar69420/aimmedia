@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Voice System Design — Services — AIM Media</title>
-  <meta name="description" content="AIM Media designs AI-powered voice systems around how your business actually handles calls — call mapping, agent roles, conversation architecture, and integration planning." />
+  <title>Voice System Design — AIM Media</title>
+  <meta name="description" content="We map how your business actually handles calls, then design the agent around it — questions, routing, escalation and booking rules." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,9 +17,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <!-- Lenis smooth scroll -->
   <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
-  <!-- Three.js — loaded eagerly so mode scenes are always ready -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
 
@@ -75,22 +72,17 @@
         <li><a href="/use-cases/call-center">Call Center</a></li>
       </ul>
     </li>
-    <li><a href="/demos">Demos</a></li>
     <li><a href="/pricing">Pricing</a></li>
-    <li><a href="/resources/process">Process</a></li>
-    <li><a href="/resources/about">About</a></li>
-    <li><a href="mailto:kaushikkrish831@gmail.com">Contact</a></li>
+    <li class="nav-drop">
+      <a href="/resources/about" class="nav-drop-trigger">Company</a>
+      <ul class="nav-drop-menu">
+        <li><a href="/resources/about">About</a></li>
+        <li><a href="/resources/process">Process</a></li>
+        <li><a href="/resources/vision">Vision</a></li>
+      </ul>
+    </li>
+    <li><a href="/demo" class="nav-cta">Hear a Demo</a></li>
   </ul>
-  <div class="mode-btn" id="mode-btn" role="button" tabindex="0" aria-label="Explore industry modes" aria-haspopup="listbox" aria-expanded="false">
-    <span class="mode-label-txt">MODES</span>
-    <span class="mode-btn-chev"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    <div class="mode-dropdown" id="mode-dropdown" role="listbox">
-      <div class="mode-opt" data-mode="realtor" role="option"><span class="mode-dot" style="background:#3D6CC0"></span>Real Estate</div>
-      <div class="mode-opt" data-mode="cafe" role="option"><span class="mode-dot" style="background:#D4956A"></span>Hospitality</div>
-      <div class="mode-opt" data-mode="corporate" role="option"><span class="mode-dot" style="background:#4A9EDB"></span>Enterprise</div>
-      <div class="mode-opt" data-mode="dealership" role="option"><span class="mode-dot" style="background:#C0C0C0"></span>Dealership</div>
-    </div>
-  </div>
   <button id="nav-burger" class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
     <span></span><span></span><span></span>
   </button>
@@ -111,15 +103,18 @@
     <a href="/use-cases/intake">Intake</a>
     <a href="/use-cases/call-center">Call Center</a>
   </div>
-  <a href="/demos">Demos</a>
   <a href="/pricing">Pricing</a>
-  <a href="/resources/process">Process</a>
-  <a href="/resources/about">About</a>
-  <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+  <div class="nav-mobile-group-label">Company</div>
+  <div class="nav-mobile-sub">
+    <a href="/resources/about">About</a>
+    <a href="/resources/process">Process</a>
+    <a href="/resources/vision">Vision</a>
+  </div>
+  <a href="/demo">Hear a Demo</a>
+  <a href="mailto:krish@theaimmedia.ca">Contact</a>
 </div>
 
 
-<!-- ── HERO ───────────────────────────────────────────── -->
 <section id="hero" class="hero-inner">
   <canvas id="particles" aria-hidden="true"></canvas>
   <div class="hero-bg" aria-hidden="true"></div>
@@ -130,63 +125,40 @@
     <div class="hero-eyebrow">Service · Voice System Design</div>
     <h1 class="hero-headline">
       <span class="hero-line hero-line-italic"><span>Designed around</span></span>
-      <span class="hero-line hero-line-bold"><span>how you take calls.</span></span>
+      <span class="hero-line hero-line-bold"><span>your calls.</span></span>
     </h1>
-    <p class="hero-sub">AI-powered communications systems designed around how a business actually handles calls — not a generic script bolted onto a phone number.</p>
-    <div class="hero-cta"><a href="mailto:kaushikkrish831@gmail.com" class="btn-primary">Start Your Design →</a></div>
+    <p class="hero-sub">We map how your calls actually run today, then build the agent around that — not a generic script pointed at your number.</p>
+    <div class="hero-cta"><a href="/demo" class="btn-primary">Hear a Demo →</a></div>
   </div>
 </section>
 
 <section class="sect">
   <div class="container">
-    <div class="s-tag rev">Overview</div>
-    <h2 class="s-title rev" style="margin-bottom:1.5rem">The blueprint before the build.</h2>
-    <p class="sect-lead rev">Before any voice agent goes live, AIM Media maps how your business actually handles calls today — who answers what, where calls get stuck, and what a caller needs to hear at each step. That map becomes the architecture for the system: agent roles, conversation flow, escalation rules, and the integrations that turn a conversation into a completed task.</p>
+    <div class="s-tag rev">What We Design</div>
+    <h2 class="s-title rev" style="margin-bottom:0.5rem">The blueprint<br><em>before the build.</em></h2>
+    <div class="tags rev"><span class="tag">Call mapping</span><span class="tag">Agent role</span><span class="tag">Conversation flow</span><span class="tag">Qualifying questions</span><span class="tag">Information captured</span><span class="tag">Handoff rules</span><span class="tag">Escalation triggers</span><span class="tag">Booking rules</span><span class="tag">Integration plan</span></div>
   </div>
 </section>
 
 <section class="sect">
   <div class="container">
-    <div class="s-tag rev">What's Covered</div>
-    <h2 class="s-title rev" style="margin-bottom:1.5rem">What voice system design covers.</h2>
-    <div class="chk-grid rev">
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Operational call mapping</strong> — documenting how calls move through your business today, end to end.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Agent roles</strong> — defining what each voice agent is responsible for, and where a human takes over.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Conversation architecture</strong> — structuring the call flow so it feels natural, not scripted.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Intent recognition</strong> — designing how the system identifies what a caller actually needs.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Information capture</strong> — specifying exactly what details get captured on every call.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Handoff logic</strong> — defining when and how a call moves from AI to a human.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Escalation rules</strong> — building the conditions that trigger a priority response.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>Workflow triggers</strong> — mapping which call outcomes should kick off which downstream action.</div></div>
-      <div class="chk-item"><div class="chk-mark">✓</div><div class="chk-text"><strong>CRM & scheduling integration planning</strong> — planning exactly how the system writes into your existing tools.</div></div>
+    <div class="facts rev">
+      <div class="fact"><div class="fact-n">Your words</div><div class="fact-l">The agent uses your service names, your pricing answers, your policies.</div></div>
+      <div class="fact"><div class="fact-n">Your rules</div><div class="fact-l">You decide what it books, what it escalates and what it never promises.</div></div>
+      <div class="fact"><div class="fact-n">Tuned live</div><div class="fact-l">You test it on a forwarding number and we adjust until it sounds right.</div></div>
     </div>
   </div>
 </section>
 
-<section class="sect">
-  <div class="container">
-    <div class="about-quote rev" style="max-width:820px;font-size:1.35rem">"A voice agent is only as good as the map it was built from. We design the system around your business, not the other way around."</div>
-  </div>
-</section>
 
-<section class="sect">
-  <div class="container">
-    <div class="s-tag rev">From Design To Build</div>
-    <h2 class="s-title rev" style="margin-bottom:1.5rem">A design that becomes the deployed system.</h2>
-    <p class="sect-lead rev">Voice system design isn't a slide deck — it's the working specification our team builds directly from. Once the call flows, agent roles, and integration plan are locked, the same design carries into build, testing, and deployment, detailed further on our <a href="/resources/process" style="color:var(--accent)">process page</a>.</p>
-  </div>
-</section>
-
-
-<!-- ── CTA ─────────────────────────────────────────────── -->
 <section id="cta">
   <div class="cta-orb-1" aria-hidden="true"></div>
   <div class="cta-orb-2" aria-hidden="true"></div>
   <div class="cta-inner">
-    <div class="cta-eye rev">Voice System Design</div>
-    <h2 class="cta-headline rev">Let's map how your<br><strong>business takes calls.</strong></h2>
-    <p class="cta-sub rev">Call Mapping · Conversation Architecture · Integration Planning</p>
-    <a href="mailto:kaushikkrish831@gmail.com" class="btn-primary rev">Design Your Voice System →</a>
+    <div class="cta-eye rev">See it applied to your business</div>
+    <h2 class="cta-headline rev">Design your<br><strong>voice system.</strong></h2>
+    <p class="cta-sub rev">Free custom demo · Ontario, Canada</p>
+    <a href="/demo" class="btn-primary rev">Hear a Demo →</a>
   </div>
 </section>
 
@@ -197,13 +169,13 @@
     <div class="ft-brand">
       <div class="ft-logo">AIM Media</div>
       <div class="ft-tag">"Intelligence. Automated."</div>
-      <div class="ft-r" style="text-align:left"><a href="mailto:kaushikkrish831@gmail.com">kaushikkrish831@gmail.com</a></div>
+      <div class="ft-r" style="text-align:left">Ontario, Canada<br><a href="mailto:krish@theaimmedia.ca">krish@theaimmedia.ca</a></div>
     </div>
     <div class="ft-sitemap">
       <div class="ft-col">
         <div class="ft-col-title">Site</div>
         <a href="/">Home</a>
-        <a href="/demos">Demos</a>
+        <a href="/demo">Hear a Demo</a>
         <a href="/pricing">Pricing</a>
       </div>
       <div class="ft-col">
@@ -224,12 +196,12 @@
         <a href="/resources/about">About</a>
         <a href="/resources/process">Process</a>
         <a href="/resources/vision">Vision</a>
-        <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+        <a href="mailto:krish@theaimmedia.ca">Contact</a>
       </div>
     </div>
   </div>
   <div class="ft-bottom">
-    <span>&copy; 2026 AIM Media. All rights reserved.</span>
+    <span>&copy; 2026 AIM Media. Serving businesses across Ontario, Canada.</span>
     <div class="ft-legal-links">
       <a href="/privacy">Privacy</a>
       <a href="/terms">Terms</a>
@@ -239,48 +211,7 @@
 
 <div id="spotlight" aria-hidden="true"></div>
 
-<!-- ── EXPANDING CARD MODAL ────────────────────────────────── -->
-<div id="cs-modal" aria-hidden="true" role="dialog" aria-modal="true">
-  <button id="cs-close" aria-label="Close">✕</button>
-  <div id="cs-m-bg"></div>
-  <div class="cs-m-ov"></div>
-  <div class="cs-m-body">
-    <div class="cs-m-tag-el" id="cs-m-tag"></div>
-    <div class="cs-m-name-el" id="cs-m-name"><span></span></div>
-    <div class="cs-m-result-el" id="cs-m-result"></div>
-  </div>
-  <div class="cs-m-swipe">↓ swipe down to close</div>
-</div>
-
-<!-- ── CINEMATIC FLASH ────────────────────────────────────── -->
-<div id="mode-flash"></div>
-
-<!-- ── INDUSTRY MODE OVERLAY ────────────────────────────── -->
-<div id="mode-overlay" data-mode="">
-  <canvas id="mode-canvas"></canvas>
-  <div class="mode-vignette"></div>
-  <div class="mode-topbar">
-    <div class="mode-topbar-logo">AIM Media</div>
-    <div class="mode-badge-lbl" id="mode-badge-lbl"></div>
-    <button class="mode-exit-btn" id="mode-exit-btn">✕ EXIT</button>
-  </div>
-  <div class="mode-hud-hl" id="mode-hud-hl">
-    <div class="mode-eyebrow" id="mode-eyebrow"></div>
-    <h2 class="mode-headline" id="mode-headline"></h2>
-    <ul class="mode-svcs" id="mode-svcs"></ul>
-  </div>
-  <div class="mode-hud-case" id="mode-hud-case">
-    <div class="mode-case">
-      <div class="mode-case-tag" id="mode-case-tag"></div>
-      <div class="mode-case-stat" id="mode-case-stat"></div>
-      <div class="mode-case-name" id="mode-case-name"></div>
-      <div class="mode-case-desc" id="mode-case-desc"></div>
-    </div>
-  </div>
-  <div class="mode-hint">Move cursor to explore</div>
-</div>
-
 <script src="/assets/js/core.js"></script>
-<script src="/assets/js/modes.js"></script>
+<script src="/assets/js/viz.js"></script>
 </body>
 </html>

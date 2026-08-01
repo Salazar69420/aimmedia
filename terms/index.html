@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Terms of Service — AIM Media</title>
-  <meta name="description" content="The terms that govern engagements with AIM Media for the design, deployment, and management of AI voice infrastructure." />
+  <meta name="description" content="The terms that govern engagements with AIM Media for building and running AI voice agents." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,9 +17,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <!-- Lenis smooth scroll -->
   <script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
-  <!-- Three.js — loaded eagerly so mode scenes are always ready -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.147.0/examples/js/loaders/GLTFLoader.js"></script>
 </head>
 <body>
 
@@ -75,22 +72,17 @@
         <li><a href="/use-cases/call-center">Call Center</a></li>
       </ul>
     </li>
-    <li><a href="/demos">Demos</a></li>
     <li><a href="/pricing">Pricing</a></li>
-    <li><a href="/resources/process">Process</a></li>
-    <li><a href="/resources/about">About</a></li>
-    <li><a href="mailto:kaushikkrish831@gmail.com">Contact</a></li>
+    <li class="nav-drop">
+      <a href="/resources/about" class="nav-drop-trigger">Company</a>
+      <ul class="nav-drop-menu">
+        <li><a href="/resources/about">About</a></li>
+        <li><a href="/resources/process">Process</a></li>
+        <li><a href="/resources/vision">Vision</a></li>
+      </ul>
+    </li>
+    <li><a href="/demo" class="nav-cta">Hear a Demo</a></li>
   </ul>
-  <div class="mode-btn" id="mode-btn" role="button" tabindex="0" aria-label="Explore industry modes" aria-haspopup="listbox" aria-expanded="false">
-    <span class="mode-label-txt">MODES</span>
-    <span class="mode-btn-chev"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    <div class="mode-dropdown" id="mode-dropdown" role="listbox">
-      <div class="mode-opt" data-mode="realtor" role="option"><span class="mode-dot" style="background:#3D6CC0"></span>Real Estate</div>
-      <div class="mode-opt" data-mode="cafe" role="option"><span class="mode-dot" style="background:#D4956A"></span>Hospitality</div>
-      <div class="mode-opt" data-mode="corporate" role="option"><span class="mode-dot" style="background:#4A9EDB"></span>Enterprise</div>
-      <div class="mode-opt" data-mode="dealership" role="option"><span class="mode-dot" style="background:#C0C0C0"></span>Dealership</div>
-    </div>
-  </div>
   <button id="nav-burger" class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
     <span></span><span></span><span></span>
   </button>
@@ -111,16 +103,19 @@
     <a href="/use-cases/intake">Intake</a>
     <a href="/use-cases/call-center">Call Center</a>
   </div>
-  <a href="/demos">Demos</a>
   <a href="/pricing">Pricing</a>
-  <a href="/resources/process">Process</a>
-  <a href="/resources/about">About</a>
-  <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+  <div class="nav-mobile-group-label">Company</div>
+  <div class="nav-mobile-sub">
+    <a href="/resources/about">About</a>
+    <a href="/resources/process">Process</a>
+    <a href="/resources/vision">Vision</a>
+  </div>
+  <a href="/demo">Hear a Demo</a>
+  <a href="mailto:krish@theaimmedia.ca">Contact</a>
 </div>
 
 
-<!-- ── HERO ───────────────────────────────────────────── -->
-<section id="hero" class="hero-inner hero-tight">
+<section id="hero" class="hero-inner">
   <canvas id="particles" aria-hidden="true"></canvas>
   <div class="hero-bg" aria-hidden="true"></div>
   <div class="hero-vignette" aria-hidden="true"></div>
@@ -132,8 +127,8 @@
       <span class="hero-line hero-line-italic"><span>Terms of</span></span>
       <span class="hero-line hero-line-bold"><span>Service.</span></span>
     </h1>
-    <p class="hero-sub">The terms that govern engagements with AIM Media for the design, deployment, and management of AI voice infrastructure.</p>
-    
+    <p class="hero-sub">The terms that govern engagements with AIM Media.</p>
+    <div class="hero-cta"> </div>
   </div>
 </section>
 
@@ -142,35 +137,38 @@
     <div class="legal-content">
       <span class="legal-updated">Last updated · August 2026</span>
 
-      <h2>Agreement To Terms</h2>
-      <p>These terms govern your use of this website and any engagement with AIM Media for voice system design, infrastructure management, or related services. By engaging AIM Media or using this site, you agree to these terms.</p>
+      <h2>Agreement</h2>
+      <p>These terms govern your use of this website and any engagement with AIM Media for building or operating AI voice agents. By engaging AIM Media or using this site, you agree to them.</p>
 
-      <h2>Description Of Services</h2>
-      <p>AIM Media designs, deploys, and manages AI voice infrastructure for call-driven businesses, including voice system design, infrastructure management, and ongoing managed operations as described on this site. The specific scope of any engagement is defined in a separate proposal or agreement between AIM Media and the client.</p>
+      <h2>Services</h2>
+      <p>AIM Media designs, builds and operates AI voice agents for call-driven businesses. The scope of any engagement is set out in a separate proposal or agreement between AIM Media and the client.</p>
+
+      <h2>Billing And Cancellation</h2>
+      <p>Engagements are billed on a month-to-month basis against an agreed minute package unless a separate written agreement says otherwise. There is no long-term commitment. Cancelling before the next billing period ends the arrangement, and no further amounts fall due for periods after cancellation.</p>
 
       <h2>Client Responsibilities</h2>
-      <p>Clients are responsible for providing accurate operational information during discovery, for securing any rights needed to connect AIM Media's systems to their existing tools, and for confirming that their use of a deployed voice system complies with laws and regulations applicable to their industry and jurisdiction, including any obligations related to call recording or caller consent.</p>
+      <p>Clients are responsible for giving us accurate information about their operations, for holding any rights needed to connect our systems to their existing tools, and for ensuring their use of a deployed agent complies with the laws that apply to their industry and jurisdiction — including any call recording or caller consent requirements.</p>
 
       <h2>No Guaranteed Outcomes</h2>
-      <p>AI voice systems augment a business's operations; they do not guarantee specific business results, call volume, or revenue outcomes. AIM Media works to design, deploy, and maintain a reliable system, but outcomes depend on factors outside our control, including a client's own operations, market conditions, and third-party service availability.</p>
+      <p>A voice agent adds coverage; it does not guarantee specific business results, call volume or revenue. We work to build and maintain a reliable agent, but outcomes depend on factors outside our control, including your own operations and third-party service availability.</p>
 
       <h2>Intellectual Property</h2>
-      <p>Each party retains ownership of its own pre-existing intellectual property. Ownership of custom configurations, integrations, and materials developed specifically for a client engagement is addressed in that engagement's agreement.</p>
+      <p>Each party keeps ownership of its own pre-existing intellectual property. Ownership of configurations and integrations built specifically for a client is addressed in that engagement's agreement.</p>
 
       <h2>Third-Party Services</h2>
-      <p>Our services rely on third-party voice platforms, AI models, telephony carriers, and integration partners. AIM Media is not responsible for outages, changes, or limitations originating from third-party providers, though we work to select reliable providers and to respond promptly when issues arise.</p>
+      <p>Our service depends on third-party voice platforms, AI models, carriers and integration partners. We are not responsible for outages or changes originating from those providers, though we select them carefully and respond promptly when issues arise.</p>
 
       <h2>Limitation Of Liability</h2>
-      <p>To the maximum extent permitted by law, AIM Media is not liable for indirect, incidental, or consequential damages arising from the use of a deployed voice system or this website. Nothing in these terms limits liability that cannot be limited under applicable law.</p>
+      <p>To the maximum extent permitted by law, AIM Media is not liable for indirect, incidental or consequential damages arising from the use of a deployed agent or this website. Nothing here limits liability that cannot be limited under applicable law.</p>
 
-      <h2>Changes To These Terms</h2>
-      <p>We may update these terms from time to time. Continued use of our services after an update constitutes acceptance of the revised terms.</p>
+      <h2>Changes</h2>
+      <p>We may update these terms. Continued use of our services after an update constitutes acceptance of the revised terms.</p>
 
       <h2>Governing Law</h2>
       <p>These terms are governed by the laws of the Province of Ontario, Canada, without regard to conflict-of-law principles.</p>
 
       <h2>Contact</h2>
-      <p>Questions about these terms can be directed to <a href="mailto:kaushikkrish831@gmail.com" style="color:var(--accent)">kaushikkrish831@gmail.com</a>.</p>
+      <p>Questions can be sent to <a href="mailto:krish@theaimmedia.ca" style="color:var(--accent)">krish@theaimmedia.ca</a>.</p>
     </div>
   </div>
 </section>
@@ -182,13 +180,13 @@
     <div class="ft-brand">
       <div class="ft-logo">AIM Media</div>
       <div class="ft-tag">"Intelligence. Automated."</div>
-      <div class="ft-r" style="text-align:left"><a href="mailto:kaushikkrish831@gmail.com">kaushikkrish831@gmail.com</a></div>
+      <div class="ft-r" style="text-align:left">Ontario, Canada<br><a href="mailto:krish@theaimmedia.ca">krish@theaimmedia.ca</a></div>
     </div>
     <div class="ft-sitemap">
       <div class="ft-col">
         <div class="ft-col-title">Site</div>
         <a href="/">Home</a>
-        <a href="/demos">Demos</a>
+        <a href="/demo">Hear a Demo</a>
         <a href="/pricing">Pricing</a>
       </div>
       <div class="ft-col">
@@ -209,12 +207,12 @@
         <a href="/resources/about">About</a>
         <a href="/resources/process">Process</a>
         <a href="/resources/vision">Vision</a>
-        <a href="mailto:kaushikkrish831@gmail.com">Contact</a>
+        <a href="mailto:krish@theaimmedia.ca">Contact</a>
       </div>
     </div>
   </div>
   <div class="ft-bottom">
-    <span>&copy; 2026 AIM Media. All rights reserved.</span>
+    <span>&copy; 2026 AIM Media. Serving businesses across Ontario, Canada.</span>
     <div class="ft-legal-links">
       <a href="/privacy">Privacy</a>
       <a href="/terms">Terms</a>
@@ -224,48 +222,7 @@
 
 <div id="spotlight" aria-hidden="true"></div>
 
-<!-- ── EXPANDING CARD MODAL ────────────────────────────────── -->
-<div id="cs-modal" aria-hidden="true" role="dialog" aria-modal="true">
-  <button id="cs-close" aria-label="Close">✕</button>
-  <div id="cs-m-bg"></div>
-  <div class="cs-m-ov"></div>
-  <div class="cs-m-body">
-    <div class="cs-m-tag-el" id="cs-m-tag"></div>
-    <div class="cs-m-name-el" id="cs-m-name"><span></span></div>
-    <div class="cs-m-result-el" id="cs-m-result"></div>
-  </div>
-  <div class="cs-m-swipe">↓ swipe down to close</div>
-</div>
-
-<!-- ── CINEMATIC FLASH ────────────────────────────────────── -->
-<div id="mode-flash"></div>
-
-<!-- ── INDUSTRY MODE OVERLAY ────────────────────────────── -->
-<div id="mode-overlay" data-mode="">
-  <canvas id="mode-canvas"></canvas>
-  <div class="mode-vignette"></div>
-  <div class="mode-topbar">
-    <div class="mode-topbar-logo">AIM Media</div>
-    <div class="mode-badge-lbl" id="mode-badge-lbl"></div>
-    <button class="mode-exit-btn" id="mode-exit-btn">✕ EXIT</button>
-  </div>
-  <div class="mode-hud-hl" id="mode-hud-hl">
-    <div class="mode-eyebrow" id="mode-eyebrow"></div>
-    <h2 class="mode-headline" id="mode-headline"></h2>
-    <ul class="mode-svcs" id="mode-svcs"></ul>
-  </div>
-  <div class="mode-hud-case" id="mode-hud-case">
-    <div class="mode-case">
-      <div class="mode-case-tag" id="mode-case-tag"></div>
-      <div class="mode-case-stat" id="mode-case-stat"></div>
-      <div class="mode-case-name" id="mode-case-name"></div>
-      <div class="mode-case-desc" id="mode-case-desc"></div>
-    </div>
-  </div>
-  <div class="mode-hint">Move cursor to explore</div>
-</div>
-
 <script src="/assets/js/core.js"></script>
-<script src="/assets/js/modes.js"></script>
+<script src="/assets/js/viz.js"></script>
 </body>
 </html>

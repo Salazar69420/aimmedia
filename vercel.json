@@ -3,5 +3,8 @@
   "buildCommand": "npm run build",
   "installCommand": null,
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "redirects": [
+    { "source": "/demos", "destination": "/demo", "permanent": true }
+  ]
 }
