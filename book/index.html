@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Terms of Service — AIM Media</title>
-  <meta name="description" content="The terms that govern engagements with AIM Media for building and running AI voice agents." />
+  <title>Hear a Demo — AIM Media</title>
+  <meta name="description" content="Answer a few quick questions and book a free custom AI voice agent demo. Takes about a minute, no computer needed on your end." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -81,7 +81,7 @@
         <li><a href="/resources/vision">Vision</a></li>
       </ul>
     </li>
-    <li><a href="/book" class="nav-cta">Hear a Demo</a></li>
+    <li><a href="/book" class="nav-cta active">Hear a Demo</a></li>
   </ul>
   <button id="nav-burger" class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
     <span></span><span></span><span></span>
@@ -110,69 +110,130 @@
     <a href="/resources/process">Process</a>
     <a href="/resources/vision">Vision</a>
   </div>
-  <a href="/book">Hear a Demo</a>
+  <a href="/book" class="active">Hear a Demo</a>
   <a href="mailto:krish@theaimmedia.ca">Contact</a>
 </div>
 
-
-<section id="hero" class="hero-inner">
-  <canvas id="particles" aria-hidden="true"></canvas>
-  <div class="hero-bg" aria-hidden="true"></div>
-  <div class="hero-vignette" aria-hidden="true"></div>
-  <div class="hero-bg-num" aria-hidden="true">§</div>
-  <div class="hero-content">
-    <div class="crumb"><a href="/">Home</a><span>/</span><span>Terms</span></div>
-    <div class="hero-eyebrow">Legal</div>
-    <h1 class="hero-headline">
-      <span class="hero-line hero-line-italic"><span>Terms of</span></span>
-      <span class="hero-line hero-line-bold"><span>Service.</span></span>
-    </h1>
-    <p class="hero-sub">The terms that govern engagements with AIM Media.</p>
-    <div class="hero-cta"> </div>
+<section id="quiz-app" data-endpoint="/api/book">
+  <div class="qz-head container">
+    <div class="crumb"><a href="/">Home</a><span>/</span><span>Hear a Demo</span></div>
+    <div class="hero-eyebrow">Free Custom Demo · About 60 Seconds</div>
+    <h1 class="qz-title">Let's get you a<br><em>demo agent.</em></h1>
   </div>
-</section>
 
-<section class="sect">
-  <div class="container">
-    <div class="legal-content">
-      <span class="legal-updated">Last updated · August 2026</span>
+  <div class="qz-wrap">
+    <div class="qz-progress"><span class="qz-progress-fill"></span></div>
+    <div class="qz-progress-label"><span class="qz-step-current">1</span> / <span class="qz-step-total">8</span></div>
 
-      <h2>Agreement</h2>
-      <p>These terms govern your use of this website and any engagement with AIM Media for building or operating AI voice agents. By engaging AIM Media or using this site, you agree to them.</p>
+    <div class="qz-stage">
 
-      <h2>Services</h2>
-      <p>AIM Media designs, builds and operates AI voice agents for call-driven businesses. The scope of any engagement is set out in a separate proposal or agreement between AIM Media and the client.</p>
+      <div class="qz-step qz-active" data-step="1">
+        <div class="qz-eyebrow">Quick Start</div>
+        <h2 class="qz-question">What do you want AI to handle?</h2>
+        <div class="qz-options" data-field="interest" data-type="single" data-auto="true">
+      <button type="button" class="qz-option" data-value="Stop missing calls">Stop missing calls</button>
+      <button type="button" class="qz-option" data-value="Automate something else">Automate something else</button>
+      <button type="button" class="qz-option" data-value="Not sure yet — exploring">Not sure yet — exploring</button>
+    </div>
+      </div>
 
-      <h2>Billing And Cancellation</h2>
-      <p>Engagements are billed on a month-to-month basis against an agreed minute package unless a separate written agreement says otherwise. There is no long-term commitment. Cancelling before the next billing period ends the arrangement, and no further amounts fall due for periods after cancellation.</p>
+      <div class="qz-step" data-step="2">
+        <div class="qz-eyebrow">About You</div>
+        <h2 class="qz-question">What's the business called?</h2>
+        <div class="qz-fields">
+          <input class="qz-input" type="text" data-field="business" placeholder="Business name" required autocomplete="organization" />
+        </div>
+      </div>
 
-      <h2>Client Responsibilities</h2>
-      <p>Clients are responsible for giving us accurate information about their operations, for holding any rights needed to connect our systems to their existing tools, and for ensuring their use of a deployed agent complies with the laws that apply to their industry and jurisdiction — including any call recording or caller consent requirements.</p>
+      <div class="qz-step" data-step="3">
+        <div class="qz-eyebrow">Industry</div>
+        <h2 class="qz-question">What industry are you in?</h2>
+        <div class="qz-options" data-field="industry" data-type="single" data-auto="true">
+      <button type="button" class="qz-option" data-value="Towing &amp; Logistics">Towing &amp; Logistics</button>
+      <button type="button" class="qz-option" data-value="Dealership">Dealership</button>
+      <button type="button" class="qz-option" data-value="Restaurant">Restaurant</button>
+      <button type="button" class="qz-option" data-value="HVAC &amp; Plumbing">HVAC &amp; Plumbing</button>
+      <button type="button" class="qz-option" data-value="Real Estate">Real Estate</button>
+      <button type="button" class="qz-option" data-value="Law Firm">Law Firm</button>
+      <button type="button" class="qz-option" data-value="Medical &amp; Dental">Medical &amp; Dental</button>
+      <button type="button" class="qz-option" data-value="Property Management">Property Management</button>
+      <button type="button" class="qz-option" data-value="Cleaning">Cleaning</button>
+      <button type="button" class="qz-option" data-value="Junk Removal &amp; Dumpster">Junk Removal &amp; Dumpster</button>
+      <button type="button" class="qz-option" data-value="Locksmith">Locksmith</button>
+      <button type="button" class="qz-option" data-value="Other">Other</button>
+    </div>
+      </div>
 
-      <h2>No Guaranteed Outcomes</h2>
-      <p>A voice agent adds coverage; it does not guarantee specific business results, call volume or revenue. We work to build and maintain a reliable agent, but outcomes depend on factors outside our control, including your own operations and third-party service availability.</p>
+      <div class="qz-step" data-step="4">
+        <div class="qz-eyebrow">The Gap</div>
+        <h2 class="qz-question">What's the biggest gap right now?</h2>
+        <div class="qz-options" data-field="pain" data-type="single" data-auto="true">
+      <button type="button" class="qz-option" data-value="Calls go to voicemail after hours">Calls go to voicemail after hours</button>
+      <button type="button" class="qz-option" data-value="We're too busy to answer everything">We're too busy to answer everything</button>
+      <button type="button" class="qz-option" data-value="Repetitive questions eat up our time">Repetitive questions eat up our time</button>
+      <button type="button" class="qz-option" data-value="Following up with leads takes too long">Following up with leads takes too long</button>
+      <button type="button" class="qz-option" data-value="Not sure yet">Not sure yet</button>
+    </div>
+      </div>
 
-      <h2>Intellectual Property</h2>
-      <p>Each party keeps ownership of its own pre-existing intellectual property. Ownership of configurations and integrations built specifically for a client is addressed in that engagement's agreement.</p>
+      <div class="qz-step" data-step="5">
+        <div class="qz-eyebrow">Scale</div>
+        <h2 class="qz-question">Roughly how many calls or leads do you get weekly?</h2>
+        <div class="qz-options" data-field="volume" data-type="single" data-auto="true">
+      <button type="button" class="qz-option" data-value="Under 20">Under 20</button>
+      <button type="button" class="qz-option" data-value="20–50">20–50</button>
+      <button type="button" class="qz-option" data-value="50–150">50–150</button>
+      <button type="button" class="qz-option" data-value="150+">150+</button>
+    </div>
+      </div>
 
-      <h2>Third-Party Services</h2>
-      <p>Our service depends on third-party voice platforms, AI models, carriers and integration partners. We are not responsible for outages or changes originating from those providers, though we select them carefully and respond promptly when issues arise.</p>
+      <div class="qz-step" data-step="6">
+        <div class="qz-eyebrow">Timeline</div>
+        <h2 class="qz-question">When do you want this live?</h2>
+        <div class="qz-options" data-field="timeline" data-type="single" data-auto="true">
+      <button type="button" class="qz-option" data-value="ASAP">ASAP</button>
+      <button type="button" class="qz-option" data-value="This month">This month</button>
+      <button type="button" class="qz-option" data-value="Just exploring">Just exploring</button>
+    </div>
+      </div>
 
-      <h2>Limitation Of Liability</h2>
-      <p>To the maximum extent permitted by law, AIM Media is not liable for indirect, incidental or consequential damages arising from the use of a deployed agent or this website. Nothing here limits liability that cannot be limited under applicable law.</p>
+      <div class="qz-step" data-step="7">
+        <div class="qz-eyebrow">Contact</div>
+        <h2 class="qz-question">Where should we reach you?</h2>
+        <div class="qz-fields qz-fields-stack">
+          <input class="qz-input" type="text" data-field="name" placeholder="Your name" required autocomplete="name" />
+          <input class="qz-input" type="tel" data-field="phone" placeholder="Phone number" required autocomplete="tel" />
+          <input class="qz-input" type="email" data-field="email" placeholder="Email (optional)" autocomplete="email" />
+        </div>
+      </div>
 
-      <h2>Changes</h2>
-      <p>We may update these terms. Continued use of our services after an update constitutes acceptance of the revised terms.</p>
+      <div class="qz-step" data-step="8">
+        <div class="qz-eyebrow">Almost Done</div>
+        <h2 class="qz-question">Pick up to 2 times that usually work</h2>
+        <div class="qz-slots" id="qz-slots" data-field="slots" data-max="2"></div>
+        <textarea class="qz-input qz-textarea" data-field="notes" placeholder="Anything else we should know? (optional)"></textarea>
+        <input type="text" class="qz-hp" id="qz-hp" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      </div>
 
-      <h2>Governing Law</h2>
-      <p>These terms are governed by the laws of the Province of Ontario, Canada, without regard to conflict-of-law principles.</p>
+    </div>
 
-      <h2>Contact</h2>
-      <p>Questions can be sent to <a href="mailto:krish@theaimmedia.ca" style="color:var(--accent)">krish@theaimmedia.ca</a>.</p>
+    <div class="qz-nav">
+      <button type="button" class="qz-back btn-ghost" id="qz-back">← Back</button>
+      <button type="button" class="qz-next btn-primary" id="qz-next">Next →</button>
+    </div>
+
+    <div class="qz-panel qz-done" id="qz-done">
+      <div class="qz-done-check">✓</div>
+      <h2 class="qz-question">Got it<span id="qz-done-name"></span>.</h2>
+      <p class="qz-done-sub">We'll call you within one business day to book your demo. Prefer email? Write to <a href="mailto:krish@theaimmedia.ca">krish@theaimmedia.ca</a> instead.</p>
+    </div>
+
+    <div class="qz-panel qz-error" id="qz-error">
+      <h2 class="qz-question">Something went wrong.</h2>
+      <p class="qz-done-sub">Your details weren't saved. Please email us directly at <a href="mailto:krish@theaimmedia.ca">krish@theaimmedia.ca</a> and we'll take it from there.</p>
     </div>
   </div>
 </section>
-
 
 <!-- ── FOOTER ──────────────────────────────────────────── -->
 <footer>

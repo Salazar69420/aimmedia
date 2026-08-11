@@ -67,7 +67,7 @@ function renderNav(current) {
     ${dropdown('Use Cases', USECASE_SUB, current, '/use-cases/front-desk')}
     <li><a href="/pricing"${cls('pricing', current)}>Pricing</a></li>
     ${dropdown('Company', COMPANY_SUB, current, '/resources/about')}
-    <li><a href="/demo" class="nav-cta${current === 'demo' ? ' active' : ''}">Hear a Demo</a></li>
+    <li><a href="/book" class="nav-cta${current === 'demo' || current === 'book' ? ' active' : ''}">Hear a Demo</a></li>
   </ul>
   <button id="nav-burger" class="nav-burger" aria-label="Open menu" aria-expanded="false" aria-controls="nav-mobile">
     <span></span><span></span><span></span>
@@ -89,7 +89,7 @@ function renderNav(current) {
   <div class="nav-mobile-sub">
     ${COMPANY_SUB.map(s => `<a href="${s.href}"${cls(s.key, current)}>${s.label}</a>`).join('\n    ')}
   </div>
-  <a href="/demo"${cls('demo', current)}>Hear a Demo</a>
+  <a href="/book"${cls('book', current)}>Hear a Demo</a>
   <a href="mailto:${EMAIL}">Contact</a>
 </div>`;
 }
@@ -108,7 +108,7 @@ function renderFooter() {
       <div class="ft-col">
         <div class="ft-col-title">Site</div>
         <a href="/">Home</a>
-        <a href="/demo">Hear a Demo</a>
+        <a href="/book">Hear a Demo</a>
         <a href="/pricing">Pricing</a>
       </div>
       <div class="ft-col">
@@ -197,7 +197,8 @@ function renderChromeTop() {
 function renderScripts() {
   return `
 <script src="/assets/js/core.js"></script>
-<script src="/assets/js/viz.js"></script>`;
+<script src="/assets/js/viz.js"></script>
+<script src="/assets/js/quiz.js"></script>`;
 }
 
 function page({ file, navKey, title, desc, body }) {
@@ -478,7 +479,7 @@ ${innerHero({
   h1a: 'Do not take',
   h1b: 'our word.',
   sub: 'We build a working agent for your business, then call you so you can hear it handle a real conversation. Takes about five minutes.',
-  cta: `<a href="mailto:${EMAIL}?subject=Demo%20request" class="btn-primary">Request Your Demo →</a>`,
+  cta: `<a href="/book" class="btn-primary">Start My Demo →</a>`,
 })}
 
 <section class="sect">
@@ -509,10 +510,131 @@ ${ctaSection({
   eyebrow: 'Free · No obligation · About five minutes',
   h1: 'Request your<br><strong>demo agent.</strong>',
   sub: 'Serving businesses across Ontario, Canada.',
-  btn: 'Request Your Demo →',
-  href: `mailto:${EMAIL}?subject=Demo%20request`,
+  btn: 'Start My Demo →',
+  href: '/book',
 })}
 `,
+});
+
+// ── BOOK (interactive funnel) ───────────────────────────────────────
+function qzOptions(field, items, auto = true) {
+  return `<div class="qz-options" data-field="${field}" data-type="single" data-auto="${auto}">
+      ${items.map(v => `<button type="button" class="qz-option" data-value="${v}">${v}</button>`).join('\n      ')}
+    </div>`;
+}
+
+function renderQuiz() {
+  return `
+<section id="quiz-app" data-endpoint="/api/book">
+  <div class="qz-head container">
+    <div class="crumb"><a href="/">Home</a><span>/</span><span>Hear a Demo</span></div>
+    <div class="hero-eyebrow">Free Custom Demo · About 60 Seconds</div>
+    <h1 class="qz-title">Let's get you a<br><em>demo agent.</em></h1>
+  </div>
+
+  <div class="qz-wrap">
+    <div class="qz-progress"><span class="qz-progress-fill"></span></div>
+    <div class="qz-progress-label"><span class="qz-step-current">1</span> / <span class="qz-step-total">8</span></div>
+
+    <div class="qz-stage">
+
+      <div class="qz-step qz-active" data-step="1">
+        <div class="qz-eyebrow">Quick Start</div>
+        <h2 class="qz-question">What do you want AI to handle?</h2>
+        ${qzOptions('interest', [
+          'Stop missing calls',
+          'Automate something else',
+          'Not sure yet — exploring',
+        ])}
+      </div>
+
+      <div class="qz-step" data-step="2">
+        <div class="qz-eyebrow">About You</div>
+        <h2 class="qz-question">What's the business called?</h2>
+        <div class="qz-fields">
+          <input class="qz-input" type="text" data-field="business" placeholder="Business name" required autocomplete="organization" />
+        </div>
+      </div>
+
+      <div class="qz-step" data-step="3">
+        <div class="qz-eyebrow">Industry</div>
+        <h2 class="qz-question">What industry are you in?</h2>
+        ${qzOptions('industry', [
+          'Towing &amp; Logistics', 'Dealership', 'Restaurant', 'HVAC &amp; Plumbing',
+          'Real Estate', 'Law Firm', 'Medical &amp; Dental', 'Property Management',
+          'Cleaning', 'Junk Removal &amp; Dumpster', 'Locksmith', 'Other',
+        ])}
+      </div>
+
+      <div class="qz-step" data-step="4">
+        <div class="qz-eyebrow">The Gap</div>
+        <h2 class="qz-question">What's the biggest gap right now?</h2>
+        ${qzOptions('pain', [
+          'Calls go to voicemail after hours',
+          "We're too busy to answer everything",
+          'Repetitive questions eat up our time',
+          'Following up with leads takes too long',
+          'Not sure yet',
+        ])}
+      </div>
+
+      <div class="qz-step" data-step="5">
+        <div class="qz-eyebrow">Scale</div>
+        <h2 class="qz-question">Roughly how many calls or leads do you get weekly?</h2>
+        ${qzOptions('volume', ['Under 20', '20–50', '50–150', '150+'])}
+      </div>
+
+      <div class="qz-step" data-step="6">
+        <div class="qz-eyebrow">Timeline</div>
+        <h2 class="qz-question">When do you want this live?</h2>
+        ${qzOptions('timeline', ['ASAP', 'This month', 'Just exploring'])}
+      </div>
+
+      <div class="qz-step" data-step="7">
+        <div class="qz-eyebrow">Contact</div>
+        <h2 class="qz-question">Where should we reach you?</h2>
+        <div class="qz-fields qz-fields-stack">
+          <input class="qz-input" type="text" data-field="name" placeholder="Your name" required autocomplete="name" />
+          <input class="qz-input" type="tel" data-field="phone" placeholder="Phone number" required autocomplete="tel" />
+          <input class="qz-input" type="email" data-field="email" placeholder="Email (optional)" autocomplete="email" />
+        </div>
+      </div>
+
+      <div class="qz-step" data-step="8">
+        <div class="qz-eyebrow">Almost Done</div>
+        <h2 class="qz-question">Pick up to 2 times that usually work</h2>
+        <div class="qz-slots" id="qz-slots" data-field="slots" data-max="2"></div>
+        <textarea class="qz-input qz-textarea" data-field="notes" placeholder="Anything else we should know? (optional)"></textarea>
+        <input type="text" class="qz-hp" id="qz-hp" name="company_website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      </div>
+
+    </div>
+
+    <div class="qz-nav">
+      <button type="button" class="qz-back btn-ghost" id="qz-back">← Back</button>
+      <button type="button" class="qz-next btn-primary" id="qz-next">Next →</button>
+    </div>
+
+    <div class="qz-panel qz-done" id="qz-done">
+      <div class="qz-done-check">✓</div>
+      <h2 class="qz-question">Got it<span id="qz-done-name"></span>.</h2>
+      <p class="qz-done-sub">We'll call you within one business day to book your demo. Prefer email? Write to <a href="mailto:${EMAIL}">${EMAIL}</a> instead.</p>
+    </div>
+
+    <div class="qz-panel qz-error" id="qz-error">
+      <h2 class="qz-question">Something went wrong.</h2>
+      <p class="qz-done-sub">Your details weren't saved. Please email us directly at <a href="mailto:${EMAIL}">${EMAIL}</a> and we'll take it from there.</p>
+    </div>
+  </div>
+</section>`;
+}
+
+page({
+  file: 'book/index.html',
+  navKey: 'book',
+  title: 'Hear a Demo — AIM Media',
+  desc: 'Answer a few quick questions and book a free custom AI voice agent demo. Takes about a minute, no computer needed on your end.',
+  body: renderQuiz(),
 });
 
 // ── PRICING ───────────────────────────────────────────────────────
@@ -529,7 +651,7 @@ ${innerHero({
   h1a: 'Priced on',
   h1b: 'call volume.',
   sub: 'You pay for a minute package that includes building, maintaining and improving your agent. No setup trap, no lock-in.',
-  cta: `<a href="mailto:${EMAIL}?subject=Quote%20request" class="btn-primary">Get a Quote →</a>`,
+  cta: `<a href="/book" class="btn-primary">Get a Quote →</a>`,
 })}
 
 <section class="sect">
@@ -571,7 +693,7 @@ ${ctaSection({
   h1: 'Get your<br><strong>quote.</strong>',
   sub: 'Month to month · No long-term agreement · Ontario, Canada',
   btn: 'Get a Quote →',
-  href: `mailto:${EMAIL}?subject=Quote%20request`,
+  href: '/book',
 })}
 `,
 });

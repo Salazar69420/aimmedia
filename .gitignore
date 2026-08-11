@@ -4,3 +4,5 @@ krish-v1.jpg
 krish-v2.jpg
 .env
 .env.local
+.vercel
+.env*
