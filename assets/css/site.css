@@ -551,9 +551,9 @@ canvas#particles {
   will-change: transform;
   transform-style: preserve-3d;
 }
-.bcard:nth-child(1) { grid-column: span 5; }
-.bcard:nth-child(2) { grid-column: span 4; }
-.bcard:nth-child(3) { grid-column: span 3; }
+.bcard:nth-child(1) { grid-column: span 7; }
+.bcard:nth-child(2) { grid-column: span 5; }
+.bcard:nth-child(3) { grid-column: span 6; }
 .bcard:nth-child(4) { grid-column: span 6; }
 .bcard:nth-child(5) { grid-column: span 6; }
 .bcard:hover { border-color: var(--a40); }
@@ -605,6 +605,7 @@ canvas#particles {
   transition: max-height 0.5s var(--ease), opacity 0.4s;
 }
 .bcard:hover .bcard-desc { max-height: 100px; opacity: 1; }
+@media (hover: none) { .bcard-desc { max-height: 100px; opacity: 1; } }
 
 /* ── CASE STUDIES ────────────────────────────────────── */
 #work { padding: 9rem 0 0; }
@@ -1356,7 +1357,7 @@ footer {
 .ft-brand { display: flex; flex-direction: column; gap: 0.5rem; }
 .ft-sitemap {
   display: grid;
-  grid-template-columns: repeat(4, auto);
+  grid-template-columns: repeat(5, auto);
   gap: 2.5rem;
 }
 .ft-col { display: flex; flex-direction: column; gap: 0.65rem; }

@@ -39,6 +39,11 @@ const COMPANY_SUB = [
   { key: 'process', href: '/resources/process', label: 'Process' },
   { key: 'vision',  href: '/resources/vision',  label: 'Vision' },
 ];
+const SOLUTIONS_SUB = [
+  { key: 'digital-marketing', href: '/digital-marketing', label: 'Digital Marketing' },
+  { key: 'content',           href: '/content',           label: 'Content' },
+  { key: 'ai-automations',    href: '/ai-automations',    label: 'AI Automations' },
+];
 const KEYS = a => a.map(s => s.key);
 
 function cls(key, current, extra) {
@@ -63,6 +68,7 @@ function renderNav(current) {
   <a href="/" class="nav-logo">AIM Media</a>
   <ul class="nav-links">
     <li><a href="/"${cls('home', current)}>Home</a></li>
+    ${dropdown('Solutions', SOLUTIONS_SUB, current, '/digital-marketing')}
     ${dropdown('Services', SERVICES_SUB, current, '/services/voice-system-design')}
     ${dropdown('Use Cases', USECASE_SUB, current, '/use-cases/front-desk')}
     <li><a href="/pricing"${cls('pricing', current)}>Pricing</a></li>
@@ -76,6 +82,10 @@ function renderNav(current) {
 
 <div id="nav-mobile" class="nav-mobile" aria-hidden="true">
   <a href="/"${cls('home', current)}>Home</a>
+  <div class="nav-mobile-group-label">Solutions</div>
+  <div class="nav-mobile-sub">
+    ${SOLUTIONS_SUB.map(s => `<a href="${s.href}"${cls(s.key, current)}>${s.label}</a>`).join('\n    ')}
+  </div>
   <div class="nav-mobile-group-label">Services</div>
   <div class="nav-mobile-sub">
     ${SERVICES_SUB.map(s => `<a href="${s.href}"${cls(s.key, current)}>${s.label}</a>`).join('\n    ')}
@@ -110,6 +120,10 @@ function renderFooter() {
         <a href="/">Home</a>
         <a href="/book">Hear a Demo</a>
         <a href="/pricing">Pricing</a>
+      </div>
+      <div class="ft-col">
+        <div class="ft-col-title">Solutions</div>
+        ${SOLUTIONS_SUB.map(s => `<a href="${s.href}">${s.label}</a>`).join('\n        ')}
       </div>
       <div class="ft-col">
         <div class="ft-col-title">Services</div>
@@ -402,6 +416,39 @@ page({
     </div>
   </div>
 </div>
+
+<!-- ── WHAT WE DO — VERTICALS ───────────────────────────── -->
+<section id="services" class="sect">
+  <div class="container">
+    <div class="s-tag rev">What We Do</div>
+    <h2 class="s-title rev">One consultancy.<br><em>Four ways in.</em></h2>
+  </div>
+  <div class="container">
+    <div class="bento">
+      <a href="/services/voice-system-design" class="bcard rev">
+        <div class="bcard-num">01 · Flagship</div>
+        <div class="bcard-title">Voice Agents</div>
+        <div class="bcard-desc">AI agents that answer, qualify and book your calls, 24/7. Our first product, and where most of our work happens today.</div>
+      </a>
+      <a href="/digital-marketing" class="bcard rev">
+        <div class="bcard-num">02</div>
+        <div class="bcard-title">Digital Marketing</div>
+        <div class="bcard-desc">Paid search, paid social and SEO built to bring in the calls your voice agent then answers.</div>
+      </a>
+      <a href="/content" class="bcard rev">
+        <div class="bcard-num">03</div>
+        <div class="bcard-title">Content</div>
+        <div class="bcard-desc">Short-form video, written content and social calendars, produced on a system instead of ad hoc.</div>
+      </a>
+      <a href="/ai-automations" class="bcard rev">
+        <div class="bcard-num">04</div>
+        <div class="bcard-title">AI Automations</div>
+        <div class="bcard-desc">Custom workflows, internal tools and reporting that remove manual work outside the phone line.</div>
+      </a>
+    </div>
+  </div>
+</section>
+
 ${LEAK_VIZ}
 ${CLOCK_VIZ}
 
@@ -528,8 +575,8 @@ function renderQuiz() {
 <section id="quiz-app" data-endpoint="/api/book">
   <div class="qz-head container">
     <div class="crumb"><a href="/">Home</a><span>/</span><span>Hear a Demo</span></div>
-    <div class="hero-eyebrow">Free Custom Demo · About 60 Seconds</div>
-    <h1 class="qz-title">Let's get you a<br><em>demo agent.</em></h1>
+    <div class="hero-eyebrow">Free Consult · About 60 Seconds</div>
+    <h1 class="qz-title">Let's get this<br><em>moving.</em></h1>
   </div>
 
   <div class="qz-wrap">
@@ -540,10 +587,12 @@ function renderQuiz() {
 
       <div class="qz-step qz-active" data-step="1">
         <div class="qz-eyebrow">Quick Start</div>
-        <h2 class="qz-question">What do you want AI to handle?</h2>
+        <h2 class="qz-question">What do you need help with?</h2>
         ${qzOptions('interest', [
-          'Stop missing calls',
-          'Automate something else',
+          'Voice Agents — stop missing calls',
+          'Digital Marketing',
+          'Content',
+          'AI Automations',
           'Not sure yet — exploring',
         ])}
       </div>
@@ -618,7 +667,7 @@ function renderQuiz() {
     <div class="qz-panel qz-done" id="qz-done">
       <div class="qz-done-check">✓</div>
       <h2 class="qz-question">Got it<span id="qz-done-name"></span>.</h2>
-      <p class="qz-done-sub">We'll call you within one business day to book your demo. Prefer email? Write to <a href="mailto:${EMAIL}">${EMAIL}</a> instead.</p>
+      <p class="qz-done-sub">We'll call you within one business day to talk it through. Prefer email? Write to <a href="mailto:${EMAIL}">${EMAIL}</a> instead.</p>
     </div>
 
     <div class="qz-panel qz-error" id="qz-error">
@@ -633,7 +682,7 @@ page({
   file: 'book/index.html',
   navKey: 'book',
   title: 'Hear a Demo — AIM Media',
-  desc: 'Answer a few quick questions and book a free custom AI voice agent demo. Takes about a minute, no computer needed on your end.',
+  desc: 'Answer a few quick questions and get a free consult on voice agents, digital marketing, content or AI automation. Takes about a minute.',
   body: renderQuiz(),
 });
 
@@ -942,6 +991,105 @@ service({
     ['It grows', 'Add services, departments or locations without starting over.'],
   ],
   ctaH1: 'Hand us<br><strong>the phone line.</strong>',
+});
+
+// ── SOLUTIONS (other verticals) ───────────────────────────────────
+// Same shape as service(), but the CTA goes straight to /book — /demo
+// is a voice-agent-specific explainer and doesn't fit these verticals.
+function vertical({ file, navKey, title, desc, crumb, bgNum, eyebrow, h1a, h1b, sub, sectionTag, sectionTitle, covers, factList, ctaH1 }) {
+  page({
+    file, navKey, title, desc,
+    body: `
+${innerHero({ crumb, bgNum, eyebrow, h1a, h1b, sub, cta: '<a href="/book" class="btn-primary">Start the Conversation →</a>' })}
+
+<section class="sect">
+  <div class="container">
+    <div class="s-tag rev">${sectionTag}</div>
+    <h2 class="s-title rev" style="margin-bottom:0.5rem">${sectionTitle}</h2>
+    ${tags(covers)}
+  </div>
+</section>
+
+<section class="sect">
+  <div class="container">
+    ${facts(factList)}
+  </div>
+</section>
+
+${ctaSection({
+  eyebrow: 'Tell us what you are working with',
+  h1: ctaH1,
+  sub: 'Free consult · Ontario, Canada',
+  href: '/book',
+})}
+`,
+  });
+}
+
+vertical({
+  file: 'digital-marketing/index.html',
+  navKey: 'digital-marketing',
+  title: 'Digital Marketing — AIM Media',
+  desc: 'AIM Media runs digital marketing built to bring in the calls and leads your business (and your voice agent) can actually convert.',
+  crumb: 'Digital Marketing',
+  bgNum: 'DM',
+  eyebrow: 'Solutions · Digital Marketing',
+  h1a: 'Traffic that',
+  h1b: 'earns the call.',
+  sub: 'Campaigns and search presence built to bring in leads worth answering, not just clicks.',
+  sectionTag: 'What We Run',
+  sectionTitle: 'Built to convert,<br><em>not just to click.</em>',
+  covers: ['Paid search', 'Paid social', 'SEO', 'Local &amp; Google Business Profile', 'Landing pages', 'Retargeting', 'Conversion tracking', 'Reporting &amp; dashboards'],
+  factList: [
+    ['No vanity metrics', 'We report on calls and leads booked, not impressions.'],
+    ['Built for local', 'Campaigns tuned to the service areas your business actually covers.'],
+    ['Works with the rest', 'Feeds straight into the voice agent and CRM you already run.'],
+  ],
+  ctaH1: 'See what we would<br><strong>run for you.</strong>',
+});
+
+vertical({
+  file: 'content/index.html',
+  navKey: 'content',
+  title: 'Content — AIM Media',
+  desc: 'AIM Media produces short-form video, written content and social content on a system, so it goes out every week instead of whenever there is time.',
+  crumb: 'Content',
+  bgNum: 'CO',
+  eyebrow: 'Solutions · Content',
+  h1a: 'Content that',
+  h1b: 'shows up on schedule.',
+  sub: 'Short-form video, written content and social, produced on a system instead of ad hoc.',
+  sectionTag: 'What We Produce',
+  sectionTitle: 'Made to run<br><em>every week, not once.</em>',
+  covers: ['Short-form video', 'Blog &amp; SEO writing', 'Social content calendars', 'Photography direction', 'Email newsletters', 'Case studies', 'Repurposing &amp; editing', 'Brand voice &amp; guidelines'],
+  factList: [
+    ['A real calendar', 'Content planned and produced on a schedule, not whenever there is time.'],
+    ['Built to convert', 'Every piece points somewhere: a call, a form, a booked demo.'],
+    ['One brand voice', 'Consistent across video, writing and social, however many people touch it.'],
+  ],
+  ctaH1: 'See what we would<br><strong>create for you.</strong>',
+});
+
+vertical({
+  file: 'ai-automations/index.html',
+  navKey: 'ai-automations',
+  title: 'AI Automations — AIM Media',
+  desc: 'AIM Media builds custom AI workflows and internal tools that take repetitive manual work off your team, beyond the phone line.',
+  crumb: 'AI Automations',
+  bgNum: 'AA',
+  eyebrow: 'Solutions · AI Automations',
+  h1a: 'The busywork,',
+  h1b: 'automated.',
+  sub: 'Custom workflows and internal tools that take repetitive work off your team, wherever it happens.',
+  sectionTag: 'What We Build',
+  sectionTitle: 'Automations that<br><em>run without you.</em>',
+  covers: ['Workflow automation', 'Internal chatbots &amp; tools', 'Data entry &amp; sync', 'Reporting &amp; dashboards', 'Email &amp; CRM automation', 'Document processing', 'API integrations', 'Custom scripts &amp; tooling'],
+  factList: [
+    ['Built around your tools', 'Automations connect to the software you already run your business on.'],
+    ['Not just a chatbot', 'Anywhere your team does the same task by hand is worth automating.'],
+    ['Maintained, not abandoned', 'We keep watching and adjusting automations after they go live, same as the voice agent.'],
+  ],
+  ctaH1: 'See what we would<br><strong>automate for you.</strong>',
 });
 
 // ── ABOUT ─────────────────────────────────────────────────────────

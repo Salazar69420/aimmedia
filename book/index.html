@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hear a Demo — AIM Media</title>
-  <meta name="description" content="Answer a few quick questions and book a free custom AI voice agent demo. Takes about a minute, no computer needed on your end." />
+  <meta name="description" content="Answer a few quick questions and get a free consult on voice agents, digital marketing, content or AI automation. Takes about a minute." />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -56,6 +56,14 @@
   <ul class="nav-links">
     <li><a href="/">Home</a></li>
     <li class="nav-drop">
+      <a href="/digital-marketing" class="nav-drop-trigger">Solutions</a>
+      <ul class="nav-drop-menu">
+        <li><a href="/digital-marketing">Digital Marketing</a></li>
+        <li><a href="/content">Content</a></li>
+        <li><a href="/ai-automations">AI Automations</a></li>
+      </ul>
+    </li>
+    <li class="nav-drop">
       <a href="/services/voice-system-design" class="nav-drop-trigger">Services</a>
       <ul class="nav-drop-menu">
         <li><a href="/services/voice-system-design">Voice System Design</a></li>
@@ -90,6 +98,12 @@
 
 <div id="nav-mobile" class="nav-mobile" aria-hidden="true">
   <a href="/">Home</a>
+  <div class="nav-mobile-group-label">Solutions</div>
+  <div class="nav-mobile-sub">
+    <a href="/digital-marketing">Digital Marketing</a>
+    <a href="/content">Content</a>
+    <a href="/ai-automations">AI Automations</a>
+  </div>
   <div class="nav-mobile-group-label">Services</div>
   <div class="nav-mobile-sub">
     <a href="/services/voice-system-design">Voice System Design</a>
@@ -117,8 +131,8 @@
 <section id="quiz-app" data-endpoint="/api/book">
   <div class="qz-head container">
     <div class="crumb"><a href="/">Home</a><span>/</span><span>Hear a Demo</span></div>
-    <div class="hero-eyebrow">Free Custom Demo · About 60 Seconds</div>
-    <h1 class="qz-title">Let's get you a<br><em>demo agent.</em></h1>
+    <div class="hero-eyebrow">Free Consult · About 60 Seconds</div>
+    <h1 class="qz-title">Let's get this<br><em>moving.</em></h1>
   </div>
 
   <div class="qz-wrap">
@@ -129,10 +143,12 @@
 
       <div class="qz-step qz-active" data-step="1">
         <div class="qz-eyebrow">Quick Start</div>
-        <h2 class="qz-question">What do you want AI to handle?</h2>
+        <h2 class="qz-question">What do you need help with?</h2>
         <div class="qz-options" data-field="interest" data-type="single" data-auto="true">
-      <button type="button" class="qz-option" data-value="Stop missing calls">Stop missing calls</button>
-      <button type="button" class="qz-option" data-value="Automate something else">Automate something else</button>
+      <button type="button" class="qz-option" data-value="Voice Agents — stop missing calls">Voice Agents — stop missing calls</button>
+      <button type="button" class="qz-option" data-value="Digital Marketing">Digital Marketing</button>
+      <button type="button" class="qz-option" data-value="Content">Content</button>
+      <button type="button" class="qz-option" data-value="AI Automations">AI Automations</button>
       <button type="button" class="qz-option" data-value="Not sure yet — exploring">Not sure yet — exploring</button>
     </div>
       </div>
@@ -225,7 +241,7 @@
     <div class="qz-panel qz-done" id="qz-done">
       <div class="qz-done-check">✓</div>
       <h2 class="qz-question">Got it<span id="qz-done-name"></span>.</h2>
-      <p class="qz-done-sub">We'll call you within one business day to book your demo. Prefer email? Write to <a href="mailto:krish@theaimmedia.ca">krish@theaimmedia.ca</a> instead.</p>
+      <p class="qz-done-sub">We'll call you within one business day to talk it through. Prefer email? Write to <a href="mailto:krish@theaimmedia.ca">krish@theaimmedia.ca</a> instead.</p>
     </div>
 
     <div class="qz-panel qz-error" id="qz-error">
@@ -249,6 +265,12 @@
         <a href="/">Home</a>
         <a href="/book">Hear a Demo</a>
         <a href="/pricing">Pricing</a>
+      </div>
+      <div class="ft-col">
+        <div class="ft-col-title">Solutions</div>
+        <a href="/digital-marketing">Digital Marketing</a>
+        <a href="/content">Content</a>
+        <a href="/ai-automations">AI Automations</a>
       </div>
       <div class="ft-col">
         <div class="ft-col-title">Services</div>
